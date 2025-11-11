@@ -6,6 +6,7 @@ import duckdb as ddb
 from pathlib import Path
 from rich import print as rprint
 
+
 def copy_db(duckdb_path: Path, temp_path: Path):
     try:
         temp_path.unlink()
@@ -36,7 +37,7 @@ def test_db(duckdb_path: Path):
         rprint(f"{len(data)} tables in '{duckdb_path.name}'.")
 
 
-def main(duckdb_path:Path, temp_file: str = "temp.duckdb")->None:
+def main(duckdb_path: Path, temp_file: str = "temp.duckdb") -> None:
     rprint(f"Compacting '{duckdb_path.name}'.")
     temp_path = duckdb_path.with_name(temp_file)
     copy_db(duckdb_path=duckdb_path, temp_path=temp_path)
