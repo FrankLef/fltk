@@ -146,10 +146,10 @@ class IDicTable(ABC):
             raise ValueError(f"No RENAME lines with rule '{rule}'")
         for line in the_lines:
             # NOTE: Parser exception might be caused by using a reserved word. Use double quotes to prevent this.
-            qry = f'''
+            qry = f"""
             ALTER TABLE {table_nm}
             RENAME COLUMN "{line.raw_name}" TO {line.name}
-            '''
+            """
             conn.sql(qry)
 
     def add(self, line):
