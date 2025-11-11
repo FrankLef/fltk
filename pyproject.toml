@@ -16,12 +16,11 @@ Changelog = "https://github.com/FrankLef/fltk.git/releases"
 [tool.poetry.dependencies]
 # python changed to allow install of scipy
 python = "^3.10.6"
-# greenlet version 3.2.2 and later required for python 3.14
-# it is a dependency of pyodbc
-greenlet = "^3.2.2"
 SQLAlchemy = "^2.0.0"
 # sqlalchemy addin to connect to MS Access databases
 sqlalchemy-access = "^2.0.2"
+# greenlet version ^3.2.2 for python 3.14, it is a dependency of pyodbc
+greenlet = "^3.2.2"
 pyodbc = "5.3.0"
 dynaconf = "^3.1.11"
 rich= "^12.5.1"
