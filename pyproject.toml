@@ -15,7 +15,7 @@ Changelog = "https://github.com/FrankLef/fltk.git/releases"
 
 [tool.poetry.dependencies]
 # python changed to allow install of scipy
-python = "^3.10.6"
+python = "^3.12"
 SQLAlchemy = "^2.0.0"
 # sqlalchemy addin to connect to MS Access databases
 sqlalchemy-access = "^2.0.2"
@@ -25,6 +25,9 @@ pyodbc = "5.3.0"
 dynaconf = "^3.1.11"
 rich= "^12.5.1"
 typer = "^0.13.1"
+duckdb = "^1.4.1"
+openpyxl = "^3.1.5"
+numpy = "^2.3.4"
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.3.1"
