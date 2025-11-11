@@ -1,7 +1,7 @@
 import duckdb as ddb
 from duckdb.typing import DOUBLE
 
-from ..log1ps import log1ps10, expm1s10
+from .log1ps import log1ps10, expm1s10
 
 
 class QryTransformLog:
