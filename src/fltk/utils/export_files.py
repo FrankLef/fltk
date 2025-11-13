@@ -48,8 +48,12 @@ class XprtRun:
             if not a_file.skip:
                 rprint(f"'{a_file.name}'")
                 src_fn = xprt_dir.path.joinpath(a_file.name)
-                dest_fn = self._xprt_path.joinpath(a_file.name)
-                shutil.copy2(src=src_fn, dst=dest_fn)
+                if src_fn.exists():
+                    dest_fn = self._xprt_path.joinpath(a_file.name)
+                    shutil.copy2(src=src_fn, dst=dest_fn)
+                else:
+                    msg = f"File not found\n'{src_fn}'"
+                    raise FileNotFoundError(msg)
                 nfiles += 1
         if not nfiles:
             msg = f"No file exported from '{xprt_dir.name}'."
