@@ -39,7 +39,11 @@ def test_db(duckdb_path: Path):
 
 def main(duckdb_path: Path, temp_file: str = "temp.duckdb") -> None:
     rprint(f"Compacting '{duckdb_path.name}'.")
+    size_before = duckdb_path.stat().st_size / 1024**2
     temp_path = duckdb_path.with_name(temp_file)
     copy_db(duckdb_path=duckdb_path, temp_path=temp_path)
     ren_db(duckdb_path=duckdb_path, temp_path=temp_path)
+    size_after = duckdb_path.stat().st_size / 1024**2
+    msg : str = f"File size: before = {size_before:0.2f} MB, after = {size_after:0.2f} MB."
+    rprint(msg)
     test_db(duckdb_path=duckdb_path)
