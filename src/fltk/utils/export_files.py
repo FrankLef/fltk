@@ -19,18 +19,18 @@ class XprtRun:
     def __init__(self, xprt_path: Path):
         self._xprt_path = xprt_path
         self._xprts: dict[str, XprtDir] = {}
-        
+
     @property
     def xprt_path(self) -> Path:
         return self._xprt_path
-    
+
     def add(self, xprt_dir: XprtDir) -> None:
         self._xprts[xprt_dir.name] = xprt_dir
-        
+
     def add_many(self, xprt_dirs: list[XprtDir]) -> None:
         for xprt_dir in xprt_dirs:
-            self.add(xprt_dir)     
-        
+            self.add(xprt_dir)
+
     def run(self) -> None:
         if len(self._xprts):
             for name, xprt in self._xprts.items():
@@ -39,7 +39,7 @@ class XprtRun:
                 rprint(msg)
         else:
             raise ValueError("No file to export.")
-    
+
     def export(self, xprt_dir: XprtDir) -> int:
         nfiles: int = 0
         msg: str = f"Exporting from\n{xprt_dir.path}\nto\n{self._xprt_path}"

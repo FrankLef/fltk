@@ -44,6 +44,8 @@ def main(duckdb_path: Path, temp_file: str = "temp.duckdb") -> None:
     copy_db(duckdb_path=duckdb_path, temp_path=temp_path)
     ren_db(duckdb_path=duckdb_path, temp_path=temp_path)
     size_after = duckdb_path.stat().st_size / 1024**2
-    msg : str = f"File size: before = {size_before:0.2f} MB, after = {size_after:0.2f} MB."
+    msg: str = (
+        f"File size: before = {size_before:0.2f} MB, after = {size_after:0.2f} MB."
+    )
     rprint(msg)
     test_db(duckdb_path=duckdb_path)
