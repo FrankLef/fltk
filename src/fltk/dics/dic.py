@@ -21,7 +21,7 @@ class AttrName(StrEnum):
 
 class IDic(ABC):
     def __init__(self, name: str):
-        self._name = name
+        self._name: str = name
         self._lines: dic_lines = []
 
     @property
