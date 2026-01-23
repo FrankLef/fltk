@@ -61,7 +61,14 @@ class IDic(ABC):
             data[var] = data[var].fillna(EMPTY_STR)
 
         the_lines: dic_lines = data.to_dict(orient="records")
+        the_lines = self.filter_skipped(the_lines)
         self._lines = the_lines
+
+    def filter_skipped(self, lines: dic_lines) -> dic_lines:
+        the_lines = list(
+            filter(lambda line: not bool(line[AttrName.SKIPPED.value]), lines)
+        )
+        return the_lines
 
     def get_by_group(self, group: str | None = None) -> dic_lines:
         if group is not None:
@@ -85,7 +92,7 @@ class IDic(ABC):
 
         the_lines = self.get_by_group(group)
 
-        out: list[dict[str, Any]] = [
+        out: dic_lines = [
             {line[NAME]: line[attr]} for line in the_lines if line[NAME] in names
         ]
         if not len(out):
