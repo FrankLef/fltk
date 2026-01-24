@@ -8,6 +8,7 @@ import fltk.dics.dic as dc
 class DicTest(dc.IDic):
     pass
 
+
 @pytest.fixture
 def dic():
     return DicTest(name="dic_test")
@@ -43,8 +44,9 @@ def loaded_dic(dic, path, sheet):
     dic.load_xl(path=path, sheet_nm=sheet)
     return dic
 
+
 def test_nlines(loaded_dic):
-    assert loaded_dic.nlines==18
+    assert loaded_dic.nlines == 18
 
 
 @pytest.mark.parametrize(
@@ -109,3 +111,17 @@ def test_get_names_by_role(loaded_dic, role, group, keep_list, expected):
 def test_get_names_by_rule(loaded_dic, rule, group, keep_list, expected):
     names = loaded_dic.get_names_by_rule(rule=rule, group=group, keep_list=keep_list)
     assert names == expected
+
+
+@pytest.mark.parametrize(
+    "tag_text, expected",
+    [
+        [None, None],
+        ["_na", None],
+        ["size=2,shape=dash", {"size": "2", "shape": "dash"}],
+        ["size=2", {"size": "2"}],
+    ],
+)
+def test_get_tags(loaded_dic, tag_text, expected):
+    tags = loaded_dic.get_tags(tag_text)
+    assert tags == expected
