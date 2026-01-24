@@ -94,8 +94,8 @@ def test_match_tag(dic, tag, text, expected):
         ["cat", "trialbal", True, ["entity"]],
     ],
 )
-def test_get_by_role(loaded_dic, role, group, keep_list, expected):
-    names = loaded_dic.get_by_role(role=role, group=group, keep_list=keep_list)
+def test_get_names_by_role(loaded_dic, role, group, keep_list, expected):
+    names = loaded_dic.get_names_by_role(role=role, group=group, keep_list=keep_list)
     assert names == expected
 
 
@@ -106,6 +106,6 @@ def test_get_by_role(loaded_dic, role, group, keep_list, expected):
         ["ren", "trialbal", False, ["gl_no", "gl_desc"]],
     ],
 )
-def test_get_by_rule(loaded_dic, rule, group, keep_list, expected):
-    names = loaded_dic.get_by_rule(rule=rule, group=group, keep_list=keep_list)
+def test_get_names_by_rule(loaded_dic, rule, group, keep_list, expected):
+    names = loaded_dic.get_names_by_rule(rule=rule, group=group, keep_list=keep_list)
     assert names == expected
