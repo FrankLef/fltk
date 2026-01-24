@@ -21,6 +21,11 @@ def path():
     return path
 
 
+@pytest.fixture
+def sheet():
+    return "data"
+
+
 def test_dic(dic):
     assert isinstance(dic, dc.IDic)
 
@@ -29,8 +34,8 @@ def test_name(dic):
     assert dic.name == "dic_test"
 
 
-def test_load_xl(dic, path):
-    dic.load_xl(path=path, sheet_nm="data")
+def test_load_xl(dic, path, sheet):
+    dic.load_xl(path=path, sheet_nm=sheet)
     lines = dic.lines
     assert len(lines) == 18
 
