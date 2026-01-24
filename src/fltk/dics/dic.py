@@ -147,3 +147,17 @@ class IDic(ABC):
             return names[0]
         
         return names
+    
+    def get_lines_by_role(self, role: str, group: str | None = None, keep_list: bool = False
+    )->dic_output:
+        # NOTE: The names must be in a list. i.e. keep_list=True
+        names: list[str] = self.get_by_role(role=role, group=group, keep_list=True)  # type: ignore
+        lines:dic_output=self.get_lines(names=names, group=group, keep_list=keep_list)
+        return lines
+    
+    def get_lines_by_rule(self, rule: str, group: str | None = None, keep_list: bool = False
+    )->dic_output:
+        # NOTE: The names must be in a list. i.e. keep_list=True
+        names: list[str] = self.get_by_rule(rule=rule, group=group, keep_list=True)  # type: ignore
+        lines:dic_output=self.get_lines(names=names, group=group, keep_list=keep_list)
+        return lines
