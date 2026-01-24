@@ -9,6 +9,7 @@ from enum import StrEnum, auto
 
 type dic_lines = list[dict[str, Any]]
 type dic_output = dict[str, Any] | list[dict[str, Any]]
+type dic_names = str | list[str]
 
 
 class AttrName(StrEnum):
@@ -35,7 +36,7 @@ class IDic(ABC):
     def load_xl(self, path: Path, sheet_nm: str) -> None:
         """Read an excel file containing the data to load into dic."""
 
-        VARS: Final[dict[str, Any]] = {
+        VARS_DTYPE: Final[dict[str, Any]] = {
             AttrName.GROUP.value: str,
             AttrName.NAME.value: str,
             AttrName.SKIPPED.value: bool,
@@ -46,18 +47,18 @@ class IDic(ABC):
         # NOTE: Important to specify the dtypes for excel.
         # Otherwise problem, e.g. with the activ field which will not be interpreted as boolean
 
-        data = pd.read_excel(io=path, sheet_name=sheet_nm, dtype=VARS)
+        data = pd.read_excel(io=path, sheet_name=sheet_nm, dtype=VARS_DTYPE)
         msg = f"The excel data for dic '{self.name}' is empty."
         assert not data.empty, msg
 
-        is_subset = set(VARS.keys()).issubset(data.columns)
+        is_subset = set(VARS_DTYPE.keys()).issubset(data.columns)
         if not is_subset:
             msg = f"Required column names for dic '{self.name}' are missing."
             raise ValueError(msg)
 
         EMPTY_STR: Final[str] = ""
         # NOTE: Remove NaN put by pandas. Not sure this is necessary anymore since using xl_dtypes above.  Keep it.
-        for var in VARS.keys():
+        for var in VARS_DTYPE.keys():
             data[var] = data[var].fillna(EMPTY_STR)
 
         the_lines: dic_lines = data.to_dict(orient="records")
@@ -107,31 +108,37 @@ class IDic(ABC):
         return a_match is not None
 
     def get_names_by_attr(
-        self, value: str, attr: str, keep_list: bool = False
-    ) -> dic_output:
+        self, value: str, attr: str, group: str | None = None, keep_list: bool = False
+    ) -> dic_names:
         NAME: Final[str] = AttrName.NAME.value
 
-        out: list[dict[str, Any]] = [
-            {line[NAME]: line[attr]}
-            for line in self._lines
-            if self.match_tag(tag=line[attr].value, text=value)
+        the_lines = self.get_by_group(group)
+
+        out: dic_names = [
+            line[NAME]
+            for line in the_lines
+            if self.match_tag(tag=line[attr], text=value)
         ]
 
         if not len(out):
-            msg: str = f"No item found with attribute '{value}'."
+            msg: str = f"No item found with {attr} = '{value}' in '{group}'."
             raise KeyError(msg)
         if not keep_list and len(out) == 1:
             return out[0]
         return out
 
-    def get_by_role(self, role: str, keep_list: bool = False) -> dic_output:
+    def get_by_role(
+        self, role: str, group: str | None = None, keep_list: bool = False
+    ) -> dic_names:
         out = self.get_names_by_attr(
-            value=role, attr=AttrName.ROLE.value, keep_list=keep_list
+            value=role, attr=AttrName.ROLE.value, group=group, keep_list=keep_list
         )
         return out
 
-    def get_by_rule(self, rule: str, keep_list: bool = False) -> dic_output:
+    def get_by_rule(
+        self, rule: str, group: str | None = None, keep_list: bool = False
+    ) -> dic_names:
         out = self.get_names_by_attr(
-            value=rule, attr=AttrName.RULE.value, keep_list=keep_list
+            value=rule, attr=AttrName.RULE.value, group=group, keep_list=keep_list
         )
         return out
