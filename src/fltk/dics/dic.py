@@ -41,11 +41,11 @@ class IDic(ABC):
         """Read an excel file containing the data to load into dic."""
 
         VARS_DTYPE: Final[dict[str, Any]] = {
-            AttrName.GROUP.value: str,
-            AttrName.NAME.value: str,
-            AttrName.SKIPPED.value: bool,
-            AttrName.ROLE.value: str,
-            AttrName.RULE.value: str,
+            AttrName.GROUP: str,
+            AttrName.NAME: str,
+            AttrName.SKIPPED: bool,
+            AttrName.ROLE: str,
+            AttrName.RULE: str,
         }
 
         # NOTE: Important to specify the dtypes for excel.
@@ -78,7 +78,7 @@ class IDic(ABC):
     def get_by_group(self, group: str | None = None) -> dic_lines:
         if group is not None:
             filtered_lines = list(
-                filter(lambda line: line[AttrName.GROUP.value] == group, self._lines)
+                filter(lambda line: line[AttrName.GROUP] == group, self._lines)
             )
         else:
             return self._lines
@@ -89,11 +89,10 @@ class IDic(ABC):
     def get_lines(
         self, names: list[str], group: str | None = None, keep_list: bool = False
     ) -> dic_output:
-        NAME: Final[str] = AttrName.NAME.value
 
         the_lines = self.get_by_group(group)
 
-        out: dic_lines = [line for line in the_lines if line[NAME] in names]
+        out: dic_lines = [line for line in the_lines if line[AttrName.NAME] in names]
         if not len(out):
             msg: str = "No line found."
             raise KeyError(msg)
@@ -108,12 +107,11 @@ class IDic(ABC):
         group: str | None = None,
         keep_list: bool = False,
     ) -> dic_output:
-        NAME: Final[str] = AttrName.NAME.value
 
         the_lines = self.get_by_group(group)
 
         out: dic_lines = [
-            {line[NAME]: line[attr]} for line in the_lines if line[NAME] in names
+            {line[AttrName.NAME]: line[attr]} for line in the_lines if line[AttrName.NAME] in names
         ]
         if not len(out):
             msg: str = f"No '{attr}' attribute available for '{names}'."
@@ -129,12 +127,11 @@ class IDic(ABC):
     def get_names_by_attr(
         self, value: str, attr: str, group: str | None = None, keep_list: bool = False
     ) -> dic_names:
-        NAME: Final[str] = AttrName.NAME.value
 
         the_lines = self.get_by_group(group)
 
         out: dic_names = [
-            line[NAME]
+            line[AttrName.NAME]
             for line in the_lines
             if self.match_tag(tag=line[attr], text=value)
         ]
@@ -150,7 +147,7 @@ class IDic(ABC):
         self, role: str, group: str | None = None, keep_list: bool = False
     ) -> dic_names:
         out = self.get_names_by_attr(
-            value=role, attr=AttrName.ROLE.value, group=group, keep_list=keep_list
+            value=role, attr=AttrName.ROLE, group=group, keep_list=keep_list
         )
         return out
 
@@ -158,6 +155,6 @@ class IDic(ABC):
         self, rule: str, group: str | None = None, keep_list: bool = False
     ) -> dic_names:
         out = self.get_names_by_attr(
-            value=rule, attr=AttrName.RULE.value, group=group, keep_list=keep_list
+            value=rule, attr=AttrName.RULE, group=group, keep_list=keep_list
         )
         return out
