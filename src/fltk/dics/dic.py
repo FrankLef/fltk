@@ -83,7 +83,8 @@ class IDic(ABC):
         else:
             return self._lines
         if not len(the_lines):
-            raise KeyError(f"No line found with group '{group}'.")
+            msg:str = f"No line found for group '{group}' in dic 'self._name'."
+            raise KeyError(msg)
         return the_lines
 
     def get_lines(
