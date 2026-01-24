@@ -1,4 +1,4 @@
-"""Test the log1ps module."""
+"""Test the dic class."""
 
 import pytest
 from pathlib import Path
