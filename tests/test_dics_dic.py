@@ -43,6 +43,9 @@ def loaded_dic(dic, path, sheet):
     dic.load_xl(path=path, sheet_nm=sheet)
     return dic
 
+def test_nlines(loaded_dic):
+    assert loaded_dic.nlines==18
+
 
 @pytest.mark.parametrize(
     "group, expected",
