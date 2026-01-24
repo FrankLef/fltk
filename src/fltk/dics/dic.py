@@ -4,11 +4,11 @@ from abc import ABC
 import re
 from pathlib import Path
 import pandas as pd
-from typing import Final, Any
+from typing import NamedTuple, Final, Any
 from enum import StrEnum, auto
 
-type dic_lines = list[dict[str, Any]]
-type dic_output = dict[str, Any] | list[dict[str, Any]]
+type dic_lines = list[NamedTuple]
+type dic_output = NamedTuple | list[NamedTuple]
 type dic_names = str | list[str]
 
 
@@ -64,97 +64,85 @@ class IDic(ABC):
         # NOTE: Remove NaN put by pandas. Not sure this is necessary anymore since using xl_dtypes above.  Keep it.
         for var in VARS_DTYPE.keys():
             data[var] = data[var].fillna(EMPTY_STR)
-
-        the_lines: dic_lines = data.to_dict(orient="records")
-        the_lines = self.filter_skipped(the_lines)
-        self._lines = the_lines
+                
+        lines:dic_lines=[]
+        for row in data.itertuples(index=False):
+            lines.append(row)
+            
+        lines = self.filter_skipped(lines)
+        self._lines = lines
 
     def filter_skipped(self, lines: dic_lines) -> dic_lines:
-        the_lines = list(
-            filter(lambda line: not bool(line[AttrName.SKIPPED.value]), lines)
-        )
+        the_lines:dic_lines = [line for line in lines if not line.skipped]  # type: ignore[attr-defined]
+        
         return the_lines
 
     def get_by_group(self, group: str | None = None) -> dic_lines:
         if group is not None:
-            filtered_lines = list(
-                filter(lambda line: line[AttrName.GROUP] == group, self._lines)
-            )
+            the_lines:dic_lines = [line for line in self._lines if line.group == group]  # type: ignore[attr-defined]
         else:
             return self._lines
-        if not len(filtered_lines):
+        if not len(the_lines):
             raise KeyError(f"No line found with group '{group}'.")
-        return filtered_lines
+        return the_lines
 
     def get_lines(
         self, names: list[str], group: str | None = None, keep_list: bool = False
     ) -> dic_output:
 
-        the_lines = self.get_by_group(group)
-
-        out: dic_lines = [line for line in the_lines if line[AttrName.NAME] in names]
-        if not len(out):
+        group_lines = self.get_by_group(group)
+        
+        lines: dic_output = [line for line in group_lines if line.name in names]  # type: ignore[attr-defined]
+        if not len(lines):
             msg: str = "No line found."
             raise KeyError(msg)
-        if not keep_list and len(out) == 1:
-            return out[0]
-        return out
-
-    def get_attributes(
-        self,
-        names: list[str],
-        attr: str,
-        group: str | None = None,
-        keep_list: bool = False,
-    ) -> dic_output:
-
-        the_lines = self.get_by_group(group)
-
-        out: dic_lines = [
-            {line[AttrName.NAME]: line[attr]} for line in the_lines if line[AttrName.NAME] in names
-        ]
-        if not len(out):
-            msg: str = f"No '{attr}' attribute available for '{names}'."
-            raise KeyError(msg)
-        if not keep_list and len(out) == 1:
-            return out[0]
-        return out
+        if not keep_list and len(lines) == 1:
+            return lines[0]
+        return lines
 
     def match_tag(self, tag: str, text: str) -> bool:
         a_match = re.search(pattern=rf"\b{text}\b", string=tag)
         return a_match is not None
 
-    def get_names_by_attr(
-        self, value: str, attr: str, group: str | None = None, keep_list: bool = False
-    ) -> dic_names:
-
-        the_lines = self.get_by_group(group)
-
-        out: dic_names = [
-            line[AttrName.NAME]
-            for line in the_lines
-            if self.match_tag(tag=line[attr], text=value)
-        ]
-
-        if not len(out):
-            msg: str = f"No item found with {attr} = '{value}' in '{group}'."
-            raise KeyError(msg)
-        if not keep_list and len(out) == 1:
-            return out[0]
-        return out
 
     def get_by_role(
         self, role: str, group: str | None = None, keep_list: bool = False
     ) -> dic_names:
-        out = self.get_names_by_attr(
-            value=role, attr=AttrName.ROLE, group=group, keep_list=keep_list
-        )
-        return out
+        
+        group_lines = self.get_by_group(group)
+
+        names: dic_names = [
+            line.name  # type: ignore[attr-defined]
+            for line in group_lines
+            if self.match_tag(tag=line.role, text=role)  # type: ignore[attr-defined]
+        ]
+        
+        if not len(names):
+            msg: str = f"No item found with role '{role}' in '{group}'."
+            raise KeyError(msg)
+        
+        if not keep_list and len(names) == 1:
+            return names[0]
+        
+        return names
 
     def get_by_rule(
         self, rule: str, group: str | None = None, keep_list: bool = False
     ) -> dic_names:
-        out = self.get_names_by_attr(
-            value=rule, attr=AttrName.RULE, group=group, keep_list=keep_list
-        )
-        return out
+        
+        group_lines = self.get_by_group(group)
+
+        names: dic_names = [
+            line.name  # type: ignore[attr-defined]
+            for line in group_lines
+            if self.match_tag(tag=line.rule, text=rule)  # type: ignore[attr-defined]
+        ]
+        
+        if not len(names):
+            msg: str = f"No item found with rule '{rule}' in '{group}'."
+            raise KeyError(msg)
+        
+        if not keep_list and len(names) == 1:
+            return names[0]
+        
+        return names

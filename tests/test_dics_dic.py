@@ -8,10 +8,8 @@ import fltk.dics.dic as dc
 class DicTest(dc.IDic):
     pass
 
-
 @pytest.fixture
 def dic():
-    # dic = DicTest(name="dic_test")
     return DicTest(name="dic_test")
 
 
@@ -72,33 +70,6 @@ def test_get_lines(loaded_dic, names, group, keep_list, expected):
 
 
 @pytest.mark.parametrize(
-    "names, attr, group, keep_list, expected",
-    [
-        [
-            ["fin_qrtr_tag"],
-            "dtype",
-            "trialbal",
-            True,
-            [{"fin_qrtr_tag": "VARCHAR(10)"}],
-        ],
-        [
-            ["concept", "fstype"],
-            "dtype",
-            "summ",
-            True,
-            [{"concept": "VARCHAR"}, {"fstype": "VARCHAR"}],
-        ],
-        [["fin_qrtr_tag"], "dtype", "trialbal", False, {"fin_qrtr_tag": "VARCHAR(10)"}],
-    ],
-)
-def test_get_attributes(loaded_dic, names, attr, group, keep_list, expected):
-    lines = loaded_dic.get_attributes(
-        names=names, attr=attr, group=group, keep_list=keep_list
-    )
-    assert lines == expected
-
-
-@pytest.mark.parametrize(
     "tag, text, expected",
     [
         ["pk", "pk", True],
@@ -110,21 +81,6 @@ def test_get_attributes(loaded_dic, names, attr, group, keep_list, expected):
 def test_match_tag(dic, tag, text, expected):
     out = dic.match_tag(tag=tag, text=text)
     assert out == expected
-
-
-@pytest.mark.parametrize(
-    "value, attr, group, keep_list, expected",
-    [
-        ["FLOAT", "dtype", "trialbal", True, ["amt"]],
-        ["FLOAT", "dtype", "trialbal", False, "amt"],
-        ["FLOAT", "dtype", "summ", False, ["amt", "amt_fin"]],
-    ],
-)
-def test_get_names_by_attr(loaded_dic, value, attr, group, keep_list, expected):
-    names = loaded_dic.get_names_by_attr(
-        value=value, attr=attr, group=group, keep_list=keep_list
-    )
-    assert names == expected
 
 
 @pytest.mark.parametrize(
