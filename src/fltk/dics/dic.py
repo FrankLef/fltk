@@ -33,6 +33,10 @@ class IDic(ABC):
     def lines(self):
         return self._lines
 
+    @property
+    def nlines(self):
+        return len(self._lines)
+
     def load_xl(self, path: Path, sheet_nm: str) -> None:
         """Read an excel file containing the data to load into dic."""
 
@@ -81,6 +85,21 @@ class IDic(ABC):
         if not len(filtered_lines):
             raise KeyError(f"No line found with group '{group}'.")
         return filtered_lines
+
+    def get_lines(
+        self, names: list[str], group: str | None = None, keep_list: bool = False
+    ) -> dic_output:
+        NAME: Final[str] = AttrName.NAME.value
+
+        the_lines = self.get_by_group(group)
+
+        out: dic_lines = [line for line in the_lines if line[NAME] in names]
+        if not len(out):
+            msg: str = "No line found."
+            raise KeyError(msg)
+        if not keep_list and len(out) == 1:
+            return out[0]
+        return out
 
     def get_attributes(
         self,

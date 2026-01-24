@@ -60,6 +60,18 @@ def test_get_by_group(loaded_dic, group, expected):
 
 
 @pytest.mark.parametrize(
+    "names, group, keep_list, expected",
+    [
+        [["fin_qrtr_tag", "pertype", "fstype"], "trialbal", False, 3],
+        [["fin_qrtr_tag"], "trialbal", True, 1],
+    ],
+)
+def test_get_lines(loaded_dic, names, group, keep_list, expected):
+    lines = loaded_dic.get_lines(names=names, group=group, keep_list=keep_list)
+    assert len(lines) == expected
+
+
+@pytest.mark.parametrize(
     "names, attr, group, keep_list, expected",
     [
         [

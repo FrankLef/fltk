@@ -4,6 +4,7 @@ import sqlalchemy as sa
 from typing import NamedTuple
 import pandas as pd
 
+
 class ConnParams(NamedTuple):
     driver_nm: str
     driver: str  # must match name in odbc list from windows
@@ -13,18 +14,27 @@ class ConnParams(NamedTuple):
     pw: str
     port: int = 1433  # optional, 1433 is the default
 
-params=ConnParams(
+
+params = ConnParams(
     driver_nm="mssql+pyodbc",
     driver="SQL Server",
     server="azuohsqlbi01.database.windows.net",
     database="olivahorti_bi_db1",
     user="flefebvreodbc",
     pw="Excursion-Companion-Squad3!",
-    port=1433
+    port=1433,
 )
 
 
-def build_engine(driver_nm:str, driver:str, server:str, database: str, user:str, pw: str, port:int=1433) -> sa.Engine:
+def build_engine(
+    driver_nm: str,
+    driver: str,
+    server: str,
+    database: str,
+    user: str,
+    pw: str,
+    port: int = 1433,
+) -> sa.Engine:
     # Since version 1.4.17 sqlalchemy requires a sqlalchemy.engine.url.URL to create the engine.
     # We can't use just a string anymore.
     engine_url = sa.engine.url.URL.create(
@@ -58,7 +68,15 @@ def test_connect(engin: sa.Engine) -> bool:
 
 
 def fetch(qry: str) -> pd.DataFrame:
-    engin = build_engine(driver_nm=params.driver_nm, driver=params.driver, server=params.server, database=params.database, user=params.user, pw=params.pw,port=params.port)
+    engin = build_engine(
+        driver_nm=params.driver_nm,
+        driver=params.driver,
+        server=params.server,
+        database=params.database,
+        user=params.user,
+        pw=params.pw,
+        port=params.port,
+    )
     try:
         with engin.connect() as conn:
             data = pd.read_sql_query(sql=sa.text(qry), con=conn)
@@ -72,7 +90,15 @@ def fetch(qry: str) -> pd.DataFrame:
 
 
 def main(test_it: bool = False) -> sa.Engine:
-    engin = build_engine(driver_nm=params.driver_nm, driver=params.driver, server=params.server, database=params.database, user=params.user, pw=params.pw,port=params.port)
+    engin = build_engine(
+        driver_nm=params.driver_nm,
+        driver=params.driver,
+        server=params.server,
+        database=params.database,
+        user=params.user,
+        pw=params.pw,
+        port=params.port,
+    )
     if test_it:
         test_connect(engin)
     return engin
