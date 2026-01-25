@@ -4,7 +4,7 @@ from abc import ABC
 import re
 from pathlib import Path
 import pandas as pd
-from typing import NamedTuple, Final, Any
+from typing import NamedTuple, Iterable, Final, Any
 from enum import StrEnum, auto
 
 type dic_lines = list[NamedTuple]
@@ -97,7 +97,7 @@ class IDic(ABC):
         return the_lines
 
     def get_by_names(
-        self, names: list[str], group: str | None = None, keep_list: bool = False
+        self, names: Iterable[str], group: str | None = None, keep_list: bool = False
     ) -> dic_output:
         group_lines = self.get_by_group(group)
 
