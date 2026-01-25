@@ -24,7 +24,14 @@ class QryConstraints:
         qry = self.write_add_primary_key(keys)
         self._conn.sql(qry)
 
-    def set_not_null(self, cols: Iterable[str]) -> None:
+    def set_not_null(self, cols: Iterable[str], skip_on_error:bool=False) -> None:
         for col in cols:
             qry = self.write_set_not_null(col)
-            self._conn.sql(qry)
+            try:
+                self._conn.sql(qry)
+            except Exception as e:
+                pass_it: bool = "Binder Error" in str(e) and skip_on_error
+                if pass_it:
+                    pass
+                else:
+                    raise
