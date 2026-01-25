@@ -24,7 +24,7 @@ class QryConstraints:
         qry = self.write_add_primary_key(keys)
         self._conn.sql(qry)
 
-    def set_not_null(self, cols: Iterable[str], skip_on_error:bool=False) -> None:
+    def set_not_null(self, cols: Iterable[str], skip_on_error: bool = False) -> None:
         for col in cols:
             qry = self.write_set_not_null(col)
             try:

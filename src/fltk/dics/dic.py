@@ -183,6 +183,11 @@ class IDic(ABC):
         if tag_text is not None:
             try:
                 tags = dict(item.split("=") for item in tag_text.split(","))
+                # fields=[(field, str) for field in tags.keys()]
+                # AttrTag = NamedTuple('AttrTag', fields)
+                # print("tag_values:", tags.values())
+                # raise KeyboardInterrupt()
+                # attr_tag = AttrTag(tags.values())
             except ValueError:
                 return None
         else:
@@ -198,7 +203,15 @@ class IDic(ABC):
             lines = self.get_by_group(group=group)
         attrs = []
         for line in lines:
+            # NOTE: Must next to get the element of the iterator.
             attr_text = getattr(line, attr_nm)
             attr_dict = {line.name: attr_text}  # type: ignore[union-attr]
             attrs.append(attr_dict)
         return attrs
+    
+    def get_attributes_default(self,tag_text: str, default:Any, na:str="_na"):
+        if tag_text != na:
+            attr_dict = self.get_tags(tag_text)
+        else:
+            attr_dict = default
+        return attr_dict

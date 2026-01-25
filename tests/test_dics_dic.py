@@ -18,9 +18,11 @@ def dic():
 def path():
     return Path(__file__).parent.joinpath("fixtures")
 
+
 @pytest.fixture
 def xlfile(path):
     return path.joinpath("ddict1.xlsx")
+
 
 @pytest.fixture
 def csvfile(path):
@@ -39,10 +41,12 @@ def test_dic(dic):
 def test_name(dic):
     assert dic.name == "dic_test"
 
+
 def test_load_csv(dic, csvfile, sheet):
     dic.load_csv(path=csvfile)
     lines = dic.lines
     assert len(lines) == 18
+
 
 def test_load_xl(dic, xlfile, sheet):
     dic.load_xl(path=xlfile, sheet_nm=sheet)
@@ -136,3 +140,21 @@ def test_get_names_by_rule(loaded_dic, rule, group, keep_list, expected):
 def test_get_tags(loaded_dic, tag_text, expected):
     tags = loaded_dic.get_tags(tag_text)
     assert tags == expected
+
+
+@pytest.mark.parametrize(
+    "names, group, attr_nm, expected",
+    [
+        [["fstype"], "trialbal", "dtype", [{"fstype": "VARCHAR(5)"}]],
+        [["pertype"], "trialbal", "LineGeom", [{"pertype": "size=2,shape=dash"}]],
+        [
+            ["pertype", "fstype"],
+            "trialbal",
+            "LineGeom",
+            [{"pertype": "size=2,shape=dash"}, {"fstype": "size=2"}],
+        ],
+    ],
+)
+def test_get_attributes(loaded_dic, names, group, attr_nm, expected):
+    line = loaded_dic.get_attributes(names=names, group=group, attr_nm=attr_nm)
+    assert line == expected
