@@ -53,7 +53,7 @@ class IDic(ABC):
 
             # Dynamically create the NamedTuple class with string types
             # using the functional syntax which is compatible with type checkers
-            fields = [(field, str) for field in header]
+            fields = [(field, str) if field != AttrName.SKIPPED else (field, bool) for field in header]
             DynamicRecord  = NamedTuple(TYPENAME, fields) # type: ignore
 
             # Iterate through remaining rows and create NamedTuple instances
@@ -66,9 +66,11 @@ class IDic(ABC):
                     print(f"Skipping row due to length mismatch: {row}")
         
         # NOTE: When doing dynamic records with NamedTuple. Python does not translate 'False' to False as normally done by csv.add() and cannot change the NamedTuple type after it is created.
-        the_lines: dic_lines = [line for line in lines if line.skipped.lower() == "false"]  # type: ignore[attr-defined]
+        lines = [line for line in lines if line.skipped.lower() == "false"]  # type: ignore[attr-defined]
         
-        self._lines = the_lines
+        # lines = self.filter_skipped(lines)
+        
+        self._lines = lines
 
     def load_xl(self, path: Path, sheet_nm: str) -> None:
         """Read an excel file containing the data to load into dic."""
