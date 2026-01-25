@@ -96,7 +96,7 @@ class IDic(ABC):
             raise KeyError(msg)
         return the_lines
 
-    def get_lines(
+    def get_by_names(
         self, names: list[str], group: str | None = None, keep_list: bool = False
     ) -> dic_output:
         group_lines = self.get_by_group(group)
@@ -160,7 +160,7 @@ class IDic(ABC):
         names: list[str] = self.get_names_by_role(
             role=role, group=group, keep_list=True
         )  # type: ignore
-        lines: dic_output = self.get_lines(
+        lines: dic_output = self.get_by_names(
             names=names, group=group, keep_list=keep_list
         )
         return lines
@@ -172,7 +172,7 @@ class IDic(ABC):
         names: list[str] = self.get_names_by_rule(
             rule=rule, group=group, keep_list=True
         )  # type: ignore
-        lines: dic_output = self.get_lines(
+        lines: dic_output = self.get_by_names(
             names=names, group=group, keep_list=keep_list
         )
         return lines
