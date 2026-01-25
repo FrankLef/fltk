@@ -3,7 +3,6 @@
 from abc import ABC
 import re
 from pathlib import Path
-import csv
 import pandas as pd
 from typing import NamedTuple, Final, Any
 from enum import StrEnum, auto
@@ -38,43 +37,8 @@ class IDic(ABC):
     def nlines(self):
         return len(self._lines)
     
-    def load_csv(self, path: Path)-> None:
-        TYPENAME: Final[str] = "DicLine"
-        lines: dic_lines = []
-        with open(path, mode='r', newline='', encoding='utf-8') as csvfile:
-            reader = csv.reader(csvfile)
-            try:
-                # Extract the header and clean the field names
-                header = [field.strip().replace(' ', '_').replace('-', '_') for field in next(reader)]
-            except StopIteration:
-                # Empty file
-                msg:str = f"The csv file '{path.name}' is empty."
-                raise ValueError(msg)
-
-            # Dynamically create the NamedTuple class with string types
-            # using the functional syntax which is compatible with type checkers
-            fields = [(field, str) if field != AttrName.SKIPPED else (field, bool) for field in header]
-            DynamicRecord  = NamedTuple(TYPENAME, fields) # type: ignore
-
-            # Iterate through remaining rows and create NamedTuple instances
-            for row in reader:
-                if len(row) == len(header):
-                    # Use _make() to create an instance from an iterable (the row list)
-                    line = DynamicRecord._make(row)
-                    lines.append(line)
-                else:
-                    print(f"Skipping row due to length mismatch: {row}")
+    def load_data(self, path: Path, sheet_nm: str|None=None, is_xl: bool=True)-> None:
         
-        # NOTE: When doing dynamic records with NamedTuple. Python does not translate 'False' to False as normally done by csv.add() and cannot change the NamedTuple type after it is created.
-        lines = [line for line in lines if line.skipped.lower() == "false"]  # type: ignore[attr-defined]
-        
-        # lines = self.filter_skipped(lines)
-        
-        self._lines = lines
-
-    def load_xl(self, path: Path, sheet_nm: str) -> None:
-        """Read an excel file containing the data to load into dic."""
-
         VARS_DTYPE: Final[dict[str, Any]] = {
             AttrName.GROUP: str,
             AttrName.NAME: str,
@@ -82,12 +46,15 @@ class IDic(ABC):
             AttrName.ROLE: str,
             AttrName.RULE: str,
         }
-
-        # NOTE: Important to specify the dtypes for excel.
-        # Otherwise problem, e.g. with the activ field which will not be interpreted as boolean
-
-        data = pd.read_excel(io=path, sheet_name=sheet_nm, dtype=VARS_DTYPE)
-        msg = f"The excel data for dic '{self.name}' is empty."
+        
+        # NOTE: Important to specify the dtypes.
+        # Otherwise problem, e.g. with the 'skipped' field which will not be interpreted as boolean.
+        
+        if is_xl:
+            data = pd.read_excel(path, sheet_name=sheet_nm, dtype=VARS_DTYPE)
+        else :
+            data = pd.read_csv(path, dtype=VARS_DTYPE)
+        msg = f"The import file '{path.name}' is empty."
         assert not data.empty, msg
 
         is_subset = set(VARS_DTYPE.keys()).issubset(data.columns)
@@ -105,7 +72,14 @@ class IDic(ABC):
             lines.append(row)
 
         lines = self.filter_skipped(lines)
+        
         self._lines = lines
+    
+    def load_csv(self, path: Path)-> None:
+        self.load_data(path, is_xl=False)
+        
+    def load_xl(self, path: Path, sheet_nm:str)-> None:
+        self.load_data(path, sheet_nm=sheet_nm)
 
     def filter_skipped(self, lines: dic_lines) -> dic_lines:
         the_lines: dic_lines = [line for line in lines if not line.skipped]  # type: ignore[attr-defined]
