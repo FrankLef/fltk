@@ -10,6 +10,7 @@ from enum import StrEnum, auto
 type dic_lines = list[NamedTuple]
 type dic_output = NamedTuple | list[NamedTuple]
 type dic_names = str | list[str]
+type dic_attrs = list[dict[str, Any]]
 
 
 class AttrName(StrEnum):
@@ -36,9 +37,10 @@ class IDic(ABC):
     @property
     def nlines(self):
         return len(self._lines)
-    
-    def load_data(self, path: Path, sheet_nm: str|None=None, is_xl: bool=True)-> None:
-        
+
+    def load_data(
+        self, path: Path, sheet_nm: str | None = None, is_xl: bool = True
+    ) -> None:
         VARS_DTYPE: Final[dict[str, Any]] = {
             AttrName.GROUP: str,
             AttrName.NAME: str,
@@ -46,15 +48,15 @@ class IDic(ABC):
             AttrName.ROLE: str,
             AttrName.RULE: str,
         }
-        
+
         # NOTE: Important to specify the dtypes.
         # Otherwise problem, e.g. with the 'skipped' field which will not be interpreted as boolean.
-        
+
         if is_xl:
             data = pd.read_excel(path, sheet_name=sheet_nm, dtype=VARS_DTYPE)
-        else :
+        else:
             data = pd.read_csv(path, dtype=VARS_DTYPE)
-            
+
         if data.empty:
             raise ValueError(f"The import file '{path.name}' is empty.")
 
@@ -73,13 +75,13 @@ class IDic(ABC):
             lines.append(row)
 
         lines = self.filter_skipped(lines)
-        
+
         self._lines = lines
-    
-    def load_csv(self, path: Path)-> None:
+
+    def load_csv(self, path: Path) -> None:
         self.load_data(path, is_xl=False)
-        
-    def load_xl(self, path: Path, sheet_nm:str)-> None:
+
+    def load_xl(self, path: Path, sheet_nm: str) -> None:
         self.load_data(path, sheet_nm=sheet_nm)
 
     def filter_skipped(self, lines: dic_lines) -> dic_lines:
@@ -186,3 +188,17 @@ class IDic(ABC):
         else:
             return None
         return tags
+
+    def get_attributes(
+        self, names: Iterable[str] | None, group: str, attr_nm: str
+    ) -> dic_attrs:
+        if names is not None:
+            lines = self.get_by_names(names=names, group=group, keep_list=True)
+        else:
+            lines = self.get_by_group(group=group)
+        attrs = []
+        for line in lines:
+            attr_text = getattr(line, attr_nm)
+            attr_dict = {line.name: attr_text}  # type: ignore[union-attr]
+            attrs.append(attr_dict)
+        return attrs
