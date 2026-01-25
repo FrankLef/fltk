@@ -54,12 +54,13 @@ class IDic(ABC):
             data = pd.read_excel(path, sheet_name=sheet_nm, dtype=VARS_DTYPE)
         else :
             data = pd.read_csv(path, dtype=VARS_DTYPE)
-        msg = f"The import file '{path.name}' is empty."
-        assert not data.empty, msg
+            
+        if data.empty:
+            raise ValueError(f"The import file '{path.name}' is empty.")
 
         is_subset = set(VARS_DTYPE.keys()).issubset(data.columns)
         if not is_subset:
-            msg = f"Required column names for dic '{self.name}' are missing."
+            msg: str = f"Required column names in '{path.name}' are missing."
             raise ValueError(msg)
 
         EMPTY_STR: Final[str] = ""
@@ -83,7 +84,6 @@ class IDic(ABC):
 
     def filter_skipped(self, lines: dic_lines) -> dic_lines:
         the_lines: dic_lines = [line for line in lines if not line.skipped]  # type: ignore[attr-defined]
-
         return the_lines
 
     def get_by_group(self, group: str | None = None) -> dic_lines:
