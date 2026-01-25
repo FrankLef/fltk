@@ -3,6 +3,7 @@
 from abc import ABC
 import re
 from pathlib import Path
+import csv
 import pandas as pd
 from typing import NamedTuple, Final, Any
 from enum import StrEnum, auto
@@ -36,6 +37,38 @@ class IDic(ABC):
     @property
     def nlines(self):
         return len(self._lines)
+    
+    def load_csv(self, path: Path)-> None:
+        TYPENAME: Final[str] = "DicLine"
+        lines: dic_lines = []
+        with open(path, mode='r', newline='', encoding='utf-8') as csvfile:
+            reader = csv.reader(csvfile)
+            try:
+                # Extract the header and clean the field names
+                header = [field.strip().replace(' ', '_').replace('-', '_') for field in next(reader)]
+            except StopIteration:
+                # Empty file
+                msg:str = f"The csv file '{path.name}' is empty."
+                raise ValueError(msg)
+
+            # Dynamically create the NamedTuple class with string types
+            # using the functional syntax which is compatible with type checkers
+            fields = [(field, str) for field in header]
+            DynamicRecord  = NamedTuple(TYPENAME, fields) # type: ignore
+
+            # Iterate through remaining rows and create NamedTuple instances
+            for row in reader:
+                if len(row) == len(header):
+                    # Use _make() to create an instance from an iterable (the row list)
+                    line = DynamicRecord._make(row)
+                    lines.append(line)
+                else:
+                    print(f"Skipping row due to length mismatch: {row}")
+        
+        # NOTE: When doing dynamic records with NamedTuple. Python does not translate 'False' to False as normally done by csv.add() and cannot change the NamedTuple type after it is created.
+        the_lines: dic_lines = [line for line in lines if line.skipped.lower() == "false"]  # type: ignore[attr-defined]
+        
+        self._lines = the_lines
 
     def load_xl(self, path: Path, sheet_nm: str) -> None:
         """Read an excel file containing the data to load into dic."""

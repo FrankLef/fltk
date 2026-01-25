@@ -16,8 +16,15 @@ def dic():
 
 @pytest.fixture
 def path():
-    path = Path(__file__).parent.joinpath("fixtures", "ddict1.xlsx")
-    return path
+    return Path(__file__).parent.joinpath("fixtures")
+
+@pytest.fixture
+def xlfile(path):
+    return path.joinpath("ddict1.xlsx")
+
+@pytest.fixture
+def csvfile(path):
+    return path.joinpath("ddict1.csv")
 
 
 @pytest.fixture
@@ -32,16 +39,20 @@ def test_dic(dic):
 def test_name(dic):
     assert dic.name == "dic_test"
 
+def test_load_csv(dic, csvfile, sheet):
+    dic.load_csv(path=csvfile)
+    lines = dic.lines
+    assert len(lines) == 18
 
-def test_load_xl(dic, path, sheet):
-    dic.load_xl(path=path, sheet_nm=sheet)
+def test_load_xl(dic, xlfile, sheet):
+    dic.load_xl(path=xlfile, sheet_nm=sheet)
     lines = dic.lines
     assert len(lines) == 18
 
 
 @pytest.fixture
-def loaded_dic(dic, path, sheet):
-    dic.load_xl(path=path, sheet_nm=sheet)
+def loaded_dic(dic, xlfile, sheet):
+    dic.load_xl(path=xlfile, sheet_nm=sheet)
     return dic
 
 
