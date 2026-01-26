@@ -209,7 +209,7 @@ class IDic(ABC):
             attrs.append(attr_dict)
         return attrs
     
-    def get_tags_default(self,tag_text: str, default:Any, na:str="_na"):
+    def get_tags_default(self,tag_text: str, default:Any, na:str="_na")->Any:
         if tag_text != na:
             attr_dict = self.get_tags(tag_text)
         else:
