@@ -133,8 +133,8 @@ def test_get_names_by_rule(loaded_dic, rule, group, keep_list, expected):
     [
         [None, None],
         ["_na", None],
-        ["size=2,shape=dash", {"size": "2", "shape": "dash"}],
-        ["size=2", {"size": "2"}],
+        ["size=2~shape=dash", {"size": "2", "shape": "dash"}],
+        ["scale=1~decimals=2~mask={:,.2f}", {"scale": "1", "decimals":"2","mask":"{:,.2f}"}],
     ],
 )
 def test_get_tags(loaded_dic, tag_text, expected):
