@@ -194,38 +194,24 @@ class IDic(ABC):
             attrs.append(attr_dict)
         return attrs
 
-    def get_tags(self, tag_text: str | None) -> dict[str, Any] | None:
-        SEP: Final[str]=chr(126)  # '~' character
+    def get_tags(self, tag_text: str | None, sep:str=chr(126)) -> dict[str, Any] | None:
         if tag_text is not None:
             # NOTE: Must use a special separator not a comma because commas are found in sub text. e.g. mask="{:,.2f}"
             try:
-                tags = dict(item.split("=") for item in tag_text.split(SEP))
-                # fields=[(field, str) for field in tags.keys()]
-                # AttrTag = NamedTuple('AttrTag', fields)
-                # print("tag_values:", tags.values())
-                # raise KeyboardInterrupt()
-                # attr_tag = AttrTag(tags.values())
+                tags = dict(item.split("=") for item in tag_text.split(sep))
             except ValueError:
                 return None
         else:
             return None
         return tags
 
-    def get_tags_default(self,names: Iterable[str] | None, group: str, attr_nm:str, default:dict[str,Any], na:str="_na")->dict[str,Any]|None:
+    def get_tags_default(self,names: Iterable[str] | None, group: str, attr_nm:str, default:dict[str,Any], na:str="_na",sep:str=chr(126))->dict[str,Any]|None:
         tag = self.get_attributes(
             names=names, group=group, attr_nm=attr_nm
             )[0]
         tag_text:str = list(tag.values())[0]
         if tag_text != na:
-            attr_dict = self.get_tags(tag_text)
+            attr_dict = self.get_tags(tag_text, sep=sep)
         else:
             attr_dict = default
         return attr_dict
-    
-    
-    # def get_tags_default(self,tag_text: str, default:dict[str,Any], na:str="_na")->dict[str,Any]|None:
-    #     if tag_text != na:
-    #         attr_dict = self.get_tags(tag_text)
-    #     else:
-    #         attr_dict = default
-    #     return attr_dict
