@@ -181,17 +181,18 @@ class IDic(ABC):
     
     def get_attributes(
         self, names: Iterable[str] | None, group: str, attr_nm: str
-    ) -> dic_attrs:
+    ) -> dict[Any, Any]:
         if names is not None:
             lines = self.get_by_names(names=names, group=group, keep_list=True)
         else:
             lines = self.get_by_group(group=group)
-        attrs = []
-        for line in lines:
-            # NOTE: Must next to get the element of the iterator.
-            attr_text = getattr(line, attr_nm)
-            attr_dict = {line.name: attr_text}  # type: ignore[union-attr]
-            attrs.append(attr_dict)
+        attrs = {line.name: getattr(line, attr_nm) for line in lines}  # type: ignore[union-attr]
+        # attrs = []
+        # for line in lines:
+        #     # NOTE: Must next to get the element of the iterator.
+        #     attr_text = getattr(line, attr_nm)
+        #     attr_dict = {line.name: attr_text}  # type: ignore[union-attr]
+        #     attrs.append(attr_dict)
         return attrs
 
     def get_tags(self, tag_text: str | None, sep:str=chr(126)) -> dict[str, Any] | None:
