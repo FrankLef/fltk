@@ -187,12 +187,6 @@ class IDic(ABC):
         else:
             lines = self.get_by_group(group=group)
         attrs = {line.name: getattr(line, attr_nm) for line in lines}  # type: ignore[union-attr]
-        # attrs = []
-        # for line in lines:
-        #     # NOTE: Must next to get the element of the iterator.
-        #     attr_text = getattr(line, attr_nm)
-        #     attr_dict = {line.name: attr_text}  # type: ignore[union-attr]
-        #     attrs.append(attr_dict)
         return attrs
 
     def get_tags(self, tag_text: str | None, sep:str=chr(126)) -> dict[str, Any] | None:
@@ -206,10 +200,8 @@ class IDic(ABC):
             return None
         return tags
 
-    def get_tags_default(self,names: Iterable[str] | None, group: str, attr_nm:str, default:dict[str,Any], na:str="_na",sep:str=chr(126))->dict[str,Any]|None:
-        tag = self.get_attributes(
-            names=names, group=group, attr_nm=attr_nm
-            )[0]
+    def get_tags_default(self, names: Iterable[str] | None, group: str, attr_nm:str, default:dict[str,Any], na:str="_na",sep:str=chr(126))->dict[str,Any]|None:
+        tag = self.get_attributes(names=names, group=group, attr_nm=attr_nm)
         tag_text:str = list(tag.values())[0]
         if tag_text != na:
             attr_dict = self.get_tags(tag_text, sep=sep)
