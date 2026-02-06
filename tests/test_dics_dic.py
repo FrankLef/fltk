@@ -145,13 +145,13 @@ def test_get_tags(loaded_dic, tag_text, expected):
 @pytest.mark.parametrize(
     "names, group, attr_nm, expected",
     [
-        [["fstype"], "trialbal", "dtype", [{"fstype": "VARCHAR(5)"}]],
-        [["pertype"], "trialbal", "LineGeom", [{"pertype": "size=2,shape=dash"}]],
+        [["fstype"], "trialbal", "dtype", {"fstype": "VARCHAR(5)"}],
+        [["pertype"], "trialbal", "LineGeom", {"pertype": "size=2,shape=dash"}],
         [
             ["pertype", "fstype"],
             "trialbal",
             "LineGeom",
-            [{"pertype": "size=2,shape=dash"}, {"fstype": "size=2"}],
+            {"pertype": "size=2,shape=dash", "fstype": "size=2"},
         ],
     ],
 )
