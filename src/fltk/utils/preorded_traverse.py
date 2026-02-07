@@ -13,10 +13,10 @@ class PreordedTraverse:
         self._stack: deque = deque()
         
     @property
-    def data(self):
+    def data(self)->pd.DataFrame:
         return self._data
         
-    def fit_exec(self):
+    def fit_exec(self)->None:
         self.fit()
         self.exec()
     
@@ -24,15 +24,18 @@ class PreordedTraverse:
         self.fit_validate()
         self.fit_reset()
     
-    def fit_validate(self):
+    def fit_validate(self)->None:
         if self._data.empty:
-            raise ValueError("The data to traverse is empty.")
+            msg: str = "The data to traverse is empty."
+            raise ValueError(msg)
         if self._stack:
-            raise ValueError("The stack must be empty at the start. Weird!")
+            msg = "The stack must be empty at the start. Weird!"
+            raise ValueError(msg)
         if self._max_iter < 10:
-            raise ValueError("max_iter must be >= 10.")
+            msg = f"max_iter must be >= 10. It is {self._max_iter=}."
+            raise ValueError(msg)
         
-    def fit_reset(self):
+    def fit_reset(self)->None:
         self._data[self._level] = 0
         self._data[self._left] = 0
         self._data[self._right] = 0
