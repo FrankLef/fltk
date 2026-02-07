@@ -29,6 +29,8 @@ class PreordedTraverse:
             raise ValueError("The data to traverse is empty.")
         if self._stack:
             raise ValueError("The stack must be empty at the start. Weird!")
+        if self._max_iter < 10:
+            raise ValueError("max_iter must be >= 10.")
         
     def fit_reset(self):
         self._data[self._level] = 0
