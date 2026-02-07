@@ -32,7 +32,7 @@ class PreordedTraverse:
             msg = "The stack must be empty at the start. Weird!"
             raise ValueError(msg)
         if self._max_iter < 10:
-            msg = f"max_iter must be >= 10. It is {self._max_iter=}."
+            msg = f"{self._max_iter=}, it must be >= 10."
             raise ValueError(msg)
         
     def fit_reset(self)->None:
