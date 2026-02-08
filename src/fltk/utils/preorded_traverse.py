@@ -16,9 +16,9 @@ class PreordedTraverse:
     def data(self)->pd.DataFrame:
         return self._data
         
-    def fit_exec(self)->None:
+    def fit_transform(self)->None:
         self.fit()
-        self.exec()
+        self.transform()
     
     def fit(self)->None:
         self.fit_validate()
@@ -40,7 +40,7 @@ class PreordedTraverse:
         self._data[self._left] = 0
         self._data[self._right] = 0
         
-    def exec(self)->None:
+    def transform(self)->None:
         self.set_root()
         self.traverse()
         self.audit()
