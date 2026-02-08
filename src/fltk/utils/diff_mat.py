@@ -4,10 +4,10 @@ from typing import Iterable
 
 class DiffMat:
     def __init__(self, idx_to:str="idx_to"):
-        self._idx_to=idx_to
-        self._idx_from="idx_from"
-        self._idx_coef = "idx_coef"
-        self._idx_value = "idx_value"
+        self._idx_to=idx_to  # column with index of values to replace
+        self._idx_from="idx_from"  # column with index of values to use
+        self._idx_coef = "idx_coef"  # column of coefficients used
+        self._idx_value = "idx_value"  # name of column with new values in data
         self._idx_df= pd.DataFrame()
         self.set_reserved_vars()
     
@@ -18,6 +18,10 @@ class DiffMat:
     @property
     def data(self):
         return self._data
+    
+    @property
+    def idx_validation(self):
+        return self._idx_validation
     
     def set_reserved_vars(self)->None:
         reserved_vars = [self._idx_from, self._idx_coef, self._idx_value]
@@ -34,6 +38,7 @@ class DiffMat:
         if ndistinct != idx_df.shape[0]:
             msg: str = f"Matrix has invalid keys {keys}."
             raise ValueError(msg)
+        self._idx_keys=keys
         
     def validate_data_names(self, data:pd.DataFrame)->None:
         reserved_vars = self._reserved_vars
@@ -46,12 +51,15 @@ class DiffMat:
             """
             raise ValueError(msg)
         
-    def validate_data_keys(self,data:pd.DataFrame,keys)->None:
+    def validate_data_keys(self,data:pd.DataFrame,idx_var:str, group_vars:Iterable[str])->None:
+        keys = [idx_var]
+        keys.extend(group_vars)
         unique_counts = data[keys].value_counts()
         ndistinct = len(unique_counts)
         if ndistinct != data.shape[0]:
             msg: str = f"Data has invalid keys {keys}."
             raise ValueError(msg)
+        self._data_keys=keys
         
     
     def load_mat_from_xl(self, path: Path, sheet_nm: str | None = None)->None:
@@ -62,13 +70,29 @@ class DiffMat:
         self.validate_idx_keys(df)
         self._idx_df = df
         
-    def load_data(self, data:pd.DataFrame, idx_var:str, value_var:str, key_vars: Iterable[str])->None:
+    def load_data(self, data:pd.DataFrame, idx_var:str, value_var:str, group_vars: Iterable[str])->None:
         if self._idx_df.empty:
             msg:str="You must load the matrix before the data."
             raise ValueError(msg)
         self.validate_data_names(data)
-        data_keys = [idx_var]
-        data_keys.extend(key_vars)
-        self.validate_data_keys(data, keys=data_keys)
-        self._data_keys=data_keys
+        self._data_idx = idx_var
+        self._data_value = value_var
+        self._data_group = group_vars
+        self.validate_data_keys(data, idx_var=idx_var, group_vars=group_vars)
         self._data = data
+        
+    def fit(self)->None:
+        self.fit_invalid_idx()
+    
+    def fit_invalid_idx(self)->None:
+        left_df = self._idx_df
+        right_df = self._data
+        left_on = self._idx_from
+        right_on = self._data_idx
+        idx_validation = pd.merge(left_df, right_df, left_on=left_on, right_on=right_on, how='left', indicator=True)
+        # cols=self._idx_keys
+        # cols.extend([right_on, "_merge"])
+        # self._idx_validation = idx_validation[cols]
+        self._idx_validation = idx_validation
+        
+        
