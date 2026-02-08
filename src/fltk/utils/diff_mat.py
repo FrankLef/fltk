@@ -8,11 +8,16 @@ class DiffMat:
         self._idx_from="idx_from"
         self._idx_coef = "idx_coef"
         self._idx_value = "idx_value"
+        self._idx_df= pd.DataFrame()
         self.set_reserved_vars()
     
     @property
     def idx_df(self):
         return self._idx_df
+    
+    @property
+    def data(self):
+        return self._data
     
     def set_reserved_vars(self)->None:
         reserved_vars = [self._idx_from, self._idx_coef, self._idx_value]
@@ -49,8 +54,12 @@ class DiffMat:
         self._idx_df = df
         
     def load_data(self, data:pd.DataFrame, idx_var:str, value_var:str, key_vars: Iterable[str])->None:
+        if self._idx_df.empty:
+            msg:str="You must load the matrix before the data."
+            raise ValueError(msg)
         self.validate_data_names(data)
         data_keys = [idx_var]
         data_keys.extend(key_vars)
         self.validate_data_keys(data, keys=data_keys)
         self._data_keys=data_keys
+        self._data = data
