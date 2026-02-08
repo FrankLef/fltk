@@ -27,6 +27,14 @@ class DiffMat:
         reserved_vars.append(self._idx_to)
         self._reserved_vars = reserved_vars
         
+    def validate_idx_keys(self, idx_df: pd.Dataframe)->None:
+        keys = [self._idx_to, self._idx_from]
+        unique_counts = idx_df[keys].value_counts()
+        ndistinct = len(unique_counts)
+        if ndistinct != idx_df.shape[0]:
+            msg: str = f"Matrix has invalid keys {keys}."
+            raise ValueError(msg)
+        
     def validate_data_names(self, data:pd.DataFrame)->None:
         reserved_vars = self._reserved_vars
         data_vars = data.columns.to_list()
@@ -51,6 +59,7 @@ class DiffMat:
         cols = df.columns[df.columns != self._idx_to].to_list()
         df = df.melt(id_vars=self._idx_to, value_vars=cols, var_name=self._idx_from, value_name=self._idx_value)
         df.dropna(inplace=True)
+        self.validate_idx_keys(df)
         self._idx_df = df
         
     def load_data(self, data:pd.DataFrame, idx_var:str, value_var:str, key_vars: Iterable[str])->None:
