@@ -18,6 +18,8 @@ diffmat.load_data(raw_data,idx_var="period", value_var="amount", group_vars=grou
 # print(diffmat._data_keys)
 # print("\nraw_data:")
 # diffmat.data.info()
+diffmat.fit()
+print("\ntest find_invalid:", diffmat._invalid, "\n")
 
 
 groups_df = diffmat.data[group_vars]

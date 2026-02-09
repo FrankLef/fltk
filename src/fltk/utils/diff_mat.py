@@ -81,8 +81,14 @@ class DiffMat:
         self.validate_data_keys(data, idx_var=idx_var, group_vars=group_vars)
         self._data = data
         
+    def find_invalid(self)->None:
+        from . import diff_mat_find_invalid as fi
+        self._invalid: int = 0
+        fi.find_invalid_test(self)
+        
     def fit(self)->None:
-        self.fit_invalid_idx()
+        self.find_invalid()
+        # self.fit_invalid_idx()
     
     def fit_invalid_idx(self)->None:
         left_df = self._idx_df
