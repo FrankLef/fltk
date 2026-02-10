@@ -50,7 +50,7 @@ class DiffMat:
                 
       
     def find_invalid_data(self)->None:
-        self._invalid_items: list[Any] = fi.find_invalid_data(self)
+        self._invalid_items: list[Any] = fi.get_invalid_items(self)
         
         
     def fit(self)->None:

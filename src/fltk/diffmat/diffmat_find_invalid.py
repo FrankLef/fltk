@@ -5,11 +5,11 @@ import pandas as pd
 if TYPE_CHECKING:
     from .diffmat import DiffMat  # Only imported when checking types
 
-def find_invalid_data(inst: DiffMat)->None:
+def get_invalid_items(inst: DiffMat)->Any:
     groups_df = get_groups_data(inst)
     invalid_items = find_invalid_items(inst, groups_df=groups_df)
     print("\ninvalid_items:\n", invalid_items)
-    inst._invalid_items = invalid_items
+    return invalid_items
 
     
 def get_groups_data(inst: DiffMat)->pd.DataFrame:
