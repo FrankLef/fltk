@@ -1,6 +1,6 @@
 import pandas as pd
 from pathlib import Path
-from fltk.diffmat.diff_mat import DiffMat
+from fltk.diffmat.diffmat import DiffMat
 
 xl_path = Path("C:/Users/Public/MyPy/Packages/fltk/tests/fixtures/diff_mat.xlsx")
 
