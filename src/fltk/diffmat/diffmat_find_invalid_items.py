@@ -1,23 +1,20 @@
 from __future__ import annotations  # Must be at the top
-from typing import TYPE_CHECKING, Any, NamedTuple, Final
+from typing import TYPE_CHECKING, Any, Final
 import pandas as pd
 import copy
 
 if TYPE_CHECKING:
     from .diffmat import DiffMat  # Only imported when checking types
 
-class InvalidItem(NamedTuple):
-    groups: dict[str, Any]
-    idx: pd.DataFrame
 
-def get_invalid_items(inst: DiffMat)->Any:
+def get_invalid_items(inst: DiffMat) -> pd.DataFrame:
     groups_df = get_groups(inst)
     invalid_items = find_invalid_items(inst, groups_df=groups_df)
     # print(f"\ninvalid_items {invalid_items.shape}:\n", invalid_items)
     return invalid_items
 
-    
-def get_groups(inst: DiffMat)->pd.DataFrame:
+
+def get_groups(inst: DiffMat) -> pd.DataFrame:
     groups_df = inst._data[inst._data_group]
     groups_df.drop_duplicates(inplace=True)
     if groups_df.empty:
@@ -25,8 +22,9 @@ def get_groups(inst: DiffMat)->pd.DataFrame:
         raise AssertionError(msg)
     return groups_df
 
-def find_invalid_items(inst: DiffMat, groups_df: pd.DataFrame):    
-    MERGED : Final[str] = "both"
+
+def find_invalid_items(inst: DiffMat, groups_df: pd.DataFrame) -> pd.DataFrame:
+    MERGED: Final[str] = "both"
     raw_data = inst._data
     idx_from = inst._idx_from
     idx_to = inst._idx_to
@@ -36,8 +34,8 @@ def find_invalid_items(inst: DiffMat, groups_df: pd.DataFrame):
     i = 0
     for ndx, row in groups_df.iterrows():
         groups_dict = row.to_dict()
-        left_df=pd.DataFrame([groups_dict])
-        matching_df = pd.merge(left=left_df, right=raw_data, on=group_vars, how='inner')
+        left_df = pd.DataFrame([groups_dict])
+        matching_df = pd.merge(left=left_df, right=raw_data, on=group_vars, how="inner")
         # print(f"\nmatching_df {i}")
         # matching_df.info()
         merged_df = get_invalid_rows(inst, idx_df=idx_df, data=matching_df)
@@ -52,8 +50,6 @@ def find_invalid_items(inst: DiffMat, groups_df: pd.DataFrame):
         final_df = create_invalid_df(groups_dict, invalid_df)
         if not final_df.empty:
             invalid_items.append(final_df)
-        # invalid_item = InvalidItem(groups=groups_dict, idx=invalid_df)
-        # invalid_items.append(invalid_item)
     if len(invalid_items):
         invalid_df_all = pd.concat(invalid_items)
         invalid_df_all.reset_index(drop=True, inplace=True)
@@ -65,19 +61,32 @@ def find_invalid_items(inst: DiffMat, groups_df: pd.DataFrame):
         raise AssertionError(msg)
     return invalid_df_all
 
-def get_invalid_rows(inst:DiffMat, idx_df: pd.Dataframe, data: pd.DataFrame):
-        left_df = idx_df
-        right_df = data
-        left_on = inst._idx_from
-        right_on = "period"
-        merged_df = pd.merge(left_df, right_df, left_on=left_on, right_on=right_on, how='left', indicator=True)
-        # print("\nmerged_df:\n", merged_df.head())
-        if merged_df.empty:
-            msg = "The merged_df is empty."
-            raise AssertionError(msg)
-        return merged_df
 
-def create_invalid_df(groups_dict: dict[str,Any], invalid_df: pd.DataFrame)->pd.Dataframe:
+def get_invalid_rows(
+    inst: DiffMat, idx_df: pd.Dataframe, data: pd.DataFrame
+) -> pd.DataFrame:
+    left_df = idx_df
+    right_df = data
+    left_on = inst._idx_from
+    right_on = "period"
+    merged_df = pd.merge(
+        left_df,
+        right_df,
+        left_on=left_on,
+        right_on=right_on,
+        how="left",
+        indicator=True,
+    )
+    # print("\nmerged_df:\n", merged_df.head())
+    if merged_df.empty:
+        msg = "The merged_df is empty."
+        raise AssertionError(msg)
+    return merged_df
+
+
+def create_invalid_df(
+    groups_dict: dict[str, Any], invalid_df: pd.DataFrame
+) -> pd.DataFrame:
     # NOTE: Must reset the index to avoid mismatch with NaN in final_df
     invalid_df.reset_index(drop=True, inplace=True)
     nrows = invalid_df.shape[0]

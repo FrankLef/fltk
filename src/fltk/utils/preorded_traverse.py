@@ -1,30 +1,40 @@
 import pandas as pd
 from collections import deque
 
+
 class PreordedTraverse:
-    def __init__(self,data: pd.DataFrame,child: str,parent: str,level: str,left: str,right: str, max_iter: int = 10000)->None:
-        self._data=data
-        self._child=child
-        self._parent=parent
-        self._level=level
-        self._left=left
-        self._right=right
+    def __init__(
+        self,
+        data: pd.DataFrame,
+        child: str,
+        parent: str,
+        level: str,
+        left: str,
+        right: str,
+        max_iter: int = 10000,
+    ) -> None:
+        self._data = data
+        self._child = child
+        self._parent = parent
+        self._level = level
+        self._left = left
+        self._right = right
         self._max_iter = max_iter
         self._stack: deque = deque()
-        
+
     @property
-    def data(self)->pd.DataFrame:
+    def data(self) -> pd.DataFrame:
         return self._data
-        
-    def fit_transform(self)->None:
+
+    def fit_transform(self) -> None:
         self.fit()
         self.transform()
-    
-    def fit(self)->None:
+
+    def fit(self) -> None:
         self.fit_validate()
         self.fit_reset()
-    
-    def fit_validate(self)->None:
+
+    def fit_validate(self) -> None:
         if self._data.empty:
             msg: str = "The data to traverse is empty."
             raise ValueError(msg)
@@ -34,18 +44,18 @@ class PreordedTraverse:
         if self._max_iter < 10:
             msg = f"{self._max_iter=}, it must be >= 10."
             raise ValueError(msg)
-        
-    def fit_reset(self)->None:
+
+    def fit_reset(self) -> None:
         self._data[self._level] = 0
         self._data[self._left] = 0
         self._data[self._right] = 0
-        
-    def transform(self)->None:
+
+    def transform(self) -> None:
         self.set_root()
         self.traverse()
         self.audit()
-        
-    def set_root(self)->None:
+
+    def set_root(self) -> None:
         """Set the root."""
         data = self._data
         sel = data.loc[(data[self._child] == data[self._parent])]
@@ -58,11 +68,11 @@ class PreordedTraverse:
         if len(self._stack) != 1:
             msg = "There must be exactly 1 element, the root, in the stack."
             raise AssertionError(msg)
-        self._data=data
-        
-    def traverse(self)->None:
+        self._data = data
+
+    def traverse(self) -> None:
         data = self._data
-        stack=self._stack
+        stack = self._stack
         level_no: int = 0
         path_no: int = 1
         while stack:
@@ -90,9 +100,9 @@ class PreordedTraverse:
             This implies that not all rows have been traversed.
             """
             raise AssertionError(msg)
-        self._data=data
-        self._stack=stack
-        
+        self._data = data
+        self._stack = stack
+
     def audit(self) -> None:
         if self._data.empty:
             raise ValueError("The traversal returned empty data. Weird!")
@@ -102,11 +112,11 @@ class PreordedTraverse:
         if check != 1:
             msg: str = f"There must be 1 left id equal to 1, there is {check} of them."
             raise AssertionError(msg)
-        
+
         check = (data.loc[sel, self._level] == 0).item()
         if not check:
             raise AssertionError("The level must be 0 at the root.")
-        
+
         root_right = data.loc[sel, self._right]
         target_right = 2 * data.shape[0]
         if (root_right != target_right).item():

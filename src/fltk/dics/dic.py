@@ -178,7 +178,7 @@ class IDic(ABC):
             names=names, group=group, keep_list=keep_list
         )
         return lines
-    
+
     def get_attributes(
         self, names: Iterable[str] | None, group: str, attr_nm: str
     ) -> dict[Any, Any]:
@@ -189,7 +189,9 @@ class IDic(ABC):
         attrs = {line.name: getattr(line, attr_nm) for line in lines}  # type: ignore[union-attr]
         return attrs
 
-    def get_tags(self, tag_text: str | None, sep:str=chr(126)) -> dict[str, Any] | None:
+    def get_tags(
+        self, tag_text: str | None, sep: str = chr(126)
+    ) -> dict[str, Any] | None:
         if tag_text is not None:
             # NOTE: Must use a special separator not a comma because commas are found in sub text. e.g. mask="{:,.2f}"
             try:
@@ -200,9 +202,17 @@ class IDic(ABC):
             return None
         return tags
 
-    def get_tags_default(self, names: Iterable[str] | None, group: str, attr_nm:str, default:dict[str,Any], na:str="_na",sep:str=chr(126))->dict[str,Any]|None:
+    def get_tags_default(
+        self,
+        names: Iterable[str] | None,
+        group: str,
+        attr_nm: str,
+        default: dict[str, Any],
+        na: str = "_na",
+        sep: str = chr(126),
+    ) -> dict[str, Any] | None:
         tag = self.get_attributes(names=names, group=group, attr_nm=attr_nm)
-        tag_text:str = list(tag.values())[0]
+        tag_text: str = list(tag.values())[0]
         if tag_text != na:
             attr_dict = self.get_tags(tag_text, sep=sep)
         else:
