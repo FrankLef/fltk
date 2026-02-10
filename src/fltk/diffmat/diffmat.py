@@ -1,7 +1,7 @@
 from __future__ import annotations  # Must be at the top
 import pandas as pd
 from pathlib import Path
-from typing import Iterable
+from typing import Iterable, Any
 
 from . import diffmat_find_invalid as fi
 from . import diffmat_load_mat_xl as lmx
@@ -38,23 +38,23 @@ class DiffMat:
         self._reserved_vars = reserved_vars
     
     def load_data(self, data:pd.DataFrame, idx_var:str, value_var:str, group_vars: Iterable[str])->None:
-        ld.load_data(self, data=data,idx_var=idx_var,value_var=value_var, group_vars=group_vars)
-    
-    def load_mat_from_xl(self, path: Path, sheet_nm: str | None = None)->None:
         self._data_idx: str = ''
         self._data_value = ''
         self._data_group : Iterable[str] = []
         self._data: pd.DataFrame = pd.DataFrame()
         self._data_keys: list[str] = []
+        ld.load_data(self, data=data,idx_var=idx_var,value_var=value_var, group_vars=group_vars)
+    
+    def load_mat_from_xl(self, path: Path, sheet_nm: str | None = None)->None:
         lmx.load_mat_from_xl(self, path=path, sheet_nm=sheet_nm)
                 
       
-    def find_invalid(self)->None:
-        self._invalid: int = 0
-        fi.find_invalid_test(self)
+    def find_invalid_data(self)->None:
+        self._invalid_items: list[Any] = fi.find_invalid_data(self)
+        
         
     def fit(self)->None:
-        self.find_invalid()
+        self.find_invalid_data()
         # self.fit_invalid_idx()
     
     def fit_invalid_idx(self)->None:
