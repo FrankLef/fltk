@@ -1,5 +1,5 @@
 from __future__ import annotations  # Must be at the top
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 import pandas as pd
 
 if TYPE_CHECKING:

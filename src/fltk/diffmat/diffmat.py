@@ -3,7 +3,7 @@ import pandas as pd
 from pathlib import Path
 from typing import Iterable, Any
 
-from . import diffmat_find_invalid as fi
+from . import diffmat_find_invalid_items as fi
 from . import diffmat_load_mat_xl as lmx
 from . import diffmat_load_data as ld
 
