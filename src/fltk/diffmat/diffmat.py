@@ -1,9 +1,9 @@
 from __future__ import annotations  # Must be at the top
 import pandas as pd
 from pathlib import Path
-from typing import Iterable, Any
+from typing import Iterable
 
-from . import diffmat_find_invalid_items as fi
+from . import diffmat_get_invalid_data as fi
 from . import diffmat_load_mat_xl as lmx
 from . import diffmat_load_data as ld
 
@@ -57,11 +57,12 @@ class DiffMat:
     def load_mat_from_xl(self, path: Path, sheet_nm: str | None = None) -> None:
         lmx.load_mat_from_xl(self, path=path, sheet_nm=sheet_nm)
 
-    def find_invalid_data(self) -> None:
-        self._invalid_items: list[Any] = fi.get_invalid_items(self)
+    def get_invalid_data(self) -> None:
+        self._invalid_data: pd.DataFrame = fi.get_invalid_data(self)
+        print(f"\ninvalid_data {self._invalid_data.shape}:\n", self._invalid_data)
 
     def fit(self) -> None:
-        self.find_invalid_data()
+        self.get_invalid_data()
         # self.fit_invalid_idx()
 
     def fit_invalid_idx(self) -> None:

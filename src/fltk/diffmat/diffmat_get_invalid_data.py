@@ -7,11 +7,11 @@ if TYPE_CHECKING:
     from .diffmat import DiffMat  # Only imported when checking types
 
 
-def get_invalid_items(inst: DiffMat) -> pd.DataFrame:
+def get_invalid_data(inst: DiffMat) -> pd.DataFrame:
     groups_df = get_groups(inst)
-    invalid_items = find_invalid_items(inst, groups_df=groups_df)
-    # print(f"\ninvalid_items {invalid_items.shape}:\n", invalid_items)
-    return invalid_items
+    invalid_data = find_invalid_items(inst, groups_df=groups_df)
+    # print(f"\ninvalid_data {invalid_data.shape}:\n", invalid_data)
+    return invalid_data
 
 
 def get_groups(inst: DiffMat) -> pd.DataFrame:
@@ -36,20 +36,13 @@ def find_invalid_items(inst: DiffMat, groups_df: pd.DataFrame) -> pd.DataFrame:
         groups_dict = row.to_dict()
         left_df = pd.DataFrame([groups_dict])
         matching_df = pd.merge(left=left_df, right=raw_data, on=group_vars, how="inner")
-        # print(f"\nmatching_df {i}")
-        # matching_df.info()
         merged_df = get_invalid_rows(inst, idx_df=idx_df, data=matching_df)
-        # print(f"\nmerged_df {i}")
-        # merged_df.info()
         invalid_df = merged_df.loc[merged_df._merge != MERGED]
-        # print(f"\ninvalid_df {i}")
-        # invalid_df.info()
         invalid_df = invalid_df[[idx_from, idx_to]]
-        # print("\ninvalid_df:\n", invalid_df.head())
-        i += 1
         final_df = create_invalid_df(groups_dict, invalid_df)
         if not final_df.empty:
             invalid_items.append(final_df)
+        i += 1
     if len(invalid_items):
         invalid_df_all = pd.concat(invalid_items)
         invalid_df_all.reset_index(drop=True, inplace=True)
@@ -77,7 +70,6 @@ def get_invalid_rows(
         how="left",
         indicator=True,
     )
-    # print("\nmerged_df:\n", merged_df.head())
     if merged_df.empty:
         msg = "The merged_df is empty."
         raise AssertionError(msg)
@@ -90,14 +82,11 @@ def create_invalid_df(
     # NOTE: Must reset the index to avoid mismatch with NaN in final_df
     invalid_df.reset_index(drop=True, inplace=True)
     nrows = invalid_df.shape[0]
-    final_df = pd.DataFrame()
     if nrows:
         the_groups_dicts = [copy.deepcopy(groups_dict) for _ in range(nrows)]
-        # print("\nthe_groups_dict\n", the_groups_dicts)
         groups_df = pd.DataFrame(the_groups_dicts)
         groups_df.reset_index(drop=True, inplace=True)
-        # print(f"\ngroups_df, {groups_df.shape}\n", groups_df)
-        # print(f"\ninvalid_df, {invalid_df.shape}\n", invalid_df)
         final_df = pd.concat([groups_df, invalid_df], axis=1)
-        # print(f"\nfinal_df, {final_df.shape}\n", final_df)
+    else:
+        final_df = pd.DataFrame()
     return final_df
