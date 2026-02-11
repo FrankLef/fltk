@@ -39,7 +39,9 @@ def find_invalid_items(inst: DiffMat, groups_df: pd.DataFrame) -> pd.DataFrame:
     for ndx, row in groups_df.iterrows():
         groups_dict = row.to_dict()
         left_df = pd.DataFrame([groups_dict])
-        matching_df = pd.merge(left=left_df, right=raw_data, on=group_vars, how=HOW_INNER)
+        matching_df = pd.merge(
+            left=left_df, right=raw_data, on=group_vars, how=HOW_INNER
+        )
         merged_df = get_invalid_rows(inst, idx_df=idx_df, data=matching_df)
         invalid_df = merged_df.loc[merged_df._merge != MERGE_BOTH]
         invalid_df = invalid_df[[idx_from, idx_to, MERGE]]
@@ -96,7 +98,8 @@ def create_invalid_df(
         final_df = pd.DataFrame()
     return final_df
 
-def clean_invalid_data(inst: DiffMat, invalid_data: pd.DataFrame)-> pd.DataFrame:
+
+def clean_invalid_data(inst: DiffMat, invalid_data: pd.DataFrame) -> pd.DataFrame:
     MERGE: Final[str] = "_merge"
     HOW_LEFT: Final[str] = "left"
     MERGE_BOTH: Final[str] = "both"
@@ -122,7 +125,7 @@ def clean_invalid_data(inst: DiffMat, invalid_data: pd.DataFrame)-> pd.DataFrame
         msg = "The merged_df is empty."
         raise AssertionError(msg)
     # print("\nclean_invalid_data, merged_df:\n", merged_df)
-    clean_invalid_data = merged_df.loc[merged_df[MERGE]==MERGE_BOTH]
+    clean_invalid_data = merged_df.loc[merged_df[MERGE] == MERGE_BOTH]
     clean_invalid_data.drop(columns=[MERGE], inplace=True)
     # print("\nclean_invalid_data:\n", clean_invalid_data)
     return clean_invalid_data

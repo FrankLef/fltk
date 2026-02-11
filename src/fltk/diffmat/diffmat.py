@@ -3,9 +3,10 @@ import pandas as pd
 from pathlib import Path
 from typing import Iterable
 
-from . import diffmat_get_invalid_data as fi
 from . import diffmat_load_mat_xl as lmx
 from . import diffmat_load_data as ld
+from . import diffmat_get_invalid_data as gid
+from . import diffmat_get_undetermined_data as gud
 
 
 class DiffMat:
@@ -58,12 +59,19 @@ class DiffMat:
         lmx.load_mat_from_xl(self, path=path, sheet_nm=sheet_nm)
 
     def get_invalid_data(self) -> None:
-        self._invalid_data: pd.DataFrame = fi.get_invalid_data(self)
+        self._invalid_data: pd.DataFrame = gid.get_invalid_data(self)
         # print(f"\ninvalid_data {self._invalid_data.shape}:\n", self._invalid_data)
+
+    def get_undetermined_data(self) -> None:
+        self._undetermined_data: pd.DataFrame = gud.get_undetermined_data(self)
+        print(
+            f"\nundetermined_data {self._undetermined_data.shape}:\n",
+            self._undetermined_data,
+        )
 
     def fit(self) -> None:
         self.get_invalid_data()
-        # self.fit_invalid_idx()
+        self.get_undetermined_data()
 
     def fit_invalid_idx(self) -> None:
         left_df = self._idx_df
