@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 def get_invalid_data(inst: DiffMat) -> pd.DataFrame:
     groups_df = get_groups(inst)
     invalid_data = find_invalid_items(inst, groups_df=groups_df)
-    # print(f"\ninvalid_data {invalid_data.shape}:\n", invalid_data)
+    print(f"\ninvalid_data {invalid_data.shape}:\n", invalid_data)
     return invalid_data
 
 
@@ -24,7 +24,8 @@ def get_groups(inst: DiffMat) -> pd.DataFrame:
 
 
 def find_invalid_items(inst: DiffMat, groups_df: pd.DataFrame) -> pd.DataFrame:
-    MERGED: Final[str] = "both"
+    BLOCK: Final[str] = "both"
+    MERGE: Final[str] = "_merge"
     raw_data = inst._data
     idx_from = inst._idx_from
     idx_to = inst._idx_to
@@ -37,8 +38,8 @@ def find_invalid_items(inst: DiffMat, groups_df: pd.DataFrame) -> pd.DataFrame:
         left_df = pd.DataFrame([groups_dict])
         matching_df = pd.merge(left=left_df, right=raw_data, on=group_vars, how="inner")
         merged_df = get_invalid_rows(inst, idx_df=idx_df, data=matching_df)
-        invalid_df = merged_df.loc[merged_df._merge != MERGED]
-        invalid_df = invalid_df[[idx_from, idx_to]]
+        invalid_df = merged_df.loc[merged_df._merge != BLOCK]
+        invalid_df = invalid_df[[idx_from, idx_to, MERGE]]
         final_df = create_invalid_df(groups_dict, invalid_df)
         if not final_df.empty:
             invalid_items.append(final_df)

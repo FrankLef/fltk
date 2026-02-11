@@ -59,7 +59,7 @@ class DiffMat:
 
     def get_invalid_data(self) -> None:
         self._invalid_data: pd.DataFrame = fi.get_invalid_data(self)
-        print(f"\ninvalid_data {self._invalid_data.shape}:\n", self._invalid_data)
+        # print(f"\ninvalid_data {self._invalid_data.shape}:\n", self._invalid_data)
 
     def fit(self) -> None:
         self.get_invalid_data()
