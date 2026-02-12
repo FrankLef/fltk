@@ -69,19 +69,19 @@ class DiffMat:
             f"\nundetermined_data {self._undetermined_data.shape}:\n",
             self._undetermined_data,
         )
-        
-    def fit_transform(self)->None:
+
+    def fit_transform(self) -> None:
         self.fit()
         self.transform()
-        
+
     def fit(self) -> None:
         self.get_invalid_data()
         self.get_undetermined_data()
-        
-    def transform(self) ->None:
+
+    def transform(self) -> None:
         self.get_valid_data()
-        
-    def get_valid_data(self)-> None:
+
+    def get_valid_data(self) -> None:
         self._valid_data = gvd.get_valid_data(self)
         print(
             f"\nvalid_data {self._valid_data.shape}:\n",

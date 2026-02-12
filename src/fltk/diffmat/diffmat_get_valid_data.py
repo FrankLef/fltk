@@ -4,7 +4,7 @@ import pandas as pd
 
 if TYPE_CHECKING:
     from .diffmat import DiffMat  # Only imported when checking types
-    
-def get_valid_data(inst: DiffMat)->pd.DataFrame:
+
+
+def get_valid_data(inst: DiffMat) -> pd.DataFrame:
     return pd.DataFrame()
-    

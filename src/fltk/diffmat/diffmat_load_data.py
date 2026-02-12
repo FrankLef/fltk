@@ -39,7 +39,7 @@ def validate_data_names(inst: DiffMat, data: pd.DataFrame) -> None:
 def validate_data_keys(
     inst: DiffMat, data: pd.DataFrame, idx_var: str, group_vars: Iterable[str]
 ) -> None:
-    keys: list[str]= list(group_vars)
+    keys: list[str] = list(group_vars)
     keys.append(idx_var)
     unique_counts = data[keys].value_counts()
     ndistinct = len(unique_counts)

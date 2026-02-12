@@ -26,7 +26,7 @@ def get_undetermined_data(inst: DiffMat) -> pd.DataFrame:
         msg = "The merged_df is empty."
         raise AssertionError(msg)
     # print("\nundetermined_data, merged_df:\n", merged_df)
-    undetermined_data = merged_df.loc[merged_df[MERGE]!=MERGE_BOTH]
+    undetermined_data = merged_df.loc[merged_df[MERGE] != MERGE_BOTH]
     undetermined_data.drop(columns=[MERGE], inplace=True)
     # print("columns:", undetermined_data.columns)
     undetermined_data = undetermined_data[inst._data_keys]
