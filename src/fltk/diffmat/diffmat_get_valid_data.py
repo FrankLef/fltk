@@ -20,7 +20,7 @@ def get_valid_data(inst: DiffMat) -> pd.DataFrame:
     nvalid: int = valid_data.shape[0]
     ncheck: int = ndata - ninvalid - nundetermined
     if nvalid != ncheck:
-        msg: str = f"There should be {ncheck}={ndata}-{ninvalid}-{nundetermined} rows in the valid data."
+        msg: str = f"There must be {ncheck}={ndata}-{ninvalid}-{nundetermined} rows in the valid data."
         raise AssertionError(msg)
     return valid_data
 
