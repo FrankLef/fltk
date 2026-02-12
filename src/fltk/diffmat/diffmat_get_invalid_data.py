@@ -70,8 +70,8 @@ def get_invalid_rows(
     left_on = inst._idx_from
     right_on = inst._data_idx
     merged_df = pd.merge(
-        left_df,
-        right_df,
+        left=left_df,
+        right=right_df,
         left_on=left_on,
         right_on=right_on,
         how=HOW_LEFT,

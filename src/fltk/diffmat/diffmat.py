@@ -18,16 +18,24 @@ class DiffMat:
         self.set_reserved_vars()
 
     @property
-    def idx_df(self):
+    def idx_df(self) -> pd.DataFrame:
         return self._idx_df
 
     @property
-    def data(self):
+    def data(self) -> pd.DataFrame:
         return self._data
 
     @property
-    def idx_validation(self):
-        return self._idx_validation
+    def invalid_data(self):
+        return self._invalid_data
+
+    @property
+    def undetermined_data(self) -> pd.DataFrame:
+        return self._undetermined_data
+
+    @property
+    def valid_data(self) -> pd.DataFrame:
+        return self._valid_data
 
     def set_reserved_vars(self) -> None:
         self._idx_from: str = "idx_from"  # column with index of values to use
