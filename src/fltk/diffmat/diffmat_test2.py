@@ -18,4 +18,4 @@ diffmat.load_data(raw_data, idx_var="period", value_var="amount", group_vars=gro
 
 
 diffmat.fit()
-# print("\ntest find_invalid_items:", diffmat._invalid_items, "\n")
+diffmat.transform()

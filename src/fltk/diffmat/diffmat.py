@@ -7,6 +7,7 @@ from . import diffmat_load_mat_xl as lmx
 from . import diffmat_load_data as ld
 from . import diffmat_get_invalid_data as gid
 from . import diffmat_get_undetermined_data as gud
+from . import diffmat_get_valid_data as gvd
 
 
 class DiffMat:
@@ -68,25 +69,21 @@ class DiffMat:
             f"\nundetermined_data {self._undetermined_data.shape}:\n",
             self._undetermined_data,
         )
-
+        
+    def fit_transform(self)->None:
+        self.fit()
+        self.transform()
+        
     def fit(self) -> None:
         self.get_invalid_data()
         self.get_undetermined_data()
-
-    def fit_invalid_idx(self) -> None:
-        left_df = self._idx_df
-        right_df = self._data
-        left_on = self._idx_from
-        right_on = self._data_idx
-        idx_validation = pd.merge(
-            left_df,
-            right_df,
-            left_on=left_on,
-            right_on=right_on,
-            how="left",
-            indicator=True,
+        
+    def transform(self) ->None:
+        self.get_valid_data()
+        
+    def get_valid_data(self)-> None:
+        self._valid_data = gvd.get_valid_data(self)
+        print(
+            f"\nvalid_data {self._valid_data.shape}:\n",
+            self._valid_data,
         )
-        # cols=self._idx_keys
-        # cols.extend([right_on, "_merge"])
-        # self._idx_validation = idx_validation[cols]
-        self._idx_validation = idx_validation
