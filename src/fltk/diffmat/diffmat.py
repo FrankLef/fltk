@@ -12,9 +12,6 @@ from . import diffmat_get_undetermined_data as gud
 class DiffMat:
     def __init__(self, idx_to: str = "idx_to"):
         self._idx_to = idx_to  # column with index of values to replace
-        self._idx_from: str = "idx_from"  # column with index of values to use
-        self._idx_coef: str = "idx_coef"  # column of coefficients used
-        self._idx_value: str = "idx_value"  # name of column with new values in data
         self._idx_keys: list[str] = []
         self._idx_df: pd.Dataframe = pd.DataFrame()
         self.set_reserved_vars()
@@ -32,6 +29,9 @@ class DiffMat:
         return self._idx_validation
 
     def set_reserved_vars(self) -> None:
+        self._idx_from: str = "idx_from"  # column with index of values to use
+        self._idx_coef: str = "idx_coef"  # column of coefficients used
+        self._idx_value: str = "idx_value"  # name of column with new values in data
         reserved_vars = [self._idx_from, self._idx_coef, self._idx_value]
         if self._idx_to in reserved_vars:
             msg: str = f"'{self._idx_to}' is reserved. Use another name for idx_to."
@@ -60,7 +60,7 @@ class DiffMat:
 
     def get_invalid_data(self) -> None:
         self._invalid_data: pd.DataFrame = gid.get_invalid_data(self)
-        # print(f"\ninvalid_data {self._invalid_data.shape}:\n", self._invalid_data)
+        print(f"\ninvalid_data {self._invalid_data.shape}:\n", self._invalid_data)
 
     def get_undetermined_data(self) -> None:
         self._undetermined_data: pd.DataFrame = gud.get_undetermined_data(self)
