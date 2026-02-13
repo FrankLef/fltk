@@ -41,8 +41,7 @@ class DiffMat:
     def set_reserved_vars(self) -> None:
         self._idx_from: str = "idx_from"  # column with index of values to use
         self._idx_coef: str = "idx_coef"  # column of coefficients used
-        self._idx_value: str = "idx_value"  # name of column with new values in data
-        reserved_vars = [self._idx_from, self._idx_coef, self._idx_value]
+        reserved_vars = [self._idx_from, self._idx_coef]
         if self._idx_to in reserved_vars:
             msg: str = f"'{self._idx_to}' is reserved. Use another name for idx_to."
             raise ValueError(msg)
@@ -55,14 +54,21 @@ class DiffMat:
         idx_var: str,
         value_var: str,
         group_vars: Iterable[str],
+        newvalue_var: str,
     ) -> None:
         self._data_idx: str = ""
         self._data_value = ""
         self._data_group: Iterable[str] = []
+        self._data_newvalue = ""
         self._data: pd.DataFrame = pd.DataFrame()
         self._data_keys: list[str] = []
         ld.load_data(
-            self, data=data, idx_var=idx_var, value_var=value_var, group_vars=group_vars
+            self,
+            data=data,
+            idx_var=idx_var,
+            value_var=value_var,
+            group_vars=group_vars,
+            newvalue_var=newvalue_var,
         )
 
     def load_mat_from_xl(self, path: Path, sheet_nm: str | None = None) -> None:
@@ -97,10 +103,10 @@ class DiffMat:
             f"\nvalid_data {self._valid_data.shape}:\n",
             self._valid_data,
         )
-        
+
     def calculate(self) -> None:
-        self._calc_data = calc.calculate(self)
+        self._valid_data = calc.calculate(self)
         print(
-            f"\ncalc_data {self._calc_data.shape}:\n",
-            self._calc_data,
+            f"\ncalculated {self._valid_data.shape}:\n",
+            self._valid_data,
         )

@@ -14,7 +14,6 @@ def load_mat_from_xl(inst: DiffMat, path: Path, sheet_nm: str | None = None) -> 
         id_vars=inst._idx_to,
         value_vars=cols,
         var_name=inst._idx_from,
-        value_name=inst._idx_value,
     )
     df.dropna(inplace=True)
     validate_idx_keys(inst, df)
