@@ -11,7 +11,7 @@ diffmat.load_mat_from_xl(xl_path, sheet_nm="qrtr")
 
 # diffmat.idx_df.info()
 
-raw_data = pd.read_excel(xl_path, sheet_name="data")
+raw_data = pd.read_excel(xl_path, sheet_name="data1")
 # data.info()
 
 group_vars = ["entity", "concept", "pertype"]

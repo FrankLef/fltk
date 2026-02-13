@@ -41,7 +41,8 @@ class DiffMat:
     def set_reserved_vars(self) -> None:
         self._idx_from: str = "idx_from"  # column with index of values to use
         self._idx_coef: str = "idx_coef"  # column of coefficients used
-        reserved_vars = [self._idx_from, self._idx_coef]
+        self._idx_value: str = "idx_value"
+        reserved_vars = [self._idx_from, self._idx_coef, self._idx_value]
         if self._idx_to in reserved_vars:
             msg: str = f"'{self._idx_to}' is reserved. Use another name for idx_to."
             raise ValueError(msg)
@@ -76,14 +77,14 @@ class DiffMat:
 
     def get_invalid_data(self) -> None:
         self._invalid_data: pd.DataFrame = gid.get_invalid_data(self)
-        print(f"\ninvalid_data {self._invalid_data.shape}:\n", self._invalid_data)
+        # print(f"\ninvalid_data {self._invalid_data.shape}:\n", self._invalid_data)
 
     def get_undetermined_data(self) -> None:
         self._undetermined_data: pd.DataFrame = gud.get_undetermined_data(self)
-        print(
-            f"\nundetermined_data {self._undetermined_data.shape}:\n",
-            self._undetermined_data,
-        )
+        # print(
+        #     f"\nundetermined_data {self._undetermined_data.shape}:\n",
+        #     self._undetermined_data,
+        # )
 
     def fit_transform(self) -> None:
         self.fit()
@@ -99,10 +100,10 @@ class DiffMat:
 
     def get_valid_data(self) -> None:
         self._valid_data = gvd.get_valid_data(self)
-        print(
-            f"\nvalid_data {self._valid_data.shape}:\n",
-            self._valid_data,
-        )
+        # print(
+        #     f"\nvalid_data {self._valid_data.shape}:\n",
+        #     self._valid_data,
+        # )
 
     def calculate(self) -> None:
         self._valid_data = calc.calculate(self)
