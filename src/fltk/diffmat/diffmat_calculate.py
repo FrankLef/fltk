@@ -7,7 +7,7 @@ if TYPE_CHECKING:
 
 
 def calculate(inst: DiffMat) -> pd.DataFrame:
-    newdata = get_newvalues(inst)
+    newdata = get_sumvalues(inst)
 
     newvalid = pd.merge(
         left=inst._valid_data,
@@ -29,7 +29,7 @@ def calculate(inst: DiffMat) -> pd.DataFrame:
     return newvalid
 
 
-def get_newvalues(inst: DiffMat) -> pd.DataFrame:
+def get_sumvalues(inst: DiffMat) -> pd.DataFrame:
     df = pd.merge(
         left=inst._data,
         right=inst._idx_df,
@@ -37,9 +37,9 @@ def get_newvalues(inst: DiffMat) -> pd.DataFrame:
         right_on=inst._idx_from,
     )
     df[inst._data_newvalue] = df[inst._idx_coef] * df[inst._data_value]
-    newkeys = list(inst._data_group)
-    newkeys.append(inst._idx_to)
-    newdata = df.groupby(by=newkeys, as_index=False)[inst._data_newvalue].sum()
-    newdata.rename(columns={inst._idx_to: inst._data_idx}, inplace=True)
+    sumkeys = list(inst._data_group)
+    sumkeys.append(inst._idx_to)
+    sumdata = df.groupby(by=sumkeys, as_index=False)[inst._data_newvalue].sum()
+    sumdata.rename(columns={inst._idx_to: inst._data_idx}, inplace=True)
     # breakpoint()
-    return newdata
+    return sumdata
