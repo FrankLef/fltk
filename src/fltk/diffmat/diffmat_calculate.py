@@ -7,11 +7,6 @@ if TYPE_CHECKING:
 
 
 def calculate(inst: DiffMat) -> pd.DataFrame:
-    newdata = calc_newvalue(inst)
-    return newdata
-
-
-def calc_newvalue(inst: DiffMat) -> pd.DataFrame:
     newdata = get_newvalues(inst)
 
     newvalid = pd.merge(
