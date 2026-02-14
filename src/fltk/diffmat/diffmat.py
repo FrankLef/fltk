@@ -109,14 +109,14 @@ class DiffMat:
 
     def calculate(self) -> None:
         self._valid_data = calc.calculate(self)
-        print(
-            f"\ncalculated {self._valid_data.shape}:\n",
-            self._valid_data,
-        )
+        # print(
+        #     f"\ncalculated {self._valid_data.shape}:\n",
+        #     self._valid_data,
+        # )
 
     def add_calc(self) -> None:
         self._data = ac.add_calc(self)
-        print(
-            f"\nfinal data {self._data.shape}:\n",
-            self._data,
-        )
+        # print(
+        #     f"\nfinal data {self._data.shape}:\n",
+        #     self._data,
+        # )

@@ -26,3 +26,9 @@ diffmat.load_data(
 
 diffmat.fit()
 diffmat.transform()
+
+print(f"\ninvalid data {diffmat.invalid_data.shape}:\n", diffmat.invalid_data)
+print(
+    f"\nundetermined data {diffmat.undetermined_data.shape}:\n",
+    diffmat.undetermined_data,
+)
