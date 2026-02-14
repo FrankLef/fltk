@@ -6,7 +6,7 @@ from fltk.diffmat.diffmat import DiffMat
 xl_path = Path("C:/Users/Public/MyPy/Packages/fltk/tests/fixtures/diff_mat.xlsx")
 
 diffmat = DiffMat(idx_to="idx")
-diffmat.load_mat_from_xl(xl_path, sheet_nm="qrtr")
+diffmat.load_mat_from_xl(xl_path, sheet_nm="rolly")
 # print("\nidx_df:")
 
 # diffmat.idx_df.info()
@@ -20,7 +20,7 @@ diffmat.load_data(
     idx_var="period",
     value_var="amount",
     group_vars=group_vars,
-    newvalue_var="qrtr_amt",
+    newvalue_var="rolly_amt",
 )
 
 

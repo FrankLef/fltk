@@ -7,21 +7,21 @@ if TYPE_CHECKING:
 
 
 def calculate(inst: DiffMat) -> pd.DataFrame:
-    newdata = get_sumvalues(inst)
+    sumdata = get_sumdata(inst)
 
     newvalid = pd.merge(
         left=inst._valid_data,
-        right=newdata,
+        right=sumdata,
         on=inst._data_keys,
     )
     # breakpoint()
 
-    ndata = inst._valid_data.shape[0]
+    nvalid = inst._valid_data.shape[0]
     nnew = newvalid.shape[0]
-    if nnew != ndata:
+    if nnew != nvalid:
         msg: str = f"""
         Data and merged df must have the same nb of rows.
-        Data has {ndata} rows, merged df has {nnew} rows.
+        Data has {nvalid} rows, merged df has {nnew} rows.
         Weird!
         """
         raise AssertionError(msg)
@@ -29,7 +29,7 @@ def calculate(inst: DiffMat) -> pd.DataFrame:
     return newvalid
 
 
-def get_sumvalues(inst: DiffMat) -> pd.DataFrame:
+def get_sumdata(inst: DiffMat) -> pd.DataFrame:
     df = pd.merge(
         left=inst._data,
         right=inst._idx_df,

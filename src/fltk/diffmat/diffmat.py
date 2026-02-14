@@ -9,6 +9,7 @@ from . import diffmat_get_invalid_data as gid
 from . import diffmat_get_undetermined_data as gud
 from . import diffmat_get_valid_data as gvd
 from . import diffmat_calculate as calc
+from . import diffmat_add_calc as ac
 
 
 class DiffMat:
@@ -97,6 +98,7 @@ class DiffMat:
     def transform(self) -> None:
         self.get_valid_data()
         self.calculate()
+        self.add_calc()
 
     def get_valid_data(self) -> None:
         self._valid_data = gvd.get_valid_data(self)
@@ -110,4 +112,11 @@ class DiffMat:
         print(
             f"\ncalculated {self._valid_data.shape}:\n",
             self._valid_data,
+        )
+
+    def add_calc(self) -> None:
+        self._data = ac.add_calc(self)
+        print(
+            f"\nfinal data {self._data.shape}:\n",
+            self._data,
         )
