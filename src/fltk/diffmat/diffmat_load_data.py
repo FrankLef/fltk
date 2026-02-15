@@ -14,7 +14,7 @@ def load_data(
     value_var: str,
     group_vars: Iterable[str],
     newvalue_var: str,
-) -> None:
+) -> pd.DataFrame:
     if inst._idx_df.empty:
         msg: str = "You must load the matrix before the data."
         raise ValueError(msg)
@@ -24,7 +24,7 @@ def load_data(
     inst._data_newvalue = newvalue_var  # new variable for calculated values
     validate_data_names(inst, data=data, newvalue_var=newvalue_var)
     validate_data_keys(inst, data=data, idx_var=idx_var, group_vars=group_vars)
-    inst._data = data
+    return data
 
 
 def validate_data_names(inst: DiffMat, data: pd.DataFrame, newvalue_var: str) -> None:

@@ -64,7 +64,7 @@ class DiffMat:
         self._data_newvalue = ""
         self._data: pd.DataFrame = pd.DataFrame()
         self._data_keys: list[str] = []
-        ld.load_data(
+        data = ld.load_data(
             self,
             data=data,
             idx_var=idx_var,
@@ -72,6 +72,9 @@ class DiffMat:
             group_vars=group_vars,
             newvalue_var=newvalue_var,
         )
+        self._data = data
+        # print("load_data")
+        # breakpoint()
 
     def load_mat_from_xl(self, path: Path, sheet_nm: str | None = None) -> None:
         lmx.load_mat_from_xl(self, path=path, sheet_nm=sheet_nm)
@@ -109,6 +112,7 @@ class DiffMat:
 
     def calculate(self) -> None:
         self._valid_data = calc.calculate(self)
+        # breakpoint()
         # print(
         #     f"\ncalculated {self._valid_data.shape}:\n",
         #     self._valid_data,
