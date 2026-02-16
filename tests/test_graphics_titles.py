@@ -4,7 +4,8 @@ import pytest
 from fltk.graphics.titles import ITitles
 
 
-class TestTitle(ITitles):
+# NOTE: Don't use TestTitle name because this would be recognised as a Test Class by pytest and mange differently. A warning in this case would be issued.
+class TheTitle(ITitles):
     def write_title(self, text: str | None = None):
         self.title = text
 
@@ -14,7 +15,7 @@ class TestTitle(ITitles):
 
 @pytest.fixture
 def a_title():
-    a_title = TestTitle(title="This is a title.", subtitle="This is a subtitle.")
+    a_title = TheTitle(title="This is a title.", subtitle="This is a subtitle.")
     return a_title
 
 

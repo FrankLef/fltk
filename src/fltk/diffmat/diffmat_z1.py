@@ -9,20 +9,21 @@ from fltk.diffmat.diffmat import DiffMat
 fixtures_path = Path("C:/Users/Public/MyPy/Packages/fltk/tests/fixtures")
 diffmat_path = fixtures_path.joinpath("diffmat.xlsx")
 out_path = fixtures_path.joinpath("diffmat_z1.xlsx")
-idx_sheet: str = "rolly"
+idx_sheet: str = "qrtr"
 data_sheet = "data1"
-newvalue_var = "rolly_amt"
+newvalue_var = "qrtr_amt"
 
 diffmat = DiffMat(idx_to="idx")
 diffmat.load_mat_from_xl(diffmat_path, sheet_nm=idx_sheet)
-# print("\nidx_df:")
+diffmat.idx_df.info()
 
-# diffmat.idx_df.info()
 print(diffmat_path)
 raw_data = pd.read_excel(
-    diffmat_path, engine="openpyxl", engine_kwargs={"data_only": True}
+    diffmat_path,
+    sheet_name=data_sheet,
+    engine="openpyxl",
+    engine_kwargs={"data_only": True},
 )
-# raw_data = pd.read_excel(diffmat_path, sheet_name=data_sheet)
 raw_data.info()
 
 group_vars = ["entity", "concept", "pertype"]
@@ -39,16 +40,16 @@ print("load_data")
 diffmat.fit()
 diffmat.transform()
 
-print(f"\ninvalid data {diffmat.invalid_data.shape}:\n", diffmat.invalid_data)
-print(
-    f"\nundetermined data {diffmat.undetermined_data.shape}:\n",
-    diffmat.undetermined_data,
-)
-print(f"\nvalid data {diffmat.valid_data.shape}:\n", diffmat.valid_data)
+# print(f"\ninvalid data {diffmat.invalid_data.shape}:\n", diffmat.invalid_data)
+# print(
+#     f"\nundetermined data {diffmat.undetermined_data.shape}:\n",
+#     diffmat.undetermined_data,
+# )
+# print(f"\nvalid data {diffmat.valid_data.shape}:\n", diffmat.valid_data)
 
-print(f"\nfinal data {diffmat.data.shape}:\n", diffmat.data)
+# print(f"\nfinal data {diffmat.data.shape}:\n", diffmat.data)
 
-add_to_xl: bool = True
+add_to_xl: bool = False
 if add_to_xl:
     # IMPORTANT INFO FOR USER:
     msg: str = """
