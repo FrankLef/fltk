@@ -104,7 +104,13 @@ class DiffMat:
         self.add_calc()
 
     def get_valid_data(self) -> None:
-        self._valid_data = gvd.get_valid_data(self)
+        try:
+            self._valid_data = gvd.get_valid_data(self)
+        except AttributeError as e:
+            msg: str = "Attribute Error: Are tou sure you ran fit()?"
+            e.add_note(msg)
+            raise
+
         # print(
         #     f"\nvalid_data {self._valid_data.shape}:\n",
         #     self._valid_data,
