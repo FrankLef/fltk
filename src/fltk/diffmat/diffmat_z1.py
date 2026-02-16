@@ -1,12 +1,14 @@
 import pandas as pd
 from pathlib import Path
-from rich.prompt import Confirm
+
+# from rich.prompt import Confirm
 # from rich.console import Console
 from fltk.diffmat.diffmat import DiffMat
 
 
 fixtures_path = Path("C:/Users/Public/MyPy/Packages/fltk/tests/fixtures")
 diffmat_path = fixtures_path.joinpath("diffmat.xlsx")
+out_path = fixtures_path.joinpath("diffmat_z1.xlsx")
 idx_sheet: str = "rolly"
 data_sheet = "data1"
 newvalue_var = "rolly_amt"
@@ -18,9 +20,7 @@ diffmat.load_mat_from_xl(diffmat_path, sheet_nm=idx_sheet)
 # diffmat.idx_df.info()
 print(diffmat_path)
 raw_data = pd.read_excel(
-    diffmat_path,
-    engine='openpyxl',
-    engine_kwargs={'data_only': True}
+    diffmat_path, engine="openpyxl", engine_kwargs={"data_only": True}
 )
 # raw_data = pd.read_excel(diffmat_path, sheet_name=data_sheet)
 raw_data.info()
@@ -34,7 +34,7 @@ diffmat.load_data(
     newvalue_var=newvalue_var,
 )
 print("load_data")
-breakpoint()
+# breakpoint()
 
 diffmat.fit()
 diffmat.transform()
@@ -51,19 +51,27 @@ print(f"\nfinal data {diffmat.data.shape}:\n", diffmat.data)
 add_to_xl: bool = True
 if add_to_xl:
     # IMPORTANT INFO FOR USER:
-    msg: str="""
+    msg: str = """
     If you use this, make sure to recalculate the spreadheet by adding any value and pressing F9 in Excel.
     Otherwise, next time, pandas will load the cell with formula as formula, not as value.
+    hThe best way to avoid this issue is to output the data in a different file.
     Do you want to do it anyway?
     """
-    is_ok = Confirm.ask(prompt=msg)
-    if is_ok:
-        with pd.ExcelWriter(
-            diffmat_path, mode="a", engine="openpyxl", if_sheet_exists="replace"
-        ) as writer:
-            diffmat.data.to_excel(writer, sheet_name="final_data", index=False)
-            diffmat.invalid_data.to_excel(writer, sheet_name="invalid_data", index=False)
-            diffmat.undetermined_data.to_excel(
-                writer, sheet_name="undetermined_data", index=False
-            )
-            diffmat.valid_data.to_excel(writer, sheet_name="valid_data", index=False)
+    # is_ok = Confirm.ask(prompt=msg)
+    # if is_ok:
+
+    # Create the initial file
+    diffmat.data.to_excel(
+        out_path, sheet_name="final_data", index=False, engine="openpyxl"
+    )
+    # Append other sheets
+    with pd.ExcelWriter(
+        out_path, mode="a", engine="openpyxl", if_sheet_exists="replace"
+    ) as writer:
+        dfs = {
+            "invalid_data": diffmat.invalid_data,
+            "undetermined_data": diffmat.undetermined_data,
+            "valid_data": diffmat.valid_data,
+        }
+        for sheet_name, df in dfs.items():
+            df.to_excel(writer, sheet_name=sheet_name, index=False)
