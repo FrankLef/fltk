@@ -9,9 +9,9 @@ from fltk.diffmat.diffmat import DiffMat
 fixtures_path = Path("C:/Users/Public/MyPy/Packages/fltk/tests/fixtures")
 diffmat_path = fixtures_path.joinpath("diffmat.xlsx")
 out_path = fixtures_path.joinpath("diffmat_z1.xlsx")
-idx_sheet: str = "qrtr"
+idx_sheet: str = "rolly"
 data_sheet = "data1"
-newvalue_var = "qrtr_amt"
+newvalue_var = "rolly_amt"
 
 diffmat = DiffMat(idx_to="idx")
 diffmat.load_mat_from_xl(diffmat_path, sheet_nm=idx_sheet)
