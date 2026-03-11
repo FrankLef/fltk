@@ -22,7 +22,12 @@ class QryConstraints:
 
     def add_primary_key(self, keys: Iterable[str]) -> None:
         qry = self.write_add_primary_key(keys)
-        self._conn.sql(qry)
+        try:
+            self._conn.sql(qry)
+        except ddb.ConstraintException as e:
+            msg: str = f"Invalid PK provided for table '{self._table_nm}'."
+            e.add_note(msg)
+            raise
 
     def set_not_null(self, cols: Iterable[str], skip_on_error: bool = False) -> None:
         for col in cols:
