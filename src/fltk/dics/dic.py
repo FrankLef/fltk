@@ -7,6 +7,10 @@ import pandas as pd
 from typing import NamedTuple, Iterable, Final, Any
 from enum import StrEnum, auto
 
+from . import dic_namedtuple as dic_nt
+from . import dic_lines_names as dic_ln
+from . import dic_tags
+
 type dic_lines = list[NamedTuple]
 type dic_output = NamedTuple | list[NamedTuple]
 type dic_names = str | list[str]
@@ -88,6 +92,10 @@ class IDic(ABC):
         the_lines: dic_lines = [line for line in lines if not line.skipped]  # type: ignore[attr-defined]
         return the_lines
 
+    def get_namedtuple(self, group: str) -> Any:
+        dic_named_tuple = dic_nt.get_namedtuple(self, group)
+        return dic_named_tuple
+
     def get_by_group(self, group: str | None = None) -> dic_lines:
         if group is not None:
             the_lines: dic_lines = [line for line in self._lines if line.group == group]  # type: ignore[attr-defined]
@@ -118,64 +126,32 @@ class IDic(ABC):
     def get_names_by_role(
         self, role: str, group: str | None = None, keep_list: bool = False
     ) -> dic_names:
-        group_lines = self.get_by_group(group)
-
-        names: dic_names = [
-            line.name  # type: ignore[attr-defined]
-            for line in group_lines
-            if self.match_tag(tag=line.role, text=role)  # type: ignore[attr-defined]
-        ]
-
-        if not len(names):
-            msg: str = f"No item found with role '{role}' in '{group}'."
-            raise KeyError(msg)
-
-        if not keep_list and len(names) == 1:
-            return names[0]
-
+        names = dic_ln.get_names_by_role(
+            inst=self, role=role, group=group, keep_list=keep_list
+        )
         return names
 
     def get_names_by_rule(
         self, rule: str, group: str | None = None, keep_list: bool = False
     ) -> dic_names:
-        group_lines = self.get_by_group(group)
-
-        names: dic_names = [
-            line.name  # type: ignore[attr-defined]
-            for line in group_lines
-            if self.match_tag(tag=line.rule, text=rule)  # type: ignore[attr-defined]
-        ]
-
-        if not len(names):
-            msg: str = f"No item found with rule '{rule}' in '{group}'."
-            raise KeyError(msg)
-
-        if not keep_list and len(names) == 1:
-            return names[0]
-
+        names = dic_ln.get_names_by_rule(
+            inst=self, rule=rule, group=group, keep_list=keep_list
+        )
         return names
 
     def get_lines_by_role(
         self, role: str, group: str | None = None, keep_list: bool = False
     ) -> dic_output:
-        # NOTE: The names must be in a list. i.e. keep_list=True
-        names: list[str] = self.get_names_by_role(
-            role=role, group=group, keep_list=True
-        )  # type: ignore
-        lines: dic_output = self.get_by_names(
-            names=names, group=group, keep_list=keep_list
+        lines = dic_ln.get_lines_by_role(
+            inst=self, role=role, group=group, keep_list=keep_list
         )
         return lines
 
     def get_lines_by_rule(
         self, rule: str, group: str | None = None, keep_list: bool = False
     ) -> dic_output:
-        # NOTE: The names must be in a list. i.e. keep_list=True
-        names: list[str] = self.get_names_by_rule(
-            rule=rule, group=group, keep_list=True
-        )  # type: ignore
-        lines: dic_output = self.get_by_names(
-            names=names, group=group, keep_list=keep_list
+        lines = dic_ln.get_lines_by_rule(
+            inst=self, rule=rule, group=group, keep_list=keep_list
         )
         return lines
 
@@ -192,14 +168,7 @@ class IDic(ABC):
     def get_tags(
         self, tag_text: str | None, sep: str = chr(126)
     ) -> dict[str, Any] | None:
-        if tag_text is not None:
-            # NOTE: Must use a special separator not a comma because commas are found in sub text. e.g. mask="{:,.2f}"
-            try:
-                tags = dict(item.split("=") for item in tag_text.split(sep))
-            except ValueError:
-                return None
-        else:
-            return None
+        tags = dic_tags.get_tags(tag_text=tag_text, sep=sep)
         return tags
 
     def get_tags_default(
@@ -211,10 +180,13 @@ class IDic(ABC):
         na: str = "_na",
         sep: str = chr(126),
     ) -> dict[str, Any] | None:
-        tag = self.get_attributes(names=names, group=group, attr_nm=attr_nm)
-        tag_text: str = list(tag.values())[0]
-        if tag_text != na:
-            attr_dict = self.get_tags(tag_text, sep=sep)
-        else:
-            attr_dict = default
+        attr_dict = dic_tags.get_tags_default(
+            inst=self,
+            names=names,
+            group=group,
+            attr_nm=attr_nm,
+            default=default,
+            na=na,
+            sep=sep,
+        )
         return attr_dict
