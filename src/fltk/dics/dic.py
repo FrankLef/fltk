@@ -4,7 +4,6 @@ from abc import ABC
 import re
 from pathlib import Path
 
-# import pandas as pd
 from typing import NamedTuple, Iterable, Any
 from enum import StrEnum, auto
 
