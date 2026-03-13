@@ -34,7 +34,7 @@ def get_namedtuple_fields(inst: IDic, group: str) -> dict[str, Any]:
     check: int = len(names) - len(fields)
     if check:
         msg: str = f"There are {check} duplicated names in '{group}'."
-        AssertionError(msg)
+        KeyError(msg)
 
     out = {"names": names, "values": values, "fields": fields}
 
