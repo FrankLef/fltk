@@ -1,7 +1,7 @@
 """Create a named tuple with the dic's names."""
 
 from __future__ import annotations  # Must be at the top
-from typing import TYPE_CHECKING, NamedTuple, Any
+from typing import TYPE_CHECKING, NamedTuple, Any, Final
 
 if TYPE_CHECKING:
     from .dic import IDic  # Only imported when checking types
@@ -16,11 +16,17 @@ def get_namedtuple(inst: IDic, group: str) -> Any:
 
 
 def get_namedtuple_fields(inst: IDic, group: str) -> dict[str, Any]:
+    NAME: Final[str] = "name"
+
     lines = inst.get_by_group(group=group)
     values = [line.name for line in lines]  # type: ignore
+    if NAME in values:
+        msg: str = f"The field name '{NAME}' is reserved and must not be used."
+        raise KeyError(msg)
+
     names = values.copy()
 
-    names.insert(0, "name")
+    names.insert(0, NAME)
     values.insert(0, group)
     assert len(names) == len(values)
 
