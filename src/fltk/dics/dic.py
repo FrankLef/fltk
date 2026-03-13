@@ -3,13 +3,15 @@
 from abc import ABC
 import re
 from pathlib import Path
-import pandas as pd
-from typing import NamedTuple, Iterable, Final, Any
+
+# import pandas as pd
+from typing import NamedTuple, Iterable, Any
 from enum import StrEnum, auto
 
 from . import dic_namedtuple as dic_nt
 from . import dic_lines_names as dic_ln
 from . import dic_tags
+from . import dic_load
 
 type dic_lines = list[NamedTuple]
 type dic_output = NamedTuple | list[NamedTuple]
@@ -45,41 +47,7 @@ class IDic(ABC):
     def load_data(
         self, path: Path, sheet_nm: str | None = None, is_xl: bool = True
     ) -> None:
-        VARS_DTYPE: Final[dict[str, Any]] = {
-            AttrName.GROUP: str,
-            AttrName.NAME: str,
-            AttrName.SKIPPED: bool,
-            AttrName.ROLE: str,
-            AttrName.RULE: str,
-        }
-
-        # NOTE: Important to specify the dtypes.
-        # Otherwise problem, e.g. with the 'skipped' field which will not be interpreted as boolean.
-
-        if is_xl:
-            data = pd.read_excel(path, sheet_name=sheet_nm, dtype=VARS_DTYPE)
-        else:
-            data = pd.read_csv(path, dtype=VARS_DTYPE)
-
-        if data.empty:
-            raise ValueError(f"The import file '{path.name}' is empty.")
-
-        is_subset = set(VARS_DTYPE.keys()).issubset(data.columns)
-        if not is_subset:
-            msg: str = f"Required column names in '{path.name}' are missing."
-            raise ValueError(msg)
-
-        EMPTY_STR: Final[str] = ""
-        # NOTE: Remove NaN put by pandas. Not sure this is necessary anymore since using xl_dtypes above.  Keep it.
-        for var in VARS_DTYPE.keys():
-            data[var] = data[var].fillna(EMPTY_STR)
-
-        lines: dic_lines = []
-        for row in data.itertuples(index=False):
-            lines.append(row)
-
-        lines = self.filter_skipped(lines)
-
+        lines = dic_load.load_data(self, path=path, sheet_nm=sheet_nm, is_xl=is_xl)
         self._lines = lines
 
     def load_csv(self, path: Path) -> None:

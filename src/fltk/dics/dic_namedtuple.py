@@ -3,15 +3,16 @@ from typing import TYPE_CHECKING, NamedTuple, Any
 
 if TYPE_CHECKING:
     from .dic import IDic  # Only imported when checking types
-    
-    
-def get_namedtuple(inst: IDic, group: str)-> Any:
+
+
+def get_namedtuple(inst: IDic, group: str) -> Any:
     specs = get_namedtuple_fields(inst, group)
     DicNamedTuple = NamedTuple(group, specs["fields"])  # type: ignore
     dic_named_tuple = DicNamedTuple(*specs["values"])
     # print("named tuple:\n", nt)
     return dic_named_tuple
-    
+
+
 def get_namedtuple_fields(inst: IDic, group: str) -> dict[str, Any]:
     lines = inst.get_by_group(group=group)
     values = [line.name for line in lines]  # type: ignore
