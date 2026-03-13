@@ -1,3 +1,5 @@
+"""Get a pandas dataframe with dic's data."""
+
 from __future__ import annotations  # Must be at the top
 from typing import TYPE_CHECKING, Final, Any, NamedTuple
 from pathlib import Path
@@ -7,6 +9,7 @@ from enum import StrEnum, auto
 if TYPE_CHECKING:
     from .dic import IDic  # Only imported when checking types
 
+
 class AttrName(StrEnum):
     GROUP = auto()
     NAME = auto()
@@ -14,11 +17,13 @@ class AttrName(StrEnum):
     ROLE = auto()
     RULE = auto()
 
+
 type dic_lines = list[NamedTuple]
 
+
 def load_data(
-        inst: IDic, path: Path, sheet_nm: str | None = None, is_xl: bool = True
-    ) -> dic_lines:
+    inst: IDic, path: Path, sheet_nm: str | None = None, is_xl: bool = True
+) -> dic_lines:
     VARS_DTYPE: Final[dict[str, Any]] = {
         AttrName.GROUP: str,
         AttrName.NAME: str,
