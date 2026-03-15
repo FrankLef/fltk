@@ -23,6 +23,7 @@ def path():
 def xlfile(path):
     return path.joinpath("dic2.xlsx")
 
+
 @pytest.fixture
 def sheet():
     return "data"
@@ -47,7 +48,17 @@ def loaded_dic(dic, xlfile, sheet):
     dic.load_xl(path=xlfile, sheet_nm=sheet)
     return dic
 
+
 def test_get_nmtpl(loaded_dic):
     nmtpl = loaded_dic.get_namedtuple(group="trialbal")
     assert isinstance(nmtpl, tuple) and hasattr(nmtpl, "_fields")
 
+
+def test_err_name(loaded_dic):
+    with pytest.raises(KeyError):
+        loaded_dic.get_namedtuple(group="err_name")
+
+
+def test_err_duplicates(loaded_dic):
+    with pytest.raises(KeyError):
+        loaded_dic.get_namedtuple(group="err_dupl")
