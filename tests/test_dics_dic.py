@@ -72,8 +72,8 @@ def test_nlines(loaded_dic):
         ["summ", 11],
     ],
 )
-def test_get_by_group(loaded_dic, group, expected):
-    lines = loaded_dic.get_by_group(group=group)
+def test_get_lines_by_group(loaded_dic, group, expected):
+    lines = loaded_dic.get_lines_by_group(group=group)
     assert len(lines) == expected
 
 
@@ -84,8 +84,8 @@ def test_get_by_group(loaded_dic, group, expected):
         [["fin_qrtr_tag"], "trialbal", True, 1],
     ],
 )
-def test_get_by_names(loaded_dic, names, group, keep_list, expected):
-    lines = loaded_dic.get_by_names(names=names, group=group, keep_list=keep_list)
+def test_get_lines_by_names(loaded_dic, names, group, keep_list, expected):
+    lines = loaded_dic.get_lines_by_names(names=names, group=group, keep_list=keep_list)
     assert len(lines) == expected
 
 

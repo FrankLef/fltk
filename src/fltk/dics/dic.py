@@ -7,8 +7,9 @@ from pathlib import Path
 from typing import NamedTuple, Iterable, Any
 from enum import StrEnum, auto
 
+from . import dic_lines as ln
 from . import dic_namedtuple as dic_nt
-from . import dic_lines_names as dic_ln
+from . import dic_role_rule as dic_rr
 from . import dic_tags
 from . import dic_load
 
@@ -63,37 +64,22 @@ class IDic(ABC):
         dic_named_tuple = dic_nt.get_namedtuple(self, group)
         return dic_named_tuple
 
-    def get_by_group(self, group: str | None = None) -> dic_lines:
-        if group is not None:
-            the_lines: dic_lines = [line for line in self._lines if line.group == group]  # type: ignore[attr-defined]
-        else:
-            return self._lines
-        if not len(the_lines):
-            msg: str = f"No line found for group '{group}' in dic '{self._name}'."
-            raise KeyError(msg)
+    def get_lines_by_group(self, group: str | None = None) -> dic_lines:
+        the_lines = ln.get_lines_by_group(inst=self, group=group)
         return the_lines
 
-    def get_by_names(
+    def get_lines_by_names(
         self, names: Iterable[str], group: str | None = None, keep_list: bool = False
     ) -> dic_output:
-        group_lines = self.get_by_group(group)
-
-        lines: dic_output = [line for line in group_lines if line.name in names]  # type: ignore[attr-defined]
-        if not len(lines):
-            msg: str = "No line found."
-            raise KeyError(msg)
-        if not keep_list and len(lines) == 1:
-            return lines[0]
-        return lines
-
-    def match_tag(self, tag: str, text: str) -> bool:
-        a_match = re.search(pattern=rf"\b{text}\b", string=tag)
-        return a_match is not None
+        the_lines = ln.get_lines_by_names(
+            inst=self, names=names, group=group, keep_list=keep_list
+        )
+        return the_lines
 
     def get_names_by_role(
         self, role: str, group: str | None = None, keep_list: bool = False
     ) -> dic_names:
-        names = dic_ln.get_names_by_role(
+        names = dic_rr.get_names_by_role(
             inst=self, role=role, group=group, keep_list=keep_list
         )
         return names
@@ -101,7 +87,7 @@ class IDic(ABC):
     def get_names_by_rule(
         self, rule: str, group: str | None = None, keep_list: bool = False
     ) -> dic_names:
-        names = dic_ln.get_names_by_rule(
+        names = dic_rr.get_names_by_rule(
             inst=self, rule=rule, group=group, keep_list=keep_list
         )
         return names
@@ -109,7 +95,7 @@ class IDic(ABC):
     def get_lines_by_role(
         self, role: str, group: str | None = None, keep_list: bool = False
     ) -> dic_output:
-        lines = dic_ln.get_lines_by_role(
+        lines = dic_rr.get_lines_by_role(
             inst=self, role=role, group=group, keep_list=keep_list
         )
         return lines
@@ -117,7 +103,7 @@ class IDic(ABC):
     def get_lines_by_rule(
         self, rule: str, group: str | None = None, keep_list: bool = False
     ) -> dic_output:
-        lines = dic_ln.get_lines_by_rule(
+        lines = dic_rr.get_lines_by_rule(
             inst=self, rule=rule, group=group, keep_list=keep_list
         )
         return lines
@@ -126,11 +112,15 @@ class IDic(ABC):
         self, names: Iterable[str] | None, group: str, attr_nm: str
     ) -> dict[Any, Any]:
         if names is not None:
-            lines = self.get_by_names(names=names, group=group, keep_list=True)
+            lines = self.get_lines_by_names(names=names, group=group, keep_list=True)
         else:
-            lines = self.get_by_group(group=group)
+            lines = self.get_lines_by_group(group=group)
         attrs = {line.name: getattr(line, attr_nm) for line in lines}  # type: ignore[union-attr]
         return attrs
+
+    def match_tag(self, tag: str, text: str) -> bool:
+        a_match = re.search(pattern=rf"\b{text}\b", string=tag)
+        return a_match is not None
 
     def get_tags(
         self, tag_text: str | None, sep: str = chr(126)
