@@ -57,7 +57,9 @@ def get_lines_by_role(
 ) -> dic_output:
     # NOTE: The names must be in a list. i.e. keep_list=True
     names: list[str] = inst.get_names_by_role(role=role, group=group, keep_list=True)  # type: ignore
-    lines: dic_output = inst.get_lines_by_names(names=names, group=group, keep_list=keep_list)
+    lines: dic_output = inst.get_lines_by_names(
+        names=names, group=group, keep_list=keep_list
+    )
     return lines
 
 
@@ -66,5 +68,7 @@ def get_lines_by_rule(
 ) -> dic_output:
     # NOTE: The names must be in a list. i.e. keep_list=True
     names: list[str] = inst.get_names_by_rule(rule=rule, group=group, keep_list=True)  # type: ignore
-    lines: dic_output = inst.get_lines_by_names(names=names, group=group, keep_list=keep_list)
+    lines: dic_output = inst.get_lines_by_names(
+        names=names, group=group, keep_list=keep_list
+    )
     return lines

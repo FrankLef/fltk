@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import NamedTuple, Iterable, Any
 from enum import StrEnum, auto
 
-from . import dic_lines as ln
+from . import dic_lines as dic_ln
 from . import dic_namedtuple as dic_nt
 from . import dic_role_rule as dic_rr
 from . import dic_tags
@@ -65,13 +65,13 @@ class IDic(ABC):
         return dic_named_tuple
 
     def get_lines_by_group(self, group: str | None = None) -> dic_lines:
-        the_lines = ln.get_lines_by_group(inst=self, group=group)
+        the_lines = dic_ln.get_lines_by_group(inst=self, group=group)
         return the_lines
 
     def get_lines_by_names(
         self, names: Iterable[str], group: str | None = None, keep_list: bool = False
     ) -> dic_output:
-        the_lines = ln.get_lines_by_names(
+        the_lines = dic_ln.get_lines_by_names(
             inst=self, names=names, group=group, keep_list=keep_list
         )
         return the_lines

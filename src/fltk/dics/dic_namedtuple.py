@@ -18,7 +18,7 @@ def get_namedtuple(inst: IDic, group: str) -> Any:
 def get_namedtuple_fields(inst: IDic, group: str) -> dict[str, Any]:
     NAME: Final[str] = "name"
 
-    lines = inst.get_by_group(group=group)
+    lines = inst.get_lines_by_group(group=group)
     values = [line.name for line in lines]  # type: ignore
     if NAME in values:
         msg: str = f"The field name '{NAME}' is reserved and must not be used."

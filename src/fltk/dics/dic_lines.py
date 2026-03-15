@@ -20,9 +20,10 @@ def get_lines_by_group(inst: IDic, group: str | None = None) -> dic_lines:
         raise KeyError(msg)
     return the_lines
 
+
 def get_lines_by_names(
-        inst: IDic, names: Iterable[str], group: str | None = None, keep_list: bool = False
-    ) -> dic_output:
+    inst: IDic, names: Iterable[str], group: str | None = None, keep_list: bool = False
+) -> dic_output:
     group_lines = inst.get_lines_by_group(group)
 
     lines: dic_output = [line for line in group_lines if line.name in names]  # type: ignore[attr-defined]

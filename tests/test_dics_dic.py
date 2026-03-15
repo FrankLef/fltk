@@ -21,12 +21,12 @@ def path():
 
 @pytest.fixture
 def xlfile(path):
-    return path.joinpath("ddict1.xlsx")
+    return path.joinpath("dic1.xlsx")
 
 
 @pytest.fixture
 def csvfile(path):
-    return path.joinpath("ddict1.csv")
+    return path.joinpath("dic1.csv")
 
 
 @pytest.fixture
