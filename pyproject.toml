@@ -31,6 +31,7 @@ numpy = "^2.3.4"
 pandas = "^2.3.3"
 sqlalchemy-utils = "^0.42.1"
 matplotlib = "^3.10.8"
+scikit-learn = "^1.8.0"
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.6.2"
