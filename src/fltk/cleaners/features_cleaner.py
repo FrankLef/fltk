@@ -4,7 +4,6 @@ from sklearn.preprocessing import MinMaxScaler
 from typing import Final
 
 
-
 class FeatureCleaner:
     def __init__(
         self,
@@ -23,11 +22,13 @@ class FeatureCleaner:
         self._features_with_near_zero_cv: list[str] = []
         self._features_with_few_values: list[str] = []
 
-    def _check_rate(self, rate: float, name: str) -> float:
-        MIN_RATE: Final[float] = 0
-        MAX_RATE: Final[float] = 1
-        if (rate < MIN_RATE) or (rate > MAX_RATE):
-            msg: str = f"The {name} must be between {MIN_RATE} and {MAX_RATE}. It is {rate}."
+    def _check_rate(
+        self, rate: float, name: str, min_rate: float = 0, max_rate: float = 1
+    ) -> float:
+        if (rate < min_rate) or (rate > max_rate):
+            msg: str = (
+                f"The {name} must be between {min_rate} and {max_rate}. It is {rate}."
+            )
             raise ValueError(msg)
         return rate
 
