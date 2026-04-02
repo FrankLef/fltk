@@ -14,7 +14,12 @@ from . import diffmat_add_calc as ac
 
 class DiffMat:
     def __init__(self, idx_to: str = "idx_to"):
-        self._idx_to = idx_to  # column with index of values to replace
+        """Compute new amounts with a new index using a difference matrix.
+
+        Args:
+            idx_to (str, optional): Name of the column with the new index used with the new calculated amounts. This is also the top left corner of a matrix given in excel. Defaults to "idx_to".
+        """
+        self._idx_to = idx_to
         self._idx_keys: list[str] = []
         self._idx_df: pd.Dataframe = pd.DataFrame()
         self.set_reserved_vars()
@@ -39,13 +44,23 @@ class DiffMat:
     def valid_data(self) -> pd.DataFrame:
         return self._valid_data
 
-    def set_reserved_vars(self) -> None:
-        self._idx_from: str = "idx_from"  # column with index of values to use
-        self._idx_coef: str = "idx_coef"  # column of coefficients used
-        self._idx_value: str = "idx_value"
+    def set_reserved_vars(self, idx_from:str = "idx_from", idx_coef:str="idx_coef", idx_value:str="idx_value") -> None:
+        """Set the reserved words used when doing computations internally.
+
+        Args:
+            idx_from (str, optional): Column with index to use. Defaults to "idx_from".
+            idx_coef (str, optional): Column of coefficients to use. Defaults to "idx_coef".
+            idx_value (str, optional): Column of values to use. Defaults to "idx_value".
+
+        Raises:
+            ValueError: Name conflict in reserved words.
+        """
+        self._idx_from: str = idx_from
+        self._idx_coef: str = idx_coef
+        self._idx_value: str = idx_value
         reserved_vars = [self._idx_from, self._idx_coef, self._idx_value]
         if self._idx_to in reserved_vars:
-            msg: str = f"'{self._idx_to}' is reserved. Use another name for idx_to."
+            msg: str = f"'{self._idx_to}' is reserved. Use another name."
             raise ValueError(msg)
         reserved_vars.append(self._idx_to)
         self._reserved_vars = reserved_vars
@@ -58,6 +73,15 @@ class DiffMat:
         group_vars: Iterable[str],
         newvalue_var: str,
     ) -> None:
+        """Load the data for processing.
+
+        Args:
+            data (pd.DataFrame): Dataframe to process.
+            idx_var (str): Column with the index used for calculations.
+            value_var (str): Column with values used for calculations.
+            group_vars (Iterable[str]): Columns making up a composite key.
+            newvalue_var (str): New column for calculated values.
+        """
         self._data_idx: str = ""
         self._data_value = ""
         self._data_group: Iterable[str] = []
@@ -77,6 +101,12 @@ class DiffMat:
         # breakpoint()
 
     def load_mat_from_xl(self, path: Path, sheet_nm: str | None = None) -> None:
+        """Load difference matrix from Excel to a pandas dataframe.
+
+        Args:
+            path (Path): Full filename of excel file.
+            sheet_nm (str | None, optional): Name of excel sheet. Defaults to None.
+        """
         lmx.load_mat_from_xl(self, path=path, sheet_nm=sheet_nm)
 
     def get_invalid_data(self) -> None:
@@ -91,14 +121,20 @@ class DiffMat:
         # )
 
     def fit_transform(self) -> None:
+        """Process the the fit and transform steps in a sequnce.
+        """
         self.fit()
         self.transform()
 
     def fit(self) -> None:
+        """Fit the data. Find invalid and undetermined data.
+        """
         self.get_invalid_data()
         self.get_undetermined_data()
 
     def transform(self) -> None:
+        """Do the actual calculations.
+        """
         self.get_valid_data()
         self.calculate()
         self.add_calc()

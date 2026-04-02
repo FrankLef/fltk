@@ -9,6 +9,10 @@ if TYPE_CHECKING:
 
 def load_mat_from_xl(inst: DiffMat, path: Path, sheet_nm: str | None = None) -> None:
     df = pd.read_excel(path, sheet_name=sheet_nm)
+    if inst._idx_to != df.columns[0]:
+        msg: str = f"'{inst._idx_to}' is not the name of the first column in the matrix."
+        raise KeyError(msg)
+    
     cols = df.columns[df.columns != inst._idx_to].to_list()
     df = df.melt(
         id_vars=inst._idx_to,

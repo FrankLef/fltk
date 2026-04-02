@@ -18,10 +18,10 @@ def load_data(
     if inst._idx_df.empty:
         msg: str = "You must load the matrix before the data."
         raise ValueError(msg)
-    inst._data_idx = idx_var  # variable used by idx, usually the period
-    inst._data_value = value_var  # variable used to calculate
-    inst._data_group = group_vars  # variable representing a composite key
-    inst._data_newvalue = newvalue_var  # new variable for calculated values
+    inst._data_idx = idx_var
+    inst._data_value = value_var
+    inst._data_group = group_vars
+    inst._data_newvalue = newvalue_var
     validate_data_names(inst, data=data, newvalue_var=newvalue_var)
     validate_data_keys(inst, data=data, idx_var=idx_var, group_vars=group_vars)
     return data
