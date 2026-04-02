@@ -160,14 +160,14 @@ class DiffMat:
         """Fit the data. Find invalid and undetermined data."""
         self.get_invalid_data()
         self.get_undetermined_data()
-        rprint("Diffmat fit() completed.")
+        rprint(f"{self._name} fit() completed.")
 
     def transform(self) -> None:
         """Do the actual calculations."""
         self.get_valid_data()
         self.calculate()
         self.add_calc()
-        rprint("Diffmat transform() completed.")
+        rprint(f"{self._name} transform() completed.")
 
     def get_valid_data(self) -> None:
         try:
