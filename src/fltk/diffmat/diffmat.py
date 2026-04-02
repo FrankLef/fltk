@@ -44,7 +44,12 @@ class DiffMat:
     def valid_data(self) -> pd.DataFrame:
         return self._valid_data
 
-    def set_reserved_vars(self, idx_from:str = "idx_from", idx_coef:str="idx_coef", idx_value:str="idx_value") -> None:
+    def set_reserved_vars(
+        self,
+        idx_from: str = "idx_from",
+        idx_coef: str = "idx_coef",
+        idx_value: str = "idx_value",
+    ) -> None:
         """Set the reserved words used when doing computations internally.
 
         Args:
@@ -121,20 +126,17 @@ class DiffMat:
         # )
 
     def fit_transform(self) -> None:
-        """Process the the fit and transform steps in a sequnce.
-        """
+        """Process the the fit and transform steps in a sequnce."""
         self.fit()
         self.transform()
 
     def fit(self) -> None:
-        """Fit the data. Find invalid and undetermined data.
-        """
+        """Fit the data. Find invalid and undetermined data."""
         self.get_invalid_data()
         self.get_undetermined_data()
 
     def transform(self) -> None:
-        """Do the actual calculations.
-        """
+        """Do the actual calculations."""
         self.get_valid_data()
         self.calculate()
         self.add_calc()
