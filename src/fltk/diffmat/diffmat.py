@@ -54,7 +54,8 @@ class DiffMat:
         nrows_invalid = self._invalid_data.shape[0]
         nrows_undetermined = self._undetermined_data.shape[0]
         msg: str = f"""
-        Summary of {self._name}.
+        Summary of {self._name}
+        -------------------------
         Data: {nrows_data} rows
         Valid data: {nrows_valid} rows
         Invalid data: {nrows_invalid} rows
