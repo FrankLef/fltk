@@ -2,6 +2,7 @@ from __future__ import annotations  # Must be at the top
 import pandas as pd
 from pathlib import Path
 from typing import Iterable
+from rich import print as rprint
 
 from . import diffmat_load_mat_xl as lmx
 from . import diffmat_load_data as ld
@@ -134,12 +135,14 @@ class DiffMat:
         """Fit the data. Find invalid and undetermined data."""
         self.get_invalid_data()
         self.get_undetermined_data()
+        rprint("Diffmat fit() completed.")
 
     def transform(self) -> None:
         """Do the actual calculations."""
         self.get_valid_data()
         self.calculate()
         self.add_calc()
+        rprint("Diffmat transform() completed.")
 
     def get_valid_data(self) -> None:
         try:
