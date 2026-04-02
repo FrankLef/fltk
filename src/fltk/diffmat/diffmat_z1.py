@@ -13,7 +13,7 @@ idx_sheet: str = "rolly"
 data_sheet = "data1"
 newvalue_var = "rolly_amt"
 
-diffmat = DiffMat(idx_to="idx")
+diffmat = DiffMat(name="test", idx_to="idx")
 diffmat.load_mat_from_xl(diffmat_path, sheet_nm=idx_sheet)
 diffmat.idx_df.info()
 

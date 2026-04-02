@@ -14,12 +14,14 @@ from . import diffmat_add_calc as ac
 
 
 class DiffMat:
-    def __init__(self, idx_to: str = "idx_to"):
+    def __init__(self, name: str, idx_to: str = "idx_to"):
         """Compute new amounts with a new index using a difference matrix.
 
         Args:
+            name (str: Name for the object.)
             idx_to (str, optional): Name of the column with the new index used with the new calculated amounts. This is also the top left corner of a matrix given in excel. Defaults to "idx_to".
         """
+        self._name = name
         self._idx_to = idx_to
         self._idx_keys: list[str] = []
         self._idx_df: pd.Dataframe = pd.DataFrame()
@@ -44,7 +46,29 @@ class DiffMat:
     @property
     def valid_data(self) -> pd.DataFrame:
         return self._valid_data
-
+    
+    @property
+    def summary(self) -> dict[str, int]:
+        nrows_data = self._data.shape[0]
+        nrows_valid = self._valid_data.shape[0]
+        nrows_invalid = self._invalid_data.shape[0]
+        nrows_undetermined = self._undetermined_data.shape[0]
+        msg: str = f"""
+        Summary of {self._name}.
+        Data: {nrows_data} rows
+        Valid data: {nrows_valid} rows
+        Invalid data: {nrows_invalid} rows
+        Undetermined data: {nrows_undetermined} rows
+        """
+        rprint(msg)
+        out = {
+            "data": nrows_data,
+            "valid": nrows_valid,
+            "invalid": nrows_invalid,
+            "undetermined": nrows_undetermined
+        }
+        return out
+    
     def set_reserved_vars(
         self,
         idx_from: str = "idx_from",

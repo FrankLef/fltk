@@ -9,7 +9,7 @@ from fltk.diffmat.diffmat import DiffMat
 
 @pytest.fixture
 def diffmat() -> DiffMat:
-    return DiffMat(idx_to="idx")
+    return DiffMat(name="test_diffmat", idx_to="idx")
 
 
 @pytest.fixture
