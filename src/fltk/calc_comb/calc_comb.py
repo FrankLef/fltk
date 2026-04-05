@@ -66,27 +66,27 @@ class CalcComb:
     def valid_data(self) -> pd.DataFrame:
         return self._valid_data
 
-    @property
-    def summary(self) -> dict[str, int]:
+    def summary(self, verbose: bool = True) -> dict[str, int]:
         nrows_data = self._data.shape[0]
         nrows_valid = self._valid_data.shape[0]
         nrows_invalid = self._invalid_data.shape[0]
         nrows_undetermined = self._undetermined_data.shape[0]
-        msg: str = f"""
-        Summary of {self._name}
-        -------------------------
-        Data: {nrows_data} rows
-        Valid data: {nrows_valid} rows
-        Invalid data: {nrows_invalid} rows
-        Undetermined data: {nrows_undetermined} rows
-        """
-        rprint(msg)
-        out = {
-            "data": nrows_data,
-            "valid": nrows_valid,
-            "invalid": nrows_invalid,
-            "undetermined": nrows_undetermined,
-        }
+        if verbose:
+            msg: str = f"""
+            Summary of {self._name}
+            -------------------------
+            Data: {nrows_data} rows
+            Valid data: {nrows_valid} rows
+            Invalid data: {nrows_invalid} rows
+            Undetermined data: {nrows_undetermined} rows
+            """
+            rprint(msg)
+            out = {
+                "data": nrows_data,
+                "valid": nrows_valid,
+                "invalid": nrows_invalid,
+                "undetermined": nrows_undetermined,
+            }
         return out
 
     def load_data(
