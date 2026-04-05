@@ -3,23 +3,23 @@ from pathlib import Path
 
 # from rich.prompt import Confirm
 # from rich.console import Console
-from fltk.diffmat.diffmat import DiffMat
+from fltk.calc_comb.calc_comb import CalcComb
 
 
 fixtures_path = Path("C:/Users/Public/MyPy/Packages/fltk/tests/fixtures")
-diffmat_path = fixtures_path.joinpath("diffmat.xlsx")
-out_path = fixtures_path.joinpath("diffmat_z1.xlsx")
+comb_path = fixtures_path.joinpath("comb.xlsx")
+out_path = fixtures_path.joinpath("comb_z1.xlsx")
 idx_sheet: str = "rolly"
 data_sheet = "data1"
 newvalue_var = "rolly_amt"
 
-diffmat = DiffMat(name="test", idx_to="idx")
-diffmat.load_mat_from_xl(diffmat_path, sheet_nm=idx_sheet)
-diffmat.idx_df.info()
+comb = CalcComb(name="test", idx_to="idx")
+comb.load_mat_from_xl(comb_path, sheet_nm=idx_sheet)
+comb.idx_df.info()
 
-print(diffmat_path)
+print(comb_path)
 raw_data = pd.read_excel(
-    diffmat_path,
+    comb_path,
     sheet_name=data_sheet,
     engine="openpyxl",
     engine_kwargs={"data_only": True},
@@ -27,7 +27,7 @@ raw_data = pd.read_excel(
 raw_data.info()
 
 group_vars = ["entity", "concept", "pertype"]
-diffmat.load_data(
+comb.load_data(
     raw_data,
     idx_var="period",
     value_var="amount",
@@ -37,17 +37,17 @@ diffmat.load_data(
 print("load_data")
 # breakpoint()
 
-diffmat.fit()
-diffmat.transform()
+comb.fit()
+comb.transform()
 
-# print(f"\ninvalid data {diffmat.invalid_data.shape}:\n", diffmat.invalid_data)
+# print(f"\ninvalid data {comb.invalid_data.shape}:\n", comb.invalid_data)
 # print(
-#     f"\nundetermined data {diffmat.undetermined_data.shape}:\n",
-#     diffmat.undetermined_data,
+#     f"\nundetermined data {comb.undetermined_data.shape}:\n",
+#     comb.undetermined_data,
 # )
-# print(f"\nvalid data {diffmat.valid_data.shape}:\n", diffmat.valid_data)
+# print(f"\nvalid data {comb.valid_data.shape}:\n", comb.valid_data)
 
-# print(f"\nfinal data {diffmat.data.shape}:\n", diffmat.data)
+# print(f"\nfinal data {comb.data.shape}:\n", comb.data)
 
 add_to_xl: bool = False
 if add_to_xl:
@@ -62,7 +62,7 @@ if add_to_xl:
     # if is_ok:
 
     # Create the initial file
-    diffmat.data.to_excel(
+    comb.data.to_excel(
         out_path, sheet_name="final_data", index=False, engine="openpyxl"
     )
     # Append other sheets
@@ -70,9 +70,9 @@ if add_to_xl:
         out_path, mode="a", engine="openpyxl", if_sheet_exists="replace"
     ) as writer:
         dfs = {
-            "invalid_data": diffmat.invalid_data,
-            "undetermined_data": diffmat.undetermined_data,
-            "valid_data": diffmat.valid_data,
+            "invalid_data": comb.invalid_data,
+            "undetermined_data": comb.undetermined_data,
+            "valid_data": comb.valid_data,
         }
         for sheet_name, df in dfs.items():
             df.to_excel(writer, sheet_name=sheet_name, index=False)

@@ -4,16 +4,16 @@ from pathlib import Path
 from typing import Iterable
 from rich import print as rprint
 
-from . import diffmat_load_mat_xl as lmx
-from . import diffmat_load_data as ld
-from . import diffmat_get_invalid_data as gid
-from . import diffmat_get_undetermined_data as gud
-from . import diffmat_get_valid_data as gvd
-from . import diffmat_calculate as calc
-from . import diffmat_add_calc as ac
+from . import calc_comb_load_mat_xl as lmx
+from . import calc_comb_load_data as ld
+from . import calc_comb_get_invalid_data as gid
+from . import calc_comb_get_undetermined_data as gud
+from . import calc_comb_get_valid_data as gvd
+from . import calc_comb_calculate as calc
+from . import calc_comb_add_calc as ac
 
 
-class DiffMat:
+class CalcComb:
     def __init__(
         self,
         name: str,

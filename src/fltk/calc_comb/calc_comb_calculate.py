@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 import pandas as pd
 
 if TYPE_CHECKING:
-    from .diffmat import DiffMat  # Only imported when checking types
+    from .calc_comb import DiffMat  # Only imported when checking types
 
 
 def calculate(inst: DiffMat) -> pd.DataFrame:

@@ -1,15 +1,15 @@
-"""Test the diffmat class."""
+"""Test the calccomb class."""
 
 import pytest
 from pathlib import Path
 import pandas as pd
 from typing import Any
-from fltk.diffmat.diffmat import DiffMat
+from fltk.calc_comb.calc_comb import CalcComb
 
 
 @pytest.fixture
-def diffmat() -> DiffMat:
-    return DiffMat(name="test_diffmat", idx_to="idx")
+def comb() -> CalcComb:
+    return CalcComb(name="test_comb", idx_to="idx")
 
 
 @pytest.fixture
@@ -19,19 +19,19 @@ def fixtures_path() -> Path:
 
 @pytest.fixture
 def qrtr_mat_xl(fixtures_path) -> dict[str, str]:
-    out = {"path": fixtures_path.joinpath("diffmat.xlsx"), "sheet": "qrtr"}
+    out = {"path": fixtures_path.joinpath("comb.xlsx"), "sheet": "qrtr"}
     return out
 
 
 @pytest.fixture
 def rolly_mat_xl(fixtures_path) -> dict[str, str]:
-    out = {"path": fixtures_path.joinpath("diffmat.xlsx"), "sheet": "rolly"}
+    out = {"path": fixtures_path.joinpath("comb.xlsx"), "sheet": "rolly"}
     return out
 
 
 @pytest.fixture
 def data_xl(fixtures_path) -> dict[str, str]:
-    out = {"path": fixtures_path.joinpath("diffmat.xlsx"), "sheet": "data1"}
+    out = {"path": fixtures_path.joinpath("comb.xlsx"), "sheet": "data1"}
     return out
 
 
@@ -57,14 +57,14 @@ def data_vars() -> dict[str, Any]:
     return out
 
 
-def test_load_mat_xl(diffmat, qrtr_mat_xl: dict[str, Path]) -> None:
-    diffmat.load_mat_from_xl(path=qrtr_mat_xl["path"], sheet_nm=qrtr_mat_xl["sheet"])
-    assert diffmat.idx_df.shape == (16, 3)
+def test_load_mat_xl(comb, qrtr_mat_xl: dict[str, Path]) -> None:
+    comb.load_mat_from_xl(path=qrtr_mat_xl["path"], sheet_nm=qrtr_mat_xl["sheet"])
+    assert comb.idx_df.shape == (16, 3)
 
 
-def test_load_data(diffmat, raw_data, data_vars) -> None:
+def test_load_data(comb, raw_data, data_vars) -> None:
     with pytest.raises(ValueError):
-        diffmat.load_data(
+        comb.load_data(
             raw_data,
             idx_var=data_vars["idx_var"],
             value_var=data_vars["value_var"],
@@ -74,39 +74,39 @@ def test_load_data(diffmat, raw_data, data_vars) -> None:
 
 
 @pytest.fixture
-def init_diffmat(diffmat, qrtr_mat_xl, raw_data, data_vars) -> DiffMat:
-    diffmat.load_mat_from_xl(path=qrtr_mat_xl["path"], sheet_nm=qrtr_mat_xl["sheet"])
-    diffmat.load_data(
+def init_comb(comb, qrtr_mat_xl, raw_data, data_vars) -> CalcComb:
+    comb.load_mat_from_xl(path=qrtr_mat_xl["path"], sheet_nm=qrtr_mat_xl["sheet"])
+    comb.load_data(
         raw_data,
         idx_var=data_vars["idx_var"],
         value_var=data_vars["value_var"],
         group_vars=data_vars["group_vars"],
         newvalue_var=data_vars["newvalue_var"],
     )
-    return diffmat
+    return comb
 
 
-def test_init_diffmat(init_diffmat) -> None:
-    assert init_diffmat.idx_df.shape == (16, 3)
-    assert init_diffmat.data.shape == (33, 7)
-
-
-@pytest.fixture
-def fit_diffmat(init_diffmat) -> DiffMat:
-    init_diffmat.fit()
-    return init_diffmat
-
-
-def test_fit_diffmat(fit_diffmat) -> None:
-    assert fit_diffmat.invalid_data.shape == (3, 6)
-    assert fit_diffmat.undetermined_data.shape == (1, 4)
+def test_init_comb(init_comb) -> None:
+    assert init_comb.idx_df.shape == (16, 3)
+    assert init_comb.data.shape == (33, 7)
 
 
 @pytest.fixture
-def transform_diffmat(fit_diffmat) -> DiffMat:
-    fit_diffmat.transform()
-    return fit_diffmat
+def fit_comb(init_comb) -> CalcComb:
+    init_comb.fit()
+    return init_comb
 
 
-def test_transform_diffmat(transform_diffmat) -> None:
-    transform_diffmat.valid_data.shape == (25, 6)
+def test_fit_comb(fit_comb) -> None:
+    assert fit_comb.invalid_data.shape == (3, 6)
+    assert fit_comb.undetermined_data.shape == (1, 4)
+
+
+@pytest.fixture
+def transform_comb(fit_comb) -> CalcComb:
+    fit_comb.transform()
+    return fit_comb
+
+
+def test_transform_comb(transform_comb) -> None:
+    transform_comb.valid_data.shape == (25, 6)

@@ -4,7 +4,7 @@ import pandas as pd
 from pathlib import Path
 
 if TYPE_CHECKING:
-    from .diffmat import DiffMat  # Only imported when checking types
+    from .calc_comb import DiffMat  # Only imported when checking types
 
 
 def load_mat_from_xl(inst: DiffMat, path: Path, sheet_nm: str | None = None) -> None:

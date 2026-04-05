@@ -4,7 +4,7 @@ import pandas as pd
 import copy
 
 if TYPE_CHECKING:
-    from .diffmat import DiffMat  # Only imported when checking types
+    from .calc_comb import DiffMat  # Only imported when checking types
 
 
 def get_invalid_data(inst: DiffMat) -> pd.DataFrame:

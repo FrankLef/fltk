@@ -4,7 +4,7 @@ import pandas as pd
 from rich.prompt import Confirm
 
 if TYPE_CHECKING:
-    from .diffmat import DiffMat  # Only imported when checking types
+    from .calc_comb import DiffMat  # Only imported when checking types
 
 
 def load_data(
