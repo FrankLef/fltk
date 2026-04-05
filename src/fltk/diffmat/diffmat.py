@@ -14,18 +14,37 @@ from . import diffmat_add_calc as ac
 
 
 class DiffMat:
-    def __init__(self, name: str, idx_to: str = "idx_to"):
-        """Compute new amounts with a new index using a difference matrix.
+    def __init__(
+        self,
+        name: str,
+        idx_to: str = "idx_to",
+        idx_from: str = "idx_from",
+        idx_coef: str = "idx_coef",
+        idx_value: str = "idx_value",
+    ):
+        """Create object to calculate combinations of amounts.
 
         Args:
-            name (str: Name for the object.)
-            idx_to (str, optional): Name of the column with the new index used with the new calculated amounts. This is also the top left corner of a matrix given in excel. Defaults to "idx_to".
+            name (str): Name to identify the object. Does not affect the process itself.
+            idx_to (str, optional): Name of the column with the target index used. Same as the upper left corner of the matrix. Defaults to "idx_to".
+            idx_from (str, optional): Name of the column with the source index used. It is recommended to keep the default value. Defaults to "idx_from".
+            idx_coef (str, optional): Column of coefficients to use. It is recommended to keep the default value. Defaults to "idx_coef".
+            idx_value (str, optional): Column of values to use. It is recommended to keep the default value. Defaults to "idx_value".
         """
         self._name = name
         self._idx_to = idx_to
+        self._idx_from = idx_from
+        self._idx_coef = idx_coef
+        self._idx_value = idx_value
         self._idx_keys: list[str] = []
         self._idx_df: pd.Dataframe = pd.DataFrame()
-        self.set_reserved_vars()
+        inputs: tuple[str, ...] = (idx_to, idx_from, idx_coef, idx_value)
+        check: int = len(inputs) - len(set(inputs))
+        if not check:
+            self._reserved_vars = inputs
+        else:
+            msg: str = f"There are {check} duplicated reserved vars."
+            raise ValueError(msg)
 
     @property
     def idx_df(self) -> pd.DataFrame:
@@ -46,7 +65,7 @@ class DiffMat:
     @property
     def valid_data(self) -> pd.DataFrame:
         return self._valid_data
-    
+
     @property
     def summary(self) -> dict[str, int]:
         nrows_data = self._data.shape[0]
@@ -66,35 +85,9 @@ class DiffMat:
             "data": nrows_data,
             "valid": nrows_valid,
             "invalid": nrows_invalid,
-            "undetermined": nrows_undetermined
+            "undetermined": nrows_undetermined,
         }
         return out
-    
-    def set_reserved_vars(
-        self,
-        idx_from: str = "idx_from",
-        idx_coef: str = "idx_coef",
-        idx_value: str = "idx_value",
-    ) -> None:
-        """Set the reserved words used when doing computations internally.
-
-        Args:
-            idx_from (str, optional): Column with index to use. Defaults to "idx_from".
-            idx_coef (str, optional): Column of coefficients to use. Defaults to "idx_coef".
-            idx_value (str, optional): Column of values to use. Defaults to "idx_value".
-
-        Raises:
-            ValueError: Name conflict in reserved words.
-        """
-        self._idx_from: str = idx_from
-        self._idx_coef: str = idx_coef
-        self._idx_value: str = idx_value
-        reserved_vars = [self._idx_from, self._idx_coef, self._idx_value]
-        if self._idx_to in reserved_vars:
-            msg: str = f"'{self._idx_to}' is reserved. Use another name."
-            raise ValueError(msg)
-        reserved_vars.append(self._idx_to)
-        self._reserved_vars = reserved_vars
 
     def load_data(
         self,
