@@ -4,10 +4,10 @@ import pandas as pd
 import copy
 
 if TYPE_CHECKING:
-    from .calc_comb import DiffMat  # Only imported when checking types
+    from .calc_comb import CalcComb  # Only imported when checking types
 
 
-def get_invalid_data(inst: DiffMat) -> pd.DataFrame:
+def get_invalid_data(inst: CalcComb) -> pd.DataFrame:
     groups_df = get_groups(inst)
     invalid_data = find_invalid_items(inst, groups_df=groups_df)
     # print(f"\ninvalid_data {invalid_data.shape}:\n", invalid_data)
@@ -16,7 +16,7 @@ def get_invalid_data(inst: DiffMat) -> pd.DataFrame:
     return cleaned_invalid_data
 
 
-def get_groups(inst: DiffMat) -> pd.DataFrame:
+def get_groups(inst: CalcComb) -> pd.DataFrame:
     groups_df = inst._data[inst._data_group]
     groups_df.drop_duplicates(inplace=True)
     if groups_df.empty:
@@ -25,14 +25,14 @@ def get_groups(inst: DiffMat) -> pd.DataFrame:
     return groups_df
 
 
-def find_invalid_items(inst: DiffMat, groups_df: pd.DataFrame) -> pd.DataFrame:
+def find_invalid_items(inst: CalcComb, groups_df: pd.DataFrame) -> pd.DataFrame:
     MERGE: Final[str] = "_merge"
     MERGE_BOTH: Final[str] = "both"
     HOW_INNER: Final[str] = "inner"
     raw_data = inst._data
     idx_from = inst._idx_from
     idx_to = inst._idx_to
-    idx_df = inst._idx_df
+    idx_df = inst._comb_df
     group_vars = inst._data_group
     invalid_items = []
     i = 0
@@ -62,7 +62,7 @@ def find_invalid_items(inst: DiffMat, groups_df: pd.DataFrame) -> pd.DataFrame:
 
 
 def get_invalid_rows(
-    inst: DiffMat, idx_df: pd.Dataframe, data: pd.DataFrame
+    inst: CalcComb, idx_df: pd.Dataframe, data: pd.DataFrame
 ) -> pd.DataFrame:
     HOW_LEFT: Final[str] = "left"
     left_df = idx_df
@@ -99,7 +99,7 @@ def create_invalid_df(
     return final_df
 
 
-def clean_invalid_data(inst: DiffMat, invalid_data: pd.DataFrame) -> pd.DataFrame:
+def clean_invalid_data(inst: CalcComb, invalid_data: pd.DataFrame) -> pd.DataFrame:
     MERGE: Final[str] = "_merge"
     HOW_LEFT: Final[str] = "left"
     MERGE_BOTH: Final[str] = "both"

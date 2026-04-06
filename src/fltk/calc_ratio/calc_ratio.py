@@ -1,44 +1,34 @@
 from __future__ import annotations  # Must be at the top
 import pandas as pd
-from pathlib import Path
+# from pathlib import Path
 from typing import Iterable
 from rich import print as rprint
 
-from . import calc_comb_load_mat_xl as lmx
-from . import calc_comb_load_data as ld
-from . import calc_comb_get_invalid_data as gid
-from . import calc_comb_get_undetermined_data as gud
-from . import calc_comb_get_valid_data as gvd
-from . import calc_comb_calculate as calc
-from . import calc_comb_add_calc as ac
+# from . import calc_comb_load_data as ld
+# from . import calc_comb_get_invalid_data as gid
+# from . import calc_comb_get_undetermined_data as gud
+# from . import calc_comb_get_valid_data as gvd
+# from . import calc_comb_calculate as calc
+# from . import calc_comb_add_calc as ac
 
 
-class CalcComb:
+class CalcRatio:
     def __init__(
         self,
         name: str,
-        idx_to: str = "idx_to",
-        idx_from: str = "idx_from",
-        comb_coef: str = "comb_coef",
-        comb_value: str = "comb_value",
+        concept_ratio: str = "concept_ratio",
+        concept_num: str = "concept_num",
+        concept_den: str = "concept_den",
+        ratio_value: str = "ratio_value",
     ):
-        """Create object to calculate combinations of amounts.
-
-        Args:
-            name (str): Name to identify the object. Does not affect the process itself.
-            idx_to (str, optional): Name of the column with the target index used. Same as the upper left corner of the matrix. Defaults to "idx_to".
-            idx_from (str, optional): Name of the column with the source index used. It is recommended to keep the default value. Defaults to "idx_from".
-            comb_coef (str, optional): Column of coefficients to use. It is recommended to keep the default value. Defaults to "comb_coef".
-            comb_value (str, optional): Column of values to use. It is recommended to keep the default value. Defaults to "comb_value".
-        """
         self._name = name
-        self._idx_to = idx_to
-        self._idx_from = idx_from
-        self._comb_coef = comb_coef
-        self._comb_value = comb_value
-        self._comb_keys: list[str] = []
-        self._comb_df: pd.Dataframe = pd.DataFrame()
-        reserved_vars: tuple[str, ...] = (idx_to, idx_from, comb_coef, comb_value)
+        self._concept_ratio = concept_ratio
+        self._concept_num = concept_num
+        self._concept_den = concept_den
+        self._ratio_value = ratio_value
+        self._ratio_keys: list[str] = []
+        self._ratio_df: pd.Dataframe = pd.DataFrame()
+        reserved_vars: tuple[str, ...] = (concept_ratio, concept_num, concept_den, ratio_value)
         check: int = len(reserved_vars) - len(set(reserved_vars))
         if not check:
             self._reserved_vars = reserved_vars
@@ -47,8 +37,8 @@ class CalcComb:
             raise ValueError(msg)
 
     @property
-    def comb_df(self) -> pd.DataFrame:
-        return self._comb_df
+    def ratio_df(self) -> pd.DataFrame:
+        return self._ratio_df
 
     @property
     def data(self) -> pd.DataFrame:
@@ -88,14 +78,17 @@ class CalcComb:
                 "undetermined": nrows_undetermined,
             }
         return out
-
+    
+    def load_specs(self)-> None:
+        pass
+    
+    
     def load_data(
         self,
         data: pd.DataFrame,
         idx_var: str,
         value_var: str,
         group_vars: Iterable[str],
-        newvalue_var: str,
     ) -> None:
         """Load the data for processing.
 
@@ -118,20 +111,10 @@ class CalcComb:
             idx_var=idx_var,
             value_var=value_var,
             group_vars=group_vars,
-            newvalue_var=newvalue_var,
         )
         self._data = data
         # print("load_data")
         # breakpoint()
-
-    def load_mat_from_xl(self, path: Path, sheet_nm: str | None = None) -> None:
-        """Load difference matrix from Excel to a pandas dataframe.
-
-        Args:
-            path (Path): Full filename of excel file.
-            sheet_nm (str | None, optional): Name of excel sheet. Defaults to None.
-        """
-        lmx.load_mat_from_xl(self, path=path, sheet_nm=sheet_nm)
 
     def get_invalid_data(self) -> None:
         self._invalid_data: pd.DataFrame = gid.get_invalid_data(self)

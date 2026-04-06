@@ -3,10 +3,10 @@ from typing import TYPE_CHECKING, Final
 import pandas as pd
 
 if TYPE_CHECKING:
-    from .calc_comb import DiffMat  # Only imported when checking types
+    from .calc_comb import CalcComb  # Only imported when checking types
 
 
-def get_valid_data(inst: DiffMat) -> pd.DataFrame:
+def get_valid_data(inst: CalcComb) -> pd.DataFrame:
     keys = inst._data_keys
     valid_data = inst._data
     dfs = [inst._invalid_data, inst._undetermined_data]

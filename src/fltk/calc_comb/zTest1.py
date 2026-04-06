@@ -13,9 +13,9 @@ idx_sheet: str = "rolly"
 data_sheet = "data1"
 newvalue_var = "rolly_amt"
 
-comb = CalcComb(name="test", idx_to="idx")
+comb = CalcComb(name="testCombZ1", idx_to="idx")
 comb.load_mat_from_xl(comb_path, sheet_nm=idx_sheet)
-comb.idx_df.info()
+comb.comb_df.info()
 
 print(comb_path)
 raw_data = pd.read_excel(

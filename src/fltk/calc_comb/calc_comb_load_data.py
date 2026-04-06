@@ -4,18 +4,18 @@ import pandas as pd
 from rich.prompt import Confirm
 
 if TYPE_CHECKING:
-    from .calc_comb import DiffMat  # Only imported when checking types
+    from .calc_comb import CalcComb  # Only imported when checking types
 
 
 def load_data(
-    inst: DiffMat,
+    inst: CalcComb,
     data: pd.DataFrame,
     idx_var: str,
     value_var: str,
     group_vars: Iterable[str],
     newvalue_var: str,
 ) -> pd.DataFrame:
-    if inst._idx_df.empty:
+    if inst._comb_df.empty:
         msg: str = "You must load the matrix before the data."
         raise ValueError(msg)
     inst._data_idx = idx_var
@@ -27,7 +27,7 @@ def load_data(
     return data
 
 
-def validate_data_names(inst: DiffMat, data: pd.DataFrame, newvalue_var: str) -> None:
+def validate_data_names(inst: CalcComb, data: pd.DataFrame, newvalue_var: str) -> None:
     reserved_vars = inst._reserved_vars
     data_vars = data.columns.to_list()
     if newvalue_var in data_vars:
@@ -47,7 +47,7 @@ def validate_data_names(inst: DiffMat, data: pd.DataFrame, newvalue_var: str) ->
 
 
 def validate_data_keys(
-    inst: DiffMat, data: pd.DataFrame, idx_var: str, group_vars: Iterable[str]
+    inst: CalcComb, data: pd.DataFrame, idx_var: str, group_vars: Iterable[str]
 ) -> None:
     keys: list[str] = list(group_vars)
     keys.append(idx_var)

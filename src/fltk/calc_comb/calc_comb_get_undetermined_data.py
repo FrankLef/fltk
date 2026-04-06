@@ -3,15 +3,15 @@ from typing import TYPE_CHECKING, Final
 import pandas as pd
 
 if TYPE_CHECKING:
-    from .calc_comb import DiffMat  # Only imported when checking types
+    from .calc_comb import CalcComb  # Only imported when checking types
 
 
-def get_undetermined_data(inst: DiffMat) -> pd.DataFrame:
+def get_undetermined_data(inst: CalcComb) -> pd.DataFrame:
     MERGE: Final[str] = "_merge"
     HOW_LEFT: Final[str] = "left"
     MERGE_BOTH: Final[str] = "both"
     left_df = inst._data
-    right_df = inst._idx_df
+    right_df = inst._comb_df
     left_on = inst._data_idx
     right_on = inst._idx_to
     merged_df = pd.merge(

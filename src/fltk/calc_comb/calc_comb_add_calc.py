@@ -3,10 +3,10 @@ from typing import TYPE_CHECKING, Final
 import pandas as pd
 
 if TYPE_CHECKING:
-    from .calc_comb import DiffMat  # Only imported when checking types
+    from .calc_comb import CalcComb  # Only imported when checking types
 
 
-def add_calc(inst: DiffMat) -> pd.DataFrame:
+def add_calc(inst: CalcComb) -> pd.DataFrame:
     HOW: Final[str] = "left"
     newvalue = inst._data_newvalue
     keys: list[str] = inst._data_keys.copy()

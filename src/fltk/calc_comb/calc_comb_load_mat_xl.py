@@ -4,10 +4,10 @@ import pandas as pd
 from pathlib import Path
 
 if TYPE_CHECKING:
-    from .calc_comb import DiffMat  # Only imported when checking types
+    from .calc_comb import CalcComb  # Only imported when checking types
 
 
-def load_mat_from_xl(inst: DiffMat, path: Path, sheet_nm: str | None = None) -> None:
+def load_mat_from_xl(inst: CalcComb, path: Path, sheet_nm: str | None = None) -> None:
     df = pd.read_excel(path, sheet_name=sheet_nm)
     top_name = df.columns[0]
     if inst._idx_to != top_name:
@@ -22,18 +22,18 @@ def load_mat_from_xl(inst: DiffMat, path: Path, sheet_nm: str | None = None) -> 
         id_vars=inst._idx_to,
         value_vars=cols,
         var_name=inst._idx_from,
-        value_name=inst._idx_coef,
+        value_name=inst._comb_coef,
     )
     df.dropna(inplace=True)
     validate_idx_keys(inst, df)
-    inst._idx_df = df
+    inst._comb_df = df
 
 
-def validate_idx_keys(inst: DiffMat, idx_df: pd.Dataframe) -> None:
+def validate_idx_keys(inst: CalcComb, comb_df: pd.Dataframe) -> None:
     keys = [inst._idx_to, inst._idx_from]
-    unique_counts = idx_df[keys].value_counts()
+    unique_counts = comb_df[keys].value_counts()
     ndistinct = len(unique_counts)
-    if ndistinct != idx_df.shape[0]:
+    if ndistinct != comb_df.shape[0]:
         msg: str = f"Matrix has invalid keys {keys}."
         raise ValueError(msg)
-    inst._idx_keys = keys
+    inst._comb_keys = keys
