@@ -25,11 +25,11 @@ def load_mat_from_xl(inst: CalcComb, path: Path, sheet_nm: str | None = None) ->
         value_name=inst._comb_coef,
     )
     df.dropna(inplace=True)
-    validate_idx_keys(inst, df)
+    validate_comb_keys(inst, df)
     inst._comb_df = df
 
 
-def validate_idx_keys(inst: CalcComb, comb_df: pd.Dataframe) -> None:
+def validate_comb_keys(inst: CalcComb, comb_df: pd.Dataframe) -> None:
     keys = [inst._idx_to, inst._idx_from]
     unique_counts = comb_df[keys].value_counts()
     ndistinct = len(unique_counts)

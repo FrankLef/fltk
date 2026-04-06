@@ -1,10 +1,11 @@
 from __future__ import annotations  # Must be at the top
 import pandas as pd
-# from pathlib import Path
+from pathlib import Path
 from typing import Iterable
 from rich import print as rprint
 
-# from . import calc_comb_load_data as ld
+from . import calc_ratio_load_ratios as lr
+from . import calc_ratio_load_data as ld
 # from . import calc_comb_get_invalid_data as gid
 # from . import calc_comb_get_undetermined_data as gud
 # from . import calc_comb_get_valid_data as gvd
@@ -26,9 +27,13 @@ class CalcRatio:
         self._concept_num = concept_num
         self._concept_den = concept_den
         self._ratio_value = ratio_value
-        self._ratio_keys: list[str] = []
-        self._ratio_df: pd.Dataframe = pd.DataFrame()
-        reserved_vars: tuple[str, ...] = (concept_ratio, concept_num, concept_den, ratio_value)
+        self._ratios_df: pd.Dataframe = pd.DataFrame()
+        reserved_vars: tuple[str, ...] = (
+            concept_ratio,
+            concept_num,
+            concept_den,
+            ratio_value,
+        )
         check: int = len(reserved_vars) - len(set(reserved_vars))
         if not check:
             self._reserved_vars = reserved_vars
@@ -37,8 +42,8 @@ class CalcRatio:
             raise ValueError(msg)
 
     @property
-    def ratio_df(self) -> pd.DataFrame:
-        return self._ratio_df
+    def ratios_df(self) -> pd.DataFrame:
+        return self._ratios_df
 
     @property
     def data(self) -> pd.DataFrame:
@@ -57,6 +62,7 @@ class CalcRatio:
         return self._valid_data
 
     def summary(self, verbose: bool = True) -> dict[str, int]:
+        pass
         nrows_data = self._data.shape[0]
         nrows_valid = self._valid_data.shape[0]
         nrows_invalid = self._invalid_data.shape[0]
@@ -78,15 +84,14 @@ class CalcRatio:
                 "undetermined": nrows_undetermined,
             }
         return out
-    
-    def load_specs(self)-> None:
-        pass
-    
-    
+
+    def load_ratios(self, path: Path, sheet_nm: str | None = None) -> None:
+        lr.load_ratios(self, path=path, sheet_nm=sheet_nm)
+
     def load_data(
         self,
         data: pd.DataFrame,
-        idx_var: str,
+        concept_var: str,
         value_var: str,
         group_vars: Iterable[str],
     ) -> None:
@@ -94,34 +99,32 @@ class CalcRatio:
 
         Args:
             data (pd.DataFrame): Dataframe to process.
-            idx_var (str): Column with the index used for calculations.
+            concept_var (str): Column with the concept used for calculations.
             value_var (str): Column with values used for calculations.
             group_vars (Iterable[str]): Columns making up a composite key.
-            newvalue_var (str): New column for calculated values.
         """
-        self._data_idx: str = ""
+        self._data_concept: str = ""
         self._data_value = ""
         self._data_group: Iterable[str] = []
-        self._data_newvalue = ""
         self._data: pd.DataFrame = pd.DataFrame()
         self._data_keys: list[str] = []
         data = ld.load_data(
             self,
             data=data,
-            idx_var=idx_var,
+            concept_var=concept_var,
             value_var=value_var,
             group_vars=group_vars,
         )
         self._data = data
-        # print("load_data")
-        # breakpoint()
 
     def get_invalid_data(self) -> None:
-        self._invalid_data: pd.DataFrame = gid.get_invalid_data(self)
+        self._invalid_data: pd.DataFrame = pd.DataFrame()
+        # self._invalid_data: pd.DataFrame = gid.get_invalid_data(self)
         # print(f"\ninvalid_data {self._invalid_data.shape}:\n", self._invalid_data)
 
     def get_undetermined_data(self) -> None:
-        self._undetermined_data: pd.DataFrame = gud.get_undetermined_data(self)
+        self._undetermined_data: pd.DataFrame = pd.DataFrame()
+        # self._undetermined_data: pd.DataFrame = gud.get_undetermined_data(self)
         # print(
         #     f"\nundetermined_data {self._undetermined_data.shape}:\n",
         #     self._undetermined_data,
@@ -146,20 +149,17 @@ class CalcRatio:
         rprint(f"{self._name} transform() completed.")
 
     def get_valid_data(self) -> None:
-        try:
-            self._valid_data = gvd.get_valid_data(self)
-        except AttributeError as e:
-            msg: str = "Attribute Error: Are tou sure you ran fit()?"
-            e.add_note(msg)
-            raise
-
-        # print(
-        #     f"\nvalid_data {self._valid_data.shape}:\n",
-        #     self._valid_data,
-        # )
+        self._valid_data: pd.DataFrame = pd.DataFrame()
+        # try:
+        #     self._valid_data = gvd.get_valid_data(self)
+        # except AttributeError as e:
+        #     msg: str = "Attribute Error: Are tou sure you ran fit()?"
+        #     e.add_note(msg)
+        #     raise
 
     def calculate(self) -> None:
-        self._valid_data = calc.calculate(self)
+        pass
+        # self._valid_data = calc.calculate(self)
         # breakpoint()
         # print(
         #     f"\ncalculated {self._valid_data.shape}:\n",
@@ -167,7 +167,8 @@ class CalcRatio:
         # )
 
     def add_calc(self) -> None:
-        self._data = ac.add_calc(self)
+        pass
+        # self._data = ac.add_calc(self)
         # print(
         #     f"\nfinal data {self._data.shape}:\n",
         #     self._data,

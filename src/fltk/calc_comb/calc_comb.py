@@ -121,8 +121,6 @@ class CalcComb:
             newvalue_var=newvalue_var,
         )
         self._data = data
-        # print("load_data")
-        # breakpoint()
 
     def load_mat_from_xl(self, path: Path, sheet_nm: str | None = None) -> None:
         """Load difference matrix from Excel to a pandas dataframe.
@@ -135,14 +133,9 @@ class CalcComb:
 
     def get_invalid_data(self) -> None:
         self._invalid_data: pd.DataFrame = gid.get_invalid_data(self)
-        # print(f"\ninvalid_data {self._invalid_data.shape}:\n", self._invalid_data)
 
     def get_undetermined_data(self) -> None:
         self._undetermined_data: pd.DataFrame = gud.get_undetermined_data(self)
-        # print(
-        #     f"\nundetermined_data {self._undetermined_data.shape}:\n",
-        #     self._undetermined_data,
-        # )
 
     def fit_transform(self) -> None:
         """Process the the fit and transform steps in a sequnce."""
@@ -170,22 +163,8 @@ class CalcComb:
             e.add_note(msg)
             raise
 
-        # print(
-        #     f"\nvalid_data {self._valid_data.shape}:\n",
-        #     self._valid_data,
-        # )
-
     def calculate(self) -> None:
         self._valid_data = calc.calculate(self)
-        # breakpoint()
-        # print(
-        #     f"\ncalculated {self._valid_data.shape}:\n",
-        #     self._valid_data,
-        # )
 
     def add_calc(self) -> None:
         self._data = ac.add_calc(self)
-        # print(
-        #     f"\nfinal data {self._data.shape}:\n",
-        #     self._data,
-        # )
