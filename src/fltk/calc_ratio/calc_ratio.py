@@ -21,18 +21,39 @@ class CalcRatio:
         concept_num: str = "concept_num",
         concept_den: str = "concept_den",
         ratio_value: str = "ratio_value",
+        concept_name: str = "concept_name",
+        concept_pos: str = "concept_pos",
     ):
+        """Create object to calculate ratios of amounts.
+
+        Args:
+            name (str): Name to identify the object. Does not affect the process itself.
+            concept_ratio (str, optional): Column of ratio names. Defaults to "concept_ratio".
+            concept_num (str, optional): Column of concepts in numerator. Defaults to "concept_num".
+            concept_den (str, optional): Column of concepts in denominator. Defaults to "concept_den".
+            ratio_value (str, optional): Column of calculated ratio value. Defaults to "ratio_value".
+            concept_name (str, optional): Column of concept names in the long ratio data. Defaults to "concept_name".
+            concept_pos (str, optional): Column of concept positions, i.e. 'num or 'den', in the long ratio data. Defaults to "concept_pos".
+
+        Raises:
+            ValueError: Duplicate names.
+        """
         self._name = name
         self._concept_ratio = concept_ratio
         self._concept_num = concept_num
         self._concept_den = concept_den
         self._ratio_value = ratio_value
+        self._concept_name = concept_name
+        self._concept_pos = concept_pos
         self._ratios_df: pd.Dataframe = pd.DataFrame()
+        self._ratios_df_long: pd.Dataframe = pd.DataFrame()
         reserved_vars: tuple[str, ...] = (
             concept_ratio,
             concept_num,
             concept_den,
             ratio_value,
+            concept_name,
+            concept_pos,
         )
         check: int = len(reserved_vars) - len(set(reserved_vars))
         if not check:
@@ -44,6 +65,10 @@ class CalcRatio:
     @property
     def ratios_df(self) -> pd.DataFrame:
         return self._ratios_df
+
+    @property
+    def ratios_df_long(self) -> pd.DataFrame:
+        return self._ratios_df_long
 
     @property
     def data(self) -> pd.DataFrame:

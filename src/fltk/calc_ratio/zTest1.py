@@ -14,17 +14,11 @@ data_sheet: str = "data1"
 
 ratio = CalcRatio(name="testRatioZ1")
 
-# print(ratio_path)
-# ratio_data = pd.read_excel(
-#     ratio_path,
-#     sheet_name=ratio_sheet,
-#     engine="openpyxl",
-#     engine_kwargs={"data_only": True},
-# )
-# ratio_data.info()
-
 ratio.load_ratios(ratio_path, sheet_nm=ratio_sheet)
 ratio.ratios_df.info()
+ratio.ratios_df_long.info()
+# print("ratios_df_long\n", ratio.ratios_df_long.head(30))
+
 
 raw_data = pd.read_excel(
     ratio_path,

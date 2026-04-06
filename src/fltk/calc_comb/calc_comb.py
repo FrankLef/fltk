@@ -30,6 +30,9 @@ class CalcComb:
             idx_from (str, optional): Name of the column with the source index used. It is recommended to keep the default value. Defaults to "idx_from".
             comb_coef (str, optional): Column of coefficients to use. It is recommended to keep the default value. Defaults to "comb_coef".
             comb_value (str, optional): Column of values to use. It is recommended to keep the default value. Defaults to "comb_value".
+
+        Raises:
+            ValueError: Duplicate names.
         """
         self._name = name
         self._idx_to = idx_to
