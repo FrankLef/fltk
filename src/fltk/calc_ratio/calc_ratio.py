@@ -6,11 +6,11 @@ from rich import print as rprint
 
 from . import calc_ratio_load_ratios as lr
 from . import calc_ratio_load_data as ld
-# from . import calc_comb_get_invalid_data as gid
-# from . import calc_comb_get_undetermined_data as gud
-# from . import calc_comb_get_valid_data as gvd
-# from . import calc_comb_calculate as calc
-# from . import calc_comb_add_calc as ac
+from . import calc_ratio_invalid_data as gid
+# from . import calc_ratio_undetermined_data as gud
+# from . import calc_ratio_valid_data as gvd
+# from . import calc_ratio_calculate as calc
+# from . import calc_ratio_add_calc as ac
 
 
 class CalcRatio:
@@ -143,8 +143,7 @@ class CalcRatio:
         self._data = data
 
     def get_invalid_data(self) -> None:
-        self._invalid_data: pd.DataFrame = pd.DataFrame()
-        # self._invalid_data: pd.DataFrame = gid.get_invalid_data(self)
+        self._invalid_data: pd.DataFrame = gid.get_invalid_data(self)
         # print(f"\ninvalid_data {self._invalid_data.shape}:\n", self._invalid_data)
 
     def get_undetermined_data(self) -> None:
