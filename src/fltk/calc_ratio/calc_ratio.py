@@ -50,7 +50,7 @@ class CalcRatio:
         self._concept_name = concept_name
         self._concept_pos = concept_pos
         self._ratio_value = ratio_value
-        self._value_num = value_den
+        self._value_num = value_num
         self._value_den = value_den
         self._ratios_df: pd.Dataframe = pd.DataFrame()
         self._ratios_df_long: pd.Dataframe = pd.DataFrame()
