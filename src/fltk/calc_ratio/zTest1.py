@@ -1,5 +1,6 @@
 import pandas as pd
 from pathlib import Path
+from datetime import datetime as dt
 
 # from rich.prompt import Confirm
 # from rich.console import Console
@@ -8,7 +9,8 @@ from fltk.calc_ratio.calc_ratio import CalcRatio
 
 fixtures_path = Path("C:/Users/Public/MyPy/Packages/fltk/tests/fixtures")
 ratio_path = fixtures_path.joinpath("ratio.xlsx")
-out_path = fixtures_path.joinpath("ratio_z1.xlsx")
+out_fn = f"ratio_z1_{dt.now().date().isoformat()}.xlsx"
+out_path = fixtures_path.joinpath(out_fn)
 ratio_sheet: str = "concepts_ratios"
 data_sheet: str = "data1"
 
@@ -38,6 +40,12 @@ print("\ndata:", ratio.data.shape)
 # ratio.data.info()
 
 ratio.fit()
+ratio.transform(is_cleaned=True)
 print("\nmerged_data:", ratio.merged_data.shape)
-
 print(ratio.merged_data.head(20))
+
+# Create the initial file
+print(f"Export calc_ratio to\n{out_path}")
+ratio.merged_data.to_excel(
+    out_path, sheet_name="final_data", index=False, engine="openpyxl"
+)

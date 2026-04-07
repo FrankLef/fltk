@@ -1,5 +1,6 @@
 import pandas as pd
 from pathlib import Path
+from datetime import datetime as dt
 
 # from rich.prompt import Confirm
 # from rich.console import Console
@@ -8,7 +9,8 @@ from fltk.calc_comb.calc_comb import CalcComb
 
 fixtures_path = Path("C:/Users/Public/MyPy/Packages/fltk/tests/fixtures")
 comb_path = fixtures_path.joinpath("comb.xlsx")
-out_path = fixtures_path.joinpath("comb_z1.xlsx")
+out_fn = f"ratio_z1_{dt.now().date().isoformat()}.xlsx"
+out_path = fixtures_path.joinpath(out_fn)
 idx_sheet: str = "rolly"
 data_sheet = "data1"
 newvalue_var = "rolly_amt"

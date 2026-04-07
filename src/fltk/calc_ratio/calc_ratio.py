@@ -8,10 +8,7 @@ from . import calc_ratio_load_ratios as lr
 from . import calc_ratio_load_data as ld
 from . import calc_ratio_merge_data as md
 from . import calc_ratio_invalid_data as gid
-# from . import calc_ratio_undetermined_data as gud
-# from . import calc_ratio_valid_data as gvd
-# from . import calc_ratio_calculate as calc
-# from . import calc_ratio_add_calc as ac
+from . import calc_ratio_calculate as calc
 
 
 class CalcRatio:
@@ -91,35 +88,24 @@ class CalcRatio:
     def invalid_data(self):
         return self._invalid_data
 
-    @property
-    def undetermined_data(self) -> pd.DataFrame:
-        return self._undetermined_data
-
-    @property
-    def valid_data(self) -> pd.DataFrame:
-        return self._valid_data
-
     def summary(self, verbose: bool = True) -> dict[str, int]:
         pass
         nrows_data = self._data.shape[0]
-        nrows_valid = self._valid_data.shape[0]
+        nrows_merged = self._merged_data.shape[0]
         nrows_invalid = self._invalid_data.shape[0]
-        nrows_undetermined = self._undetermined_data.shape[0]
         if verbose:
             msg: str = f"""
             Summary of {self._name}
             -------------------------
             Data: {nrows_data} rows
-            Valid data: {nrows_valid} rows
+            Merged data: {nrows_merged} rows
             Invalid data: {nrows_invalid} rows
-            Undetermined data: {nrows_undetermined} rows
             """
             rprint(msg)
             out = {
                 "data": nrows_data,
-                "valid": nrows_valid,
+                "merged": nrows_merged,
                 "invalid": nrows_invalid,
-                "undetermined": nrows_undetermined,
             }
         return out
 
@@ -161,50 +147,29 @@ class CalcRatio:
     def get_invalid_data(self) -> None:
         self._invalid_data: pd.DataFrame = gid.get_invalid_data(self)
 
-    def get_undetermined_data(self) -> None:
-        self._undetermined_data: pd.DataFrame = pd.DataFrame()
-
-    def fit_transform(self) -> None:
-        """Process the the fit and transform steps in a sequnce."""
+    def fit_transform(self, is_cleaned: bool) -> None:
+        """Process the the fit and transform steps in sequence."""
         self.fit()
-        self.transform()
+        self.transform(is_cleaned=is_cleaned)
 
     def fit(self) -> None:
-        """Fit the data. Find invalid and undetermined data."""
+        """Create merged data and flag invalid."""
         self.merge_data()
         self.get_invalid_data()
-        self.get_undetermined_data()
         rprint(f"{self._name} fit() completed.")
 
-    def transform(self) -> None:
+    def transform(self, is_cleaned: bool) -> None:
         """Do the actual calculations."""
-        self.get_valid_data()
         self.calculate()
-        self.add_calc()
+        if is_cleaned:
+            self.clean()
         rprint(f"{self._name} transform() completed.")
 
-    def get_valid_data(self) -> None:
-        self._valid_data: pd.DataFrame = pd.DataFrame()
-        # try:
-        #     self._valid_data = gvd.get_valid_data(self)
-        # except AttributeError as e:
-        #     msg: str = "Attribute Error: Are tou sure you ran fit()?"
-        #     e.add_note(msg)
-        #     raise
-
     def calculate(self) -> None:
-        pass
-        # self._valid_data = calc.calculate(self)
-        # breakpoint()
-        # print(
-        #     f"\ncalculated {self._valid_data.shape}:\n",
-        #     self._valid_data,
-        # )
+        self._merged_data = calc.calculate(self)
 
-    def add_calc(self) -> None:
-        pass
-        # self._data = ac.add_calc(self)
-        # print(
-        #     f"\nfinal data {self._data.shape}:\n",
-        #     self._data,
-        # )
+    def clean(self) -> None:
+        df = self._merged_data
+        cols = (self._ratio_value, self._value_num, self._value_den)
+        df.replace([float("inf"), float("-inf")], value=None, inplace=True)
+        df.dropna(subset=cols, inplace=True)
