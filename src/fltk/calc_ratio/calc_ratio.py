@@ -85,7 +85,7 @@ class CalcRatio:
         return self._merged_data
 
     @property
-    def invalid_data(self):
+    def invalid_data(self)-> pd.DataFrame:
         return self._invalid_data
 
     def summary(self, verbose: bool = True) -> dict[str, int]:
