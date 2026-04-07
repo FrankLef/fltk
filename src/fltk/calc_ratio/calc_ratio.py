@@ -20,7 +20,7 @@ class CalcRatio:
         concept_den: str = "concept_den",
         concept_name: str = "concept_name",
         concept_pos: str = "concept_pos",
-        ratio_value: str = "ratio_value",
+        value_ratio: str = "value_ratio",
         value_num: str = "value_num",
         value_den: str = "value_den",
     ):
@@ -31,9 +31,9 @@ class CalcRatio:
             concept_ratio (str, optional): Column of ratio names. Defaults to "concept_ratio".
             concept_num (str, optional): Column of concepts in numerator. Defaults to "concept_num".
             concept_den (str, optional): Column of concepts in denominator. Defaults to "concept_den".
-            ratio_value (str, optional): Column of calculated ratio value. Defaults to "ratio_value".
             concept_name (str, optional): Column of concept names in the long ratio data. Defaults to "concept_name".
             concept_pos (str, optional): Column of concept positions, i.e. 'num or 'den', in the long ratio data. Defaults to "concept_pos".
+            value_ratio (str, optional): Column of calculated ratio value. Defaults to "value_ratio".
             value_num (str, optional): Column of concept value used in merged data. Defaults to "value_num".
             value_den (str, optional): Column of concept value used in merged data. Defaults to "value_den".
 
@@ -46,7 +46,7 @@ class CalcRatio:
         self._concept_den = concept_den
         self._concept_name = concept_name
         self._concept_pos = concept_pos
-        self._ratio_value = ratio_value
+        self._value_ratio = value_ratio
         self._value_num = value_num
         self._value_den = value_den
         self._ratios_df: pd.Dataframe = pd.DataFrame()
@@ -57,7 +57,7 @@ class CalcRatio:
             concept_den,
             concept_name,
             concept_pos,
-            ratio_value,
+            value_ratio,
             value_num,
             value_den,
         )
@@ -170,6 +170,6 @@ class CalcRatio:
 
     def clean(self) -> None:
         df = self._merged_data
-        cols = (self._ratio_value, self._value_num, self._value_den)
+        cols = (self._value_ratio, self._value_num, self._value_den)
         df.replace([float("inf"), float("-inf")], value=None, inplace=True)
         df.dropna(subset=cols, inplace=True)

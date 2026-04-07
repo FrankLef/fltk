@@ -8,6 +8,5 @@ if TYPE_CHECKING:
 
 def calculate(inst: CalcRatio) -> pd.DataFrame:
     data = inst._merged_data
-    data[inst._ratio_value] = data[inst._value_num] / data[inst._value_den]
-    # breakpoint()
+    data[inst._value_ratio] = data[inst._value_num] / data[inst._value_den]
     return data
