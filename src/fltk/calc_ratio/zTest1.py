@@ -15,9 +15,10 @@ data_sheet: str = "data1"
 ratio = CalcRatio(name="testRatioZ1")
 
 ratio.load_ratios(ratio_path, sheet_nm=ratio_sheet)
-ratio.ratios_df.info()
-ratio.ratios_df_long.info()
-# print("ratios_df_long\n", ratio.ratios_df_long.head(30))
+print("\nratios_df:", ratio.ratios_df.shape)
+# ratio.ratios_df.info()
+print("\nratios_df_long:", ratio.ratios_df_long.shape)
+# ratio.ratios_df_long.info()
 
 
 raw_data = pd.read_excel(
@@ -33,4 +34,10 @@ ratio.load_data(
     value_var="amount",
     group_vars=group_vars,
 )
-ratio.data.info()
+print("\ndata:", ratio.data.shape)
+# ratio.data.info()
+
+ratio.fit()
+print("\nmerged_data:", ratio.merged_data.shape)
+
+print(ratio.merged_data.head(20))

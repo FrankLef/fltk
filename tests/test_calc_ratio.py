@@ -1,8 +1,9 @@
-"""Test the calccomb class."""
+"""Test the calc_ratio class."""
 
 import pytest
 from pathlib import Path
 import pandas as pd
+
 # from typing import Any
 from fltk.calc_ratio.calc_ratio import CalcRatio
 
@@ -40,7 +41,7 @@ def raw_data(data_xl) -> pd.DataFrame:
     return raw_data
 
 
-def test_load_ratios(ratio, ratios_xl: dict[str, Path|str]) -> None:
+def test_load_ratios(ratio, ratios_xl: dict[str, Path | str]) -> None:
     ratio.load_ratios(path=ratios_xl["path"], sheet_nm=ratios_xl["sheet"])
     assert ratio.ratios_df.shape == (6, 3)
 

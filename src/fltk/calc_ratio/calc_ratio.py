@@ -6,6 +6,7 @@ from rich import print as rprint
 
 from . import calc_ratio_load_ratios as lr
 from . import calc_ratio_load_data as ld
+from . import calc_ratio_merge_data as md
 from . import calc_ratio_invalid_data as gid
 # from . import calc_ratio_undetermined_data as gud
 # from . import calc_ratio_valid_data as gvd
@@ -20,9 +21,11 @@ class CalcRatio:
         concept_ratio: str = "concept_ratio",
         concept_num: str = "concept_num",
         concept_den: str = "concept_den",
-        ratio_value: str = "ratio_value",
         concept_name: str = "concept_name",
         concept_pos: str = "concept_pos",
+        ratio_value: str = "ratio_value",
+        value_num: str = "value_num",
+        value_den: str = "value_den",
     ):
         """Create object to calculate ratios of amounts.
 
@@ -34,6 +37,8 @@ class CalcRatio:
             ratio_value (str, optional): Column of calculated ratio value. Defaults to "ratio_value".
             concept_name (str, optional): Column of concept names in the long ratio data. Defaults to "concept_name".
             concept_pos (str, optional): Column of concept positions, i.e. 'num or 'den', in the long ratio data. Defaults to "concept_pos".
+            value_num (str, optional): Column of concept value used in merged data. Defaults to "value_num".
+            value_den (str, optional): Column of concept value used in merged data. Defaults to "value_den".
 
         Raises:
             ValueError: Duplicate names.
@@ -42,18 +47,22 @@ class CalcRatio:
         self._concept_ratio = concept_ratio
         self._concept_num = concept_num
         self._concept_den = concept_den
-        self._ratio_value = ratio_value
         self._concept_name = concept_name
         self._concept_pos = concept_pos
+        self._ratio_value = ratio_value
+        self._value_num = value_den
+        self._value_den = value_den
         self._ratios_df: pd.Dataframe = pd.DataFrame()
         self._ratios_df_long: pd.Dataframe = pd.DataFrame()
         reserved_vars: tuple[str, ...] = (
             concept_ratio,
             concept_num,
             concept_den,
-            ratio_value,
             concept_name,
             concept_pos,
+            ratio_value,
+            value_num,
+            value_den,
         )
         check: int = len(reserved_vars) - len(set(reserved_vars))
         if not check:
@@ -73,6 +82,10 @@ class CalcRatio:
     @property
     def data(self) -> pd.DataFrame:
         return self._data
+
+    @property
+    def merged_data(self) -> pd.DataFrame:
+        return self._merged_data
 
     @property
     def invalid_data(self):
@@ -142,17 +155,14 @@ class CalcRatio:
         )
         self._data = data
 
+    def merge_data(self) -> None:
+        self._merged_data: pd.DataFrame = md.merge_data(self)
+
     def get_invalid_data(self) -> None:
         self._invalid_data: pd.DataFrame = gid.get_invalid_data(self)
-        # print(f"\ninvalid_data {self._invalid_data.shape}:\n", self._invalid_data)
 
     def get_undetermined_data(self) -> None:
         self._undetermined_data: pd.DataFrame = pd.DataFrame()
-        # self._undetermined_data: pd.DataFrame = gud.get_undetermined_data(self)
-        # print(
-        #     f"\nundetermined_data {self._undetermined_data.shape}:\n",
-        #     self._undetermined_data,
-        # )
 
     def fit_transform(self) -> None:
         """Process the the fit and transform steps in a sequnce."""
@@ -161,6 +171,7 @@ class CalcRatio:
 
     def fit(self) -> None:
         """Fit the data. Find invalid and undetermined data."""
+        self.merge_data()
         self.get_invalid_data()
         self.get_undetermined_data()
         rprint(f"{self._name} fit() completed.")
