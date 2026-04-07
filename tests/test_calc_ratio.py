@@ -71,4 +71,15 @@ def init_ratio(ratio, ratios_xl, raw_data) -> CalcRatio:
 def test_init_ratio(init_ratio) -> None:
     assert init_ratio.ratios_df.shape == (6, 3)
     assert init_ratio.ratios_df_long.shape == (12, 3)
-    assert init_ratio.data.shape == (20, 5)
+    assert init_ratio.data.shape == (21, 5)
+
+
+def test_fit(init_ratio) -> None:
+    init_ratio.fit()
+    assert init_ratio.merged_data.shape == (30, 8)
+
+
+def test_transform(init_ratio) -> None:
+    init_ratio.fit()
+    init_ratio.transform(is_cleaned=True)
+    assert init_ratio.merged_data.shape == (18, 9)
