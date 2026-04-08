@@ -59,7 +59,7 @@ def data_vars() -> dict[str, Any]:
 
 def test_load_mat_xl(comb, qrtr_mat_xl: dict[str, Path]) -> None:
     comb.load_mat_from_xl(path=qrtr_mat_xl["path"], sheet_nm=qrtr_mat_xl["sheet"])
-    assert comb._comb_df.shape == (16, 3)
+    assert comb.combs_df.shape == (16, 3)
 
 
 def test_load_data(comb, raw_data, data_vars) -> None:
@@ -87,7 +87,7 @@ def init_comb(comb, qrtr_mat_xl, raw_data, data_vars) -> CalcComb:
 
 
 def test_init_comb(init_comb) -> None:
-    assert init_comb.comb_df.shape == (16, 3)
+    assert init_comb.combs_df.shape == (16, 3)
     assert init_comb.data.shape == (33, 7)
 
 
