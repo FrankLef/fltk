@@ -156,11 +156,11 @@ class CalcComb:
     def get_undetermined_data(self) -> None:
         self._undetermined_data: pd.DataFrame = gud.get_undetermined_data(self)
 
-    def fit_transform(self, is_merged: bool) -> None:
-        """Process the fit and transform steps in a sequnce.
+    def fit_transform(self, is_merged: bool = False) -> None:
+        """Process the fit and transform steps in a sequence.
 
         Args:
-            is_merged (bool): If True, merge the calculated data to the original dataframe. Otherwise, don't do it.
+            is_merged (bool, optional): If True, merge the calculated data to the original dataframe. Otherwise, don't do it. Defaults to False.
         """
         self.fit()
         self.transform(is_merged=is_merged)
@@ -171,11 +171,11 @@ class CalcComb:
         self.get_undetermined_data()
         rprint(f"{self._name} fit() completed.")
 
-    def transform(self, is_merged: bool) -> None:
+    def transform(self, is_merged: bool = False) -> None:
         """Do the calculations.
 
         Args:
-            is_merged (bool): If True, merge the calculated data to the original dataframe. Otherwise, don't do it.
+            is_merged (bool, optional): If True, merge the calculated data to the original dataframe. Otherwise, don't do it. Defaults to False.
         """
         self.get_valid_data()
         self.calculate()
