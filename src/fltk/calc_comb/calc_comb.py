@@ -106,7 +106,7 @@ class CalcComb:
         data: pd.DataFrame,
         idx_var: str,
         value_var: str,
-        group_vars: Iterable[str],
+        group_vars: list[str],
         newvalue_var: str,
     ) -> None:
         """Load the data for processing.
@@ -120,7 +120,7 @@ class CalcComb:
         """
         self._data_idx: str = ""
         self._data_value = ""
-        self._data_group: Iterable[str] = []
+        self._data_group: list[str] = []
         self._data_newvalue = ""
         self._data: pd.DataFrame = pd.DataFrame()
         self._data_keys: list[str] = []

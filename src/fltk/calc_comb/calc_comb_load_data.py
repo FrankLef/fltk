@@ -12,7 +12,7 @@ def load_data(
     data: pd.DataFrame,
     idx_var: str,
     value_var: str,
-    group_vars: Iterable[str],
+    group_vars: list[str],
     newvalue_var: str,
 ) -> pd.DataFrame:
     if inst._combs_df.empty:
