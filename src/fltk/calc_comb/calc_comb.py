@@ -5,6 +5,7 @@ from typing import Iterable
 from rich import print as rprint
 
 from . import calc_comb_load_mat_xl as lmx
+from . import calc_comb_load_combs as lc
 from . import calc_comb_load_data as ld
 from . import calc_comb_invalid_data as gid
 from . import calc_comb_undetermined_data as gud
@@ -92,6 +93,14 @@ class CalcComb:
             }
         return out
 
+    def load_combs(self, data: pd.DataFrame) -> None:
+        """Load combinations from a pandas dataframe.
+
+        Args:
+            data (pd.DataFrame): Dataframe of combinations.
+        """
+        lc.load_combs(self, data=data)
+
     def load_data(
         self,
         data: pd.DataFrame,
@@ -126,7 +135,7 @@ class CalcComb:
         self._data = data
 
     def load_mat_from_xl(self, path: Path, sheet_nm: str | None = None) -> None:
-        """Load difference matrix from Excel to a pandas dataframe.
+        """Load combinations from Excel to a pandas dataframe.
 
         Args:
             path (Path): Full filename of excel file.
