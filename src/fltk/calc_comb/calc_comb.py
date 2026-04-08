@@ -41,7 +41,7 @@ class CalcComb:
         self._comb_coef = comb_coef
         self._comb_value = comb_value
         self._comb_keys: list[str] = []
-        self._comb_df: pd.Dataframe = pd.DataFrame()
+        self._combs_df: pd.Dataframe = pd.DataFrame()
         reserved_vars: tuple[str, ...] = (idx_to, idx_from, comb_coef, comb_value)
         check: int = len(reserved_vars) - len(set(reserved_vars))
         if not check:
@@ -51,8 +51,8 @@ class CalcComb:
             raise ValueError(msg)
 
     @property
-    def comb_df(self) -> pd.DataFrame:
-        return self._comb_df
+    def combs_df(self) -> pd.DataFrame:
+        return self._combs_df
 
     @property
     def data(self) -> pd.DataFrame:

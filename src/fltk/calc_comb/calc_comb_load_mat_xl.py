@@ -26,7 +26,7 @@ def load_mat_from_xl(inst: CalcComb, path: Path, sheet_nm: str | None = None) ->
     )
     df.dropna(inplace=True)
     validate_comb_keys(inst, df)
-    inst._comb_df = df
+    inst._combs_df = df
 
 
 def validate_comb_keys(inst: CalcComb, comb_df: pd.Dataframe) -> None:

@@ -8,7 +8,7 @@ if TYPE_CHECKING:
 
 def load_combs(inst: CalcComb, data: pd.DataFrame) -> None:
     validate_comb_keys(inst, data)
-    inst._comb_df = data
+    inst._combs_df = data
 
 
 def validate_comb_keys(inst: CalcComb, comb_df: pd.Dataframe) -> None:
