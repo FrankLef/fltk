@@ -1,7 +1,6 @@
 from __future__ import annotations  # Must be at the top
 import pandas as pd
 from pathlib import Path
-from typing import Iterable
 from rich import print as rprint
 
 from . import calc_comb_load_mat_xl as lmx
@@ -57,8 +56,7 @@ class CalcComb:
 
     @property
     def data(self) -> pd.DataFrame:
-        """Original data. Augmented with calculations if `is_merged` flag is True.
-        """
+        """Original data. Augmented with calculations if `is_merged` flag is True."""
         return self._data
 
     @property
@@ -158,7 +156,7 @@ class CalcComb:
     def get_undetermined_data(self) -> None:
         self._undetermined_data: pd.DataFrame = gud.get_undetermined_data(self)
 
-    def fit_transform(self, is_merged:bool) -> None:
+    def fit_transform(self, is_merged: bool) -> None:
         """Process the fit and transform steps in a sequnce.
 
         Args:
@@ -173,7 +171,7 @@ class CalcComb:
         self.get_undetermined_data()
         rprint(f"{self._name} fit() completed.")
 
-    def transform(self, is_merged:bool) -> None:
+    def transform(self, is_merged: bool) -> None:
         """Do the calculations.
 
         Args:

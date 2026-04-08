@@ -1,5 +1,5 @@
 from __future__ import annotations  # Must be at the top
-from typing import TYPE_CHECKING, Iterable
+from typing import TYPE_CHECKING
 import pandas as pd
 from rich.prompt import Confirm
 
