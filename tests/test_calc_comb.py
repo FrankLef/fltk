@@ -104,7 +104,7 @@ def test_fit_comb(fit_comb) -> None:
 
 @pytest.fixture
 def transform_comb(fit_comb) -> CalcComb:
-    fit_comb.transform()
+    fit_comb.transform(is_merged=True)
     return fit_comb
 
 

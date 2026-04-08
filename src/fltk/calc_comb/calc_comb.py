@@ -52,25 +52,32 @@ class CalcComb:
 
     @property
     def combs_df(self) -> pd.DataFrame:
+        """Dataframe of combinations' specifications."""
         return self._combs_df
 
     @property
     def data(self) -> pd.DataFrame:
+        """Original data. Augmented with calculations if `is_merged` flag is True.
+        """
         return self._data
 
     @property
     def invalid_data(self):
+        """Dataframe of rows that cannot be calulated."""
         return self._invalid_data
 
     @property
     def undetermined_data(self) -> pd.DataFrame:
+        """Dataframe of rows not used in the calculations."""
         return self._undetermined_data
 
     @property
     def valid_data(self) -> pd.DataFrame:
+        """Dataframe of calulated data."""
         return self._valid_data
 
     def summary(self, verbose: bool = True) -> dict[str, int]:
+        nrows_combs = self._combs_df.shape[0]
         nrows_data = self._data.shape[0]
         nrows_valid = self._valid_data.shape[0]
         nrows_invalid = self._invalid_data.shape[0]
@@ -79,6 +86,7 @@ class CalcComb:
             msg: str = f"""
             Summary of {self._name}
             -------------------------
+            Combinations: {nrows_combs} rows
             Data: {nrows_data} rows
             Valid data: {nrows_valid} rows
             Invalid data: {nrows_invalid} rows
@@ -86,6 +94,7 @@ class CalcComb:
             """
             rprint(msg)
             out = {
+                "combinations": nrows_combs,
                 "data": nrows_data,
                 "valid": nrows_valid,
                 "invalid": nrows_invalid,
@@ -149,10 +158,14 @@ class CalcComb:
     def get_undetermined_data(self) -> None:
         self._undetermined_data: pd.DataFrame = gud.get_undetermined_data(self)
 
-    def fit_transform(self) -> None:
-        """Process the the fit and transform steps in a sequnce."""
+    def fit_transform(self, is_merged:bool) -> None:
+        """Process the fit and transform steps in a sequnce.
+
+        Args:
+            is_merged (bool): If True, merge the calculated data to the original dataframe. Otherwise, don't do it.
+        """
         self.fit()
-        self.transform()
+        self.transform(is_merged=is_merged)
 
     def fit(self) -> None:
         """Fit the data. Find invalid and undetermined data."""
@@ -160,11 +173,16 @@ class CalcComb:
         self.get_undetermined_data()
         rprint(f"{self._name} fit() completed.")
 
-    def transform(self) -> None:
-        """Do the actual calculations."""
+    def transform(self, is_merged:bool) -> None:
+        """Do the calculations.
+
+        Args:
+            is_merged (bool): If True, merge the calculated data to the original dataframe. Otherwise, don't do it.
+        """
         self.get_valid_data()
         self.calculate()
-        self.add_calc()
+        if is_merged:
+            self.add_calc()
         rprint(f"{self._name} transform() completed.")
 
     def get_valid_data(self) -> None:

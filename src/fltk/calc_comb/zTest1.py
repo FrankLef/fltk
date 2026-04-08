@@ -40,7 +40,7 @@ print("load_data")
 # breakpoint()
 
 comb.fit()
-comb.transform()
+comb.transform(is_merged=True)
 
 # print(f"\ninvalid data {comb.invalid_data.shape}:\n", comb.invalid_data)
 # print(
