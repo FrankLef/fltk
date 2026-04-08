@@ -15,7 +15,7 @@ def load_data(
     group_vars: Iterable[str],
     newvalue_var: str,
 ) -> pd.DataFrame:
-    if inst._comb_df.empty:
+    if inst._combs_df.empty:
         msg: str = "You must load the matrix before the data."
         raise ValueError(msg)
     inst._data_idx = idx_var

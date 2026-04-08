@@ -11,7 +11,7 @@ def get_undetermined_data(inst: CalcComb) -> pd.DataFrame:
     HOW_LEFT: Final[str] = "left"
     MERGE_BOTH: Final[str] = "both"
     left_df = inst._data
-    right_df = inst._comb_df
+    right_df = inst._combs_df
     left_on = inst._data_idx
     right_on = inst._idx_to
     merged_df = pd.merge(

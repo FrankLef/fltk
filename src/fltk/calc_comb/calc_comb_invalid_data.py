@@ -32,7 +32,7 @@ def find_invalid_items(inst: CalcComb, groups_df: pd.DataFrame) -> pd.DataFrame:
     raw_data = inst._data
     idx_from = inst._idx_from
     idx_to = inst._idx_to
-    idx_df = inst._comb_df
+    idx_df = inst._combs_df
     group_vars = inst._data_group
     invalid_items = []
     i = 0

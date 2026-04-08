@@ -32,7 +32,7 @@ def calculate(inst: CalcComb) -> pd.DataFrame:
 def get_sumdata(inst: CalcComb) -> pd.DataFrame:
     df = pd.merge(
         left=inst._data,
-        right=inst._comb_df,
+        right=inst._combs_df,
         left_on=inst._data_idx,
         right_on=inst._idx_from,
     )
