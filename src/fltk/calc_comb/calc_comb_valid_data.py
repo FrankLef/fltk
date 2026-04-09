@@ -1,5 +1,5 @@
 from __future__ import annotations  # Must be at the top
-from typing import TYPE_CHECKING, Final
+from typing import TYPE_CHECKING
 import pandas as pd
 
 if TYPE_CHECKING:
@@ -33,20 +33,16 @@ def get_valid_data(inst: CalcComb) -> pd.DataFrame:
 def clean_data(
     left_df: pd.DataFrame, right_df: pd.DataFrame, keys: list[str]
 ) -> pd.DataFrame:
-    MERGE: Final[str] = "_merge"
-    HOW_LEFT: Final[str] = "left"
-    LEFT_ONLY: Final[str] = "left_only"
     merged_df = pd.merge(
         left=left_df,
         right=right_df,
         left_on=keys,
         right_on=keys,
-        how=HOW_LEFT,
+        how="left",
         indicator=True,
     )
     if merged_df.empty:
-        msg = "The merged_df is empty."
-        raise AssertionError(msg)
-    clean_data_df = merged_df.loc[merged_df._merge == LEFT_ONLY]
-    clean_data_df.drop(columns=[MERGE], inplace=True)
+        raise AssertionError("The merged_df is empty.")
+    clean_data_df = merged_df.loc[merged_df._merge == "left_only"]
+    clean_data_df.drop(columns=["_merge"], inplace=True)
     return clean_data_df
