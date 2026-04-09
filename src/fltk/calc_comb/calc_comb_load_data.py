@@ -44,6 +44,13 @@ def validate_data_names(inst: CalcComb, data: pd.DataFrame, newvalue_var: str) -
         Please change these column names.
         """
         raise ValueError(msg)
+    args_vars = inst._data_group.copy()
+    args_vars.append(inst._data_idx)
+    args_vars.append(inst._data_value)
+    invalid_vars = [var for var in args_vars if var not in data_vars]
+    if invalid_vars:
+        msg=f"{invalid_vars} are not in columns of data."
+        raise KeyError(msg)
 
 
 def validate_data_keys(inst: CalcComb, data: pd.DataFrame) -> None:

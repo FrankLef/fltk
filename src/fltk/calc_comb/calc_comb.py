@@ -187,7 +187,7 @@ class CalcComb:
         try:
             self._valid_data = gvd.get_valid_data(self)
         except AttributeError as e:
-            msg: str = "Attribute Error: Are tou sure you ran fit()?"
+            msg: str = "Attribute Error: Are you sure you ran fit()?"
             e.add_note(msg)
             raise
 
