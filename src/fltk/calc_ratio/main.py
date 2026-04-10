@@ -1,7 +1,6 @@
 from __future__ import annotations  # Must be at the top
 import pandas as pd
 from pathlib import Path
-from typing import Iterable
 from rich import print as rprint
 
 from fltk.utils.value_cls import StrName
@@ -10,6 +9,7 @@ from . import init_vars as iv
 from . import load_ratios as lr
 from . import load_data as ld
 from . import merge_data as md
+from . import valid_data as gvd
 from . import invalid_data as gid
 from . import calculate as calc
 
@@ -60,22 +60,6 @@ class CalcRatio:
         self._ratio_vars: list[str] = []
         self._ratio_keys: list[str] = []
         iv._init_ratio_vars(self)
-        # reserved_vars: tuple[str, ...] = (
-        #     concept_ratio,
-        #     concept_num,
-        #     concept_den,
-        #     concept_name,
-        #     concept_pos,
-        #     value_ratio,
-        #     value_num,
-        #     value_den,
-        # )
-        # check: int = len(reserved_vars) - len(set(reserved_vars))
-        # if not check:
-        #     self._reserved_vars = reserved_vars
-        # else:
-        #     msg: str = f"There are {check} duplicated reserved vars."
-        #     raise ValueError(msg)
 
     @property
     def ratios_df(self) -> pd.DataFrame:
@@ -96,25 +80,39 @@ class CalcRatio:
     @property
     def invalid_data(self) -> pd.DataFrame:
         return self._invalid_data
+    
+    @property
+    def valid_data(self) -> pd.DataFrame:
+        return self._valid_data
+    
+    @property
+    def calc_data(self) -> pd.DataFrame:
+        return self._calc_data
 
     def summary(self, verbose: bool = True) -> dict[str, int]:
         pass
-        nrows_data = self._data.shape[0]
-        nrows_merged = self._merged_data.shape[0]
-        nrows_invalid = self._invalid_data.shape[0]
+        ndata = self._data.shape[0]
+        nmerged = self._merged_data.shape[0]
+        ninvalid = self._invalid_data.shape[0]
+        nvalid = self._valid_data.shape[0]
+        ncalc = self._calc_data.shape[0]
         if verbose:
             msg: str = f"""
             Summary of {self._name}
             -------------------------
-            Data: {nrows_data} rows
-            Merged data: {nrows_merged} rows
-            Invalid data: {nrows_invalid} rows
+            Data: {ndata} rows
+            Merged data: {nmerged} rows
+            Invalid data: {ninvalid} rows
+            Valid data: {nvalid} rows
+            Calculated data: {ncalc} rows
             """
             rprint(msg)
             out = {
-                "data": nrows_data,
-                "merged": nrows_merged,
-                "invalid": nrows_invalid,
+                "data": ndata,
+                "merged": nmerged,
+                "invalid": ninvalid,
+                "valid": nvalid,
+                "calculated": ncalc,
             }
         return out
 
@@ -126,7 +124,7 @@ class CalcRatio:
         data: pd.DataFrame,
         concept_var: str,
         value_var: str,
-        group_vars: Iterable[str],
+        group_vars: list[str],
     ) -> None:
         """Load the data for processing.
 
@@ -163,6 +161,10 @@ class CalcRatio:
 
     def get_invalid_data(self) -> None:
         self._invalid_data: pd.DataFrame = gid.get_invalid_data(self)
+    
+    def get_valid_data(self) -> None:
+        self._valid_data: pd.DataFrame = gvd.get_valid_data(self)
+    
 
     def fit_transform(self, is_cleaned: bool) -> None:
         """Process the the fit and transform steps in sequence."""
@@ -173,6 +175,7 @@ class CalcRatio:
         """Create merged data and flag invalid."""
         self.merge_data()
         self.get_invalid_data()
+        self.get_valid_data()
         rprint(f"{self._name} fit() completed.")
 
     def transform(self, is_cleaned: bool) -> None:
@@ -183,10 +186,10 @@ class CalcRatio:
         rprint(f"{self._name} transform() completed.")
 
     def calculate(self) -> None:
-        self._merged_data = calc.calculate(self)
+        self._calc_data = calc.calculate(self)
 
     def clean(self) -> None:
-        df = self._merged_data
+        df = self._calc_data
         cols = (self._value_ratio, self._value_num, self._value_den)
         df.replace([float("inf"), float("-inf")], value=None, inplace=True)
         df.dropna(subset=cols, inplace=True)

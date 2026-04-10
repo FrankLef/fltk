@@ -1,5 +1,5 @@
 from __future__ import annotations  # Must be at the top
-from typing import TYPE_CHECKING, Final
+from typing import TYPE_CHECKING
 import pandas as pd
 
 if TYPE_CHECKING:
@@ -7,23 +7,22 @@ if TYPE_CHECKING:
 
 
 def add_calc(inst: CalcComb) -> pd.DataFrame:
-    HOW: Final[str] = "left"
-    newvalue = inst._data_newvalue
-    keys: list[str] = inst._data_keys.copy()
-    right_cols = keys.copy()
+    newvalue=inst._data_newvalue
+    
+    left_on = inst._data_group.copy()
+    left_on.append(inst._data_idx)
+    left_df = inst._valid_data
+    
+    right_on = inst._data_group.copy()
+    right_on.append(inst._idx_to)
+    right_cols = right_on.copy()
     right_cols.append(newvalue)
-    left_df = inst._data
-    right_df = inst._valid_data[right_cols]
+    right_df = inst._calc_data[right_cols]
+    
     if newvalue in left_df.columns:
         left_df.drop(columns=[newvalue], inplace=True)
-    data = pd.merge(left=left_df, right=right_df, how=HOW, on=keys)
+    data = pd.merge(left=left_df, right=right_df, how="left", left_on=left_on, right_on=right_on)
     if data.empty:
-        msg: str = "`add_calc()` gave an empty dataframe. Are the keys ok?"
+        msg: str = "`add_calc()` returned an empty dataframe. Are the keys ok?"
         raise AssertionError(msg)
-
-    # nna = data[newvalue].isna().sum()
-    # ninvalid = inst._data.shape[0] - inst._valid_data.shape[0]
-    # if nna != ninvalid:
-    #     msg= f"The number of NaN is {nna}, it must be {ninvalid}."
-    #     raise AssertionError(msg)
     return data

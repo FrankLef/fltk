@@ -83,3 +83,4 @@ def test_transform(init_ratio) -> None:
     init_ratio.fit()
     init_ratio.transform(is_cleaned=True)
     assert init_ratio.merged_data.shape == (18, 9)
+    assert init_ratio.calc_data.shape == (18, 9)

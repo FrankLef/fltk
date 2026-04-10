@@ -44,10 +44,24 @@ ratio.transform(is_cleaned=True)
 print("\nmerged_data:", ratio.merged_data.shape)
 print(ratio.merged_data.head(20))
 
+ratio.summary()
+
 # Create the initial file
 print(f"Export calc_ratio to\n{out_path}")
 ratio.merged_data.to_excel(
     out_path, sheet_name="merged_data", index=False, engine="openpyxl"
 )
 
-ratio.summary()
+    # Create the initial file
+ratio.data.to_excel(out_path, sheet_name="data", index=False, engine="openpyxl")
+    # Append other sheets
+with pd.ExcelWriter(
+        out_path, mode="a", engine="openpyxl", if_sheet_exists="replace"
+    ) as writer:
+        dfs = {
+            "invalid_data": ratio.invalid_data,
+            "valid_data": ratio.valid_data,
+            "calc_data": ratio.calc_data,
+        }
+        for sheet_name, df in dfs.items():
+            df.to_excel(writer, sheet_name=sheet_name, index=False)

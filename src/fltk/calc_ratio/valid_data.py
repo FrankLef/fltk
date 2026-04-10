@@ -6,7 +6,6 @@ if TYPE_CHECKING:
     from .main import CalcRatio  # Only imported when checking types
 
 
-def calculate(inst: CalcRatio) -> pd.DataFrame:
-    data = inst._valid_data
-    data[inst._value_ratio] = data[inst._value_num] / data[inst._value_den]
-    return data
+def get_valid_data(inst: CalcRatio) -> pd.DataFrame:
+    # NOTE: Placeholder, to be used later. Should use merged_data as input.
+    return inst._merged_data

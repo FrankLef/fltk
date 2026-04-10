@@ -62,35 +62,50 @@ class CalcComb:
 
     @property
     def invalid_data(self):
-        """Dataframe of rows that cannot be calulated."""
+        """Dataframe of rows that cannot be calculated."""
         return self._invalid_data
+    
+    @property
+    def valid_data(self):
+        """Dataframe of rows without invalid rows. Used for be calulations."""
+        return self._valid_data
+    
+    @property
+    def calc_data(self):
+        """Dataframe of calculated results."""
+        return self._calc_data
 
     @property
     def output(self) -> pd.DataFrame:
-        """Dataframe of calulated data."""
+        """Dataframe of final output data."""
         return self._output
 
     def summary(self, verbose: bool = True) -> dict[str, int]:
-        nrows_combs = self._combs_df.shape[0]
-        nrows_data = self._data.shape[0]
-        nrows_output = self._output.shape[0]
-        nrows_invalid = self._invalid_data.shape[0]
+        ncombs = self._combs_df.shape[0]
+        ndata = self._data.shape[0]
+        ninvalid = self._invalid_data.shape[0]
+        nvalid = self._valid_data.shape[0]
+        ncalc = self._calc_data.shape[0]
+        noutput = self._output.shape[0]
         if verbose:
             msg: str = f"""
             Summary of {self._name}
             -------------------------
-            Combinations: {nrows_combs} rows
-            Data: {nrows_data} rows
-            Output data: {nrows_output} rows
-            Invalid data: {nrows_invalid} rows
+            Combinations: {ncombs} rows
+            Data: {ndata} rows
+            Invalid data: {ninvalid} rows
+            Valid data: {nvalid} rows
+            Calculated data: {ncalc} rows
+            Output data: {noutput} rows
             """
             rprint(msg)
             out = {
-                "combinations": nrows_combs,
-                "data": nrows_data,
-                "valid": nrows_output,
-                "invalid": nrows_invalid,
-                # "undetermined": nrows_undetermined,
+                "combinations": ncombs,
+                "data": ndata,
+                "invalid": ninvalid,
+                "valid": nvalid,
+                "calculated": ncalc,
+                "output": noutput
             }
         return out
 
@@ -168,6 +183,7 @@ class CalcComb:
     def fit(self) -> None:
         """Fit the data. Find invalid and undetermined data."""
         self.get_invalid_data()
+        self.get_valid_data()
         rprint(f"{self._name} fit() completed.")
 
     def transform(self, is_merged: bool = False) -> None:
@@ -176,22 +192,23 @@ class CalcComb:
         Args:
             is_merged (bool, optional): If True, merge the calculated data to the original dataframe. Otherwise, don't do it. Defaults to False.
         """
-        self.get_valid_data()
         self.calculate()
         if is_merged:
-            self.add_calc()
+            self._output=self.add_calc()
+        else:
+            self._output=self._calc_data
         rprint(f"{self._name} transform() completed.")
 
     def get_valid_data(self) -> None:
         try:
-            self._output = gvd.get_valid_data(self)
+            self._valid_data = gvd.get_valid_data(self)
         except AttributeError as e:
             msg: str = "Attribute Error: Are you sure you ran fit()?"
             e.add_note(msg)
             raise
 
     def calculate(self) -> None:
-        self._valid_data = calc.calculate(self)
+        self._calc_data = calc.calculate(self)
 
-    def add_calc(self) -> None:
-        self._data = ac.add_calc(self)
+    def add_calc(self) -> pd.DataFrame:
+        return ac.add_calc(self)

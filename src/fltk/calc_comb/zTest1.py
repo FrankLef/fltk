@@ -71,7 +71,8 @@ if add_to_xl:
     ) as writer:
         dfs = {
             "invalid_data": comb.invalid_data,
-            # "undetermined_data": comb.undetermined_data,
+            "valid_data": comb.valid_data,
+            "calc_data": comb.calc_data,
             "output": comb.output,
         }
         for sheet_name, df in dfs.items():
