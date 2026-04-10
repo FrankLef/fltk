@@ -4,7 +4,7 @@ import pandas as pd
 from rich.prompt import Confirm
 
 if TYPE_CHECKING:
-    from .calc_comb import CalcComb  # Only imported when checking types
+    from .main import CalcComb  # Only imported when checking types
 
 
 def load_data(

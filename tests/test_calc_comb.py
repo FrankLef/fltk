@@ -4,7 +4,7 @@ import pytest
 from pathlib import Path
 import pandas as pd
 from typing import Any
-from fltk.calc_comb.calc_comb import CalcComb
+from fltk.calc_comb.main import CalcComb
 
 
 @pytest.fixture

@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 import pandas as pd
 
 if TYPE_CHECKING:
-    from .calc_comb import CalcComb  # Only imported when checking types
+    from .main import CalcComb  # Only imported when checking types
 
 
 def calculate(inst: CalcComb) -> pd.DataFrame:

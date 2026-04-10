@@ -4,7 +4,7 @@ import pandas as pd
 from pathlib import Path
 
 if TYPE_CHECKING:
-    from .calc_comb import CalcComb  # Only imported when checking types
+    from .main import CalcComb  # Only imported when checking types
 
 
 def load_mat_from_xl(inst: CalcComb, path: Path, sheet_nm: str | None = None) -> pd.DataFrame:

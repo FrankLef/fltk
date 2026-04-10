@@ -5,14 +5,15 @@ import pandas as pd
 from pathlib import Path
 from rich import print as rprint
 
-from . import calc_comb_load_mat_xl as lmx
-from . import calc_comb_load_combs as lc
-from . import calc_comb_load_data as ld
-from . import calc_comb_invalid_data as gid
-from . import calc_comb_undetermined_data as gud
-from . import calc_comb_valid_data as gvd
-from . import calc_comb_calculate as calc
-from . import calc_comb_add_calc as ac
+from . import init_vars as iv
+from . import load_mat_xl as lmx
+from . import load_combs as lc
+from . import load_data as ld
+from . import invalid_data as gid
+from . import undetermined_data as gud
+from . import valid_data as gvd
+from . import calculate as calc
+from . import add_calc as ac
 
 
 class StrName(str):
@@ -58,25 +59,10 @@ class CalcComb:
         self._init_comb_vars()
 
     def _init_comb_vars(self) -> None:
-        comb_vars: list[str] = [
-            self._idx_to,
-            self._idx_from,
-            self._comb_coef,
-            self._comb_value,
-        ]
-        check: int = len(comb_vars) - len(set(comb_vars))
-        if check:
-            msg: str = f"There are {check} duplicated comb variables."
-            raise ValueError(msg)
-        self._comb_vars = comb_vars
-
-        self._comb_keys: list[str] = [self._idx_to, self._idx_from]
-        # NOTE: Used to exclude varibale in combs_df that are irrelevant. See load_combs.
-        self._comb_vars_base: list[str] = [
-            self._idx_to,
-            self._idx_from,
-            self._comb_coef,
-        ]
+        self._comb_vars: list[str] = []
+        self._comb_keys: list[str]=[]
+        self._comb_vars_base: list[str]=[]
+        iv._init_comb_vars(self)
 
     @property
     def combs_df(self) -> pd.DataFrame:
@@ -153,10 +139,10 @@ class CalcComb:
             group_vars (Iterable[str]): Columns making up a composite key.
             newvalue_var (str): New column for calculated values.
         """
-        self._data_idx= StrName(idx_var)
-        self._data_value = StrName(value_var)
+        self._data_idx= str(StrName(idx_var))
+        self._data_value = str(StrName(value_var))
         self._data_group = [str(StrName(var)) for var in group_vars]
-        self._data_newvalue = StrName(newvalue_var)
+        self._data_newvalue = str(StrName(newvalue_var))
         self._data: pd.DataFrame = pd.DataFrame()
         
         self._init_data_vars()
@@ -172,20 +158,9 @@ class CalcComb:
         self._data = data
         
     def _init_data_vars(self) -> None:
-        data_vars: list[Any] = [
-            self._data_idx,
-            self._data_value,
-            self._data_newvalue,
-        ] + self._data_group
-        check: int = len(data_vars) - len(set(data_vars))
-        if check:
-            msg: str = f"There are {check} duplicated data variables."
-            raise ValueError(msg)
-        self._data_vars = data_vars
-        
-        data_keys=self._data_group.copy()
-        data_keys.append(self._data_idx)
-        self._data_keys = data_keys
+        self._data_vars: list[str] = []
+        self._data_keys: list[str]=[]
+        iv._init_data_vars(self)
 
     def load_mat_from_xl(self, path: Path, sheet_nm: str | None = None) -> None:
         """Load combinations from Excel to a pandas dataframe.

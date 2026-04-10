@@ -4,7 +4,7 @@ import pandas as pd
 import copy
 
 if TYPE_CHECKING:
-    from .calc_comb import CalcComb  # Only imported when checking types
+    from .main import CalcComb  # Only imported when checking types
 
 
 def get_invalid_data(inst: CalcComb) -> pd.DataFrame:

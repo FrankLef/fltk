@@ -4,7 +4,7 @@ from datetime import datetime as dt
 
 # from rich.prompt import Confirm
 # from rich.console import Console
-from fltk.calc_comb.calc_comb import CalcComb
+from fltk.calc_comb.main import CalcComb
 
 
 fixtures_path = Path("C:/Users/Public/MyPy/Packages/fltk/tests/fixtures")
