@@ -7,18 +7,16 @@ if TYPE_CHECKING:
 
 
 def load_combs(inst: CalcComb, data: pd.DataFrame) -> None:
-    # sometimes combs_df is given with extra variables, e.g. pertype. Only keep the reserved_vars
-    # inst._comb_value is not in original combs
-    vars = [var for var in inst._reserved_vars if var != inst._comb_value]
-    inst._combs_df = data[vars]
-    validate_comb_keys(inst, inst._combs_df)
+    if data.empty:
+        raise ValueError("Combs dataframe is empty.")
+    validate_comb_keys(inst, combs_df=data)
+    # sometimes combs_df is given with extra variables, e.g. pertype. Only keep the reserved_vars. Will give an eexception if column does not exist.
+    inst._combs_df = data[inst._comb_vars_base]
 
 
-def validate_comb_keys(inst: CalcComb, comb_df: pd.Dataframe) -> None:
-    keys = [inst._idx_to, inst._idx_from]
-    unique_counts = comb_df[keys].value_counts()
-    ndistinct = len(unique_counts)
-    if ndistinct != comb_df.shape[0]:
+def validate_comb_keys(inst: CalcComb, combs_df: pd.Dataframe) -> None:
+    keys = inst._comb_keys
+    unique_counts = combs_df[keys].value_counts()
+    if len(unique_counts) != combs_df.shape[0]:
         msg: str = f"Combinations df has invalid keys {keys}."
         raise ValueError(msg)
-    inst._comb_keys = keys

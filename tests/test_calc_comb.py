@@ -57,6 +57,13 @@ def data_vars() -> dict[str, Any]:
     return out
 
 
+def test_err_name() -> CalcComb:
+    with pytest.raises(ValueError):
+        CalcComb(name=" ", idx_to="idx")
+    with pytest.raises(ValueError):
+        CalcComb(name="?", idx_to="idx")
+
+
 def test_load_mat_xl(comb, qrtr_mat_xl: dict[str, Path]) -> None:
     comb.load_mat_from_xl(path=qrtr_mat_xl["path"], sheet_nm=qrtr_mat_xl["sheet"])
     assert comb.combs_df.shape == (16, 3)

@@ -7,7 +7,7 @@ if TYPE_CHECKING:
     from .calc_comb import CalcComb  # Only imported when checking types
 
 
-def load_mat_from_xl(inst: CalcComb, path: Path, sheet_nm: str | None = None) -> None:
+def load_mat_from_xl(inst: CalcComb, path: Path, sheet_nm: str | None = None) -> pd.DataFrame:
     df = pd.read_excel(path, sheet_name=sheet_nm)
     top_name = df.columns[0]
     if inst._idx_to != top_name:
@@ -25,15 +25,4 @@ def load_mat_from_xl(inst: CalcComb, path: Path, sheet_nm: str | None = None) ->
         value_name=inst._comb_coef,
     )
     df.dropna(inplace=True)
-    validate_comb_keys(inst, df)
-    inst._combs_df = df
-
-
-def validate_comb_keys(inst: CalcComb, comb_df: pd.Dataframe) -> None:
-    keys = [inst._idx_to, inst._idx_from]
-    unique_counts = comb_df[keys].value_counts()
-    ndistinct = len(unique_counts)
-    if ndistinct != comb_df.shape[0]:
-        msg: str = f"Matrix has invalid keys {keys}."
-        raise ValueError(msg)
-    inst._comb_keys = keys
+    return df

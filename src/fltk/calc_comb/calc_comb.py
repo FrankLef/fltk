@@ -1,4 +1,6 @@
 from __future__ import annotations  # Must be at the top
+from typing import Any, Self
+import re
 import pandas as pd
 from pathlib import Path
 from rich import print as rprint
@@ -11,6 +13,19 @@ from . import calc_comb_undetermined_data as gud
 from . import calc_comb_valid_data as gvd
 from . import calc_comb_calculate as calc
 from . import calc_comb_add_calc as ac
+
+
+class StrName(str):
+    """Name must be non-empty and have valid characters."""
+
+    def __new__(cls, value: Any) -> Self:
+        val = str(value)
+        val = val.replace(" ", "")
+        if not val:
+            raise ValueError("Empty name.")
+        if re.search(r"\W", val):
+            raise ValueError(f"'{val}' is invalid for a name.")
+        return super().__new__(cls, val)
 
 
 class CalcComb:
@@ -34,20 +49,43 @@ class CalcComb:
         Raises:
             ValueError: Duplicate names.
         """
-        self._name = name
-        self._idx_to = idx_to
-        self._idx_from = idx_from
-        self._comb_coef = comb_coef
-        self._comb_value = comb_value
-        self._comb_keys: list[str] = []
-        self._combs_df: pd.Dataframe = pd.DataFrame()
-        reserved_vars: tuple[str, ...] = (idx_to, idx_from, comb_coef, comb_value)
-        check: int = len(reserved_vars) - len(set(reserved_vars))
+        self._name = StrName(name)
+        self._idx_to = StrName(idx_to)
+        self._idx_from = StrName(idx_from)
+        self._comb_coef = StrName(comb_coef)
+        self._comb_value = StrName(comb_value)
+        self._combs_df = pd.DataFrame()
+        self._init_comb_vars()
+        # reserved_vars: tuple[str, ...] = (idx_to, idx_from, comb_coef, comb_value)
+        # check: int = len(reserved_vars) - len(set(reserved_vars))
+        # if not check:
+        #     self._reserved_vars = reserved_vars
+        # else:
+        #     msg: str = f"There are {check} duplicated reserved vars."
+        #     raise ValueError(msg)
+
+    def _init_comb_vars(self) -> None:
+        comb_vars: list[str] = [
+            self._idx_to,
+            self._idx_from,
+            self._comb_coef,
+            self._comb_value,
+        ]
+        check: int = len(comb_vars) - len(set(comb_vars))
         if not check:
-            self._reserved_vars = reserved_vars
+            self._comb_vars = comb_vars
         else:
-            msg: str = f"There are {check} duplicated reserved vars."
+            msg: str = f"There are {check} duplicated comb variables."
             raise ValueError(msg)
+
+        self._comb_vars = comb_vars
+        self._comb_keys: list[str] = [self._idx_to, self._idx_from]
+        # NOTE: Used to exclude varibale in combs_df that are irrelevant. See load_combs.
+        self._comb_vars_base: list[str] = [
+            self._idx_to,
+            self._idx_from,
+            self._comb_coef,
+        ]
 
     @property
     def combs_df(self) -> pd.DataFrame:
@@ -147,7 +185,8 @@ class CalcComb:
             path (Path): Full filename of excel file.
             sheet_nm (str | None, optional): Name of excel sheet. Defaults to None.
         """
-        lmx.load_mat_from_xl(self, path=path, sheet_nm=sheet_nm)
+        df = lmx.load_mat_from_xl(self, path=path, sheet_nm=sheet_nm)
+        self.load_combs(df)
 
     def get_invalid_data(self) -> None:
         self._invalid_data: pd.DataFrame = gid.get_invalid_data(self)

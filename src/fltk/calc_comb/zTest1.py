@@ -57,16 +57,14 @@ if add_to_xl:
     msg: str = """
     If you use this, make sure to recalculate the spreadheet by adding any value and pressing F9 in Excel.
     Otherwise, next time, pandas will load the cell with formula as formula, not as value.
-    hThe best way to avoid this issue is to output the data in a different file.
+    The best way to avoid this issue is to output the data in a different file.
     Do you want to do it anyway?
     """
     # is_ok = Confirm.ask(prompt=msg)
     # if is_ok:
 
     # Create the initial file
-    comb.data.to_excel(
-        out_path, sheet_name="data", index=False, engine="openpyxl"
-    )
+    comb.data.to_excel(out_path, sheet_name="data", index=False, engine="openpyxl")
     # Append other sheets
     with pd.ExcelWriter(
         out_path, mode="a", engine="openpyxl", if_sheet_exists="replace"

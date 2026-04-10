@@ -28,7 +28,6 @@ def load_data(
 
 
 def validate_data_names(inst: CalcComb, data: pd.DataFrame, newvalue_var: str) -> None:
-    reserved_vars = inst._reserved_vars
     data_vars = data.columns.to_list()
     if newvalue_var in data_vars:
         msg: str = f"'{newvalue_var}' will be replaced with new calculations?"
@@ -37,7 +36,7 @@ def validate_data_names(inst: CalcComb, data: pd.DataFrame, newvalue_var: str) -
             raise ValueError(msg)
     else:
         data_vars.append(newvalue_var)
-    illegal_vars = [var for var in data_vars if var in reserved_vars]
+    illegal_vars = [var for var in data_vars if var in inst._comb_vars]
     if illegal_vars:
         msg = f"""
         {illegal_vars} are reserved names.
@@ -49,7 +48,7 @@ def validate_data_names(inst: CalcComb, data: pd.DataFrame, newvalue_var: str) -
     args_vars.append(inst._data_value)
     invalid_vars = [var for var in args_vars if var not in data_vars]
     if invalid_vars:
-        msg=f"{invalid_vars} are not in columns of data."
+        msg = f"{invalid_vars} are not in columns of data."
         raise KeyError(msg)
 
 
