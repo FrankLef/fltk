@@ -1,9 +1,9 @@
 from __future__ import annotations  # Must be at the top
-from typing import Any, Self
-import re
 import pandas as pd
 from pathlib import Path
 from rich import print as rprint
+
+from fltk.utils.value_cls import StrName
 
 from . import init_vars as iv
 from . import load_mat_xl as lmx
@@ -13,19 +13,6 @@ from . import invalid_data as gid
 from . import valid_data as gvd
 from . import calculate as calc
 from . import add_calc as ac
-
-
-class StrName(str):
-    """Name must be non-empty and have valid characters."""
-
-    def __new__(cls, value: Any) -> Self:
-        val = str(value)
-        val = val.replace(" ", "")
-        if not val:
-            raise ValueError("Empty name.")
-        if re.search(r"\W", val):
-            raise ValueError(f"'{val}' is invalid for a name.")
-        return super().__new__(cls, val)
 
 
 class CalcComb:

@@ -27,7 +27,7 @@ def _init_comb_vars(inst: CalcComb) -> None:
     ]
 
 
-def _init_data_vars(inst) -> None:
+def _init_data_vars(inst:CalcComb) -> None:
     data_vars: list[Any] = [
         inst._data_idx,
         inst._data_value,

@@ -4,6 +4,9 @@ from pathlib import Path
 from typing import Iterable
 from rich import print as rprint
 
+from fltk.utils.value_cls import StrName
+
+from . import init_vars as iv
 from . import load_ratios as lr
 from . import load_data as ld
 from . import merge_data as md
@@ -40,33 +43,39 @@ class CalcRatio:
         Raises:
             ValueError: Duplicate names.
         """
-        self._name = name
-        self._concept_ratio = concept_ratio
-        self._concept_num = concept_num
-        self._concept_den = concept_den
-        self._concept_name = concept_name
-        self._concept_pos = concept_pos
-        self._value_ratio = value_ratio
-        self._value_num = value_num
-        self._value_den = value_den
+        self._name = StrName(name)
+        self._concept_ratio = StrName(concept_ratio)
+        self._concept_num = StrName(concept_num)
+        self._concept_den = StrName(concept_den)
+        self._concept_name = StrName(concept_name)
+        self._concept_pos = StrName(concept_pos)
+        self._value_ratio = StrName(value_ratio)
+        self._value_num = StrName(value_num)
+        self._value_den = StrName(value_den)
         self._ratios_df: pd.Dataframe = pd.DataFrame()
         self._ratios_df_long: pd.Dataframe = pd.DataFrame()
-        reserved_vars: tuple[str, ...] = (
-            concept_ratio,
-            concept_num,
-            concept_den,
-            concept_name,
-            concept_pos,
-            value_ratio,
-            value_num,
-            value_den,
-        )
-        check: int = len(reserved_vars) - len(set(reserved_vars))
-        if not check:
-            self._reserved_vars = reserved_vars
-        else:
-            msg: str = f"There are {check} duplicated reserved vars."
-            raise ValueError(msg)
+        self._init_ratio_vars()
+
+    def _init_ratio_vars(self) -> None:
+        self._ratio_vars: list[str] = []
+        self._ratio_keys: list[str] = []
+        iv._init_ratio_vars(self)
+        # reserved_vars: tuple[str, ...] = (
+        #     concept_ratio,
+        #     concept_num,
+        #     concept_den,
+        #     concept_name,
+        #     concept_pos,
+        #     value_ratio,
+        #     value_num,
+        #     value_den,
+        # )
+        # check: int = len(reserved_vars) - len(set(reserved_vars))
+        # if not check:
+        #     self._reserved_vars = reserved_vars
+        # else:
+        #     msg: str = f"There are {check} duplicated reserved vars."
+        #     raise ValueError(msg)
 
     @property
     def ratios_df(self) -> pd.DataFrame:
@@ -127,11 +136,13 @@ class CalcRatio:
             value_var (str): Column with values used for calculations.
             group_vars (Iterable[str]): Columns making up a composite key.
         """
-        self._data_concept: str = ""
-        self._data_value = ""
-        self._data_group: Iterable[str] = []
+        self._data_concept = StrName(concept_var)
+        self._data_value = StrName(value_var)
+        self._data_group = [str(StrName(var)) for var in group_vars]
         self._data: pd.DataFrame = pd.DataFrame()
-        self._data_keys: list[str] = []
+        
+        self._init_data_vars()
+        
         data = ld.load_data(
             self,
             data=data,
@@ -140,6 +151,11 @@ class CalcRatio:
             group_vars=group_vars,
         )
         self._data = data
+        
+    def _init_data_vars(self) -> None:
+        self._data_vars: list[str] = []
+        self._data_keys: list[str] = []
+        iv._init_data_vars(self)
 
     def merge_data(self) -> None:
         self._merged_data: pd.DataFrame = md.merge_data(self)

@@ -47,7 +47,7 @@ print(ratio.merged_data.head(20))
 # Create the initial file
 print(f"Export calc_ratio to\n{out_path}")
 ratio.merged_data.to_excel(
-    out_path, sheet_name="final_data", index=False, engine="openpyxl"
+    out_path, sheet_name="merged_data", index=False, engine="openpyxl"
 )
 
 ratio.summary()

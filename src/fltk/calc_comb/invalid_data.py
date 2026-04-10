@@ -94,29 +94,27 @@ def create_invalid_df(
 
 def clean_invalid_data(inst: CalcComb, invalid_data: pd.DataFrame) -> pd.DataFrame:
     MERGE: Final[str] = "_merge"
-    HOW_LEFT: Final[str] = "left"
-    MERGE_BOTH: Final[str] = "both"
     left_df = invalid_data
     invalid_data.drop(columns=MERGE, inplace=True)
     right_df = inst._data[inst._data_keys]
-    idx_keys = list(inst._data_group)
+    idx_keys = inst._data_group.copy()
     idx_keys.append(inst._idx_to)
     left_on = idx_keys
     # NOTE: redo data keys to ensure they have same ordering as idx_keys
-    data_keys = list(inst._data_group)
+    data_keys = inst._data_group.copy()
     data_keys.append(inst._data_idx)
     right_on = data_keys
     merged_df = pd.merge(
-        left_df,
-        right_df,
+        left=left_df,
+        right=right_df,
         left_on=left_on,
         right_on=right_on,
-        how=HOW_LEFT,
+        how="left",
         indicator=True,
     )
     if merged_df.empty:
         msg = "The merged_df is empty."
         raise AssertionError(msg)
-    clean_invalid_data = merged_df.loc[merged_df[MERGE] == MERGE_BOTH]
+    clean_invalid_data = merged_df.loc[merged_df[MERGE] == "both"]
     clean_invalid_data.drop(columns=[MERGE], inplace=True)
     return clean_invalid_data

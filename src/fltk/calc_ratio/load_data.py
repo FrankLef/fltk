@@ -1,5 +1,5 @@
 from __future__ import annotations  # Must be at the top
-from typing import TYPE_CHECKING, Iterable
+from typing import TYPE_CHECKING
 import pandas as pd
 
 if TYPE_CHECKING:
@@ -11,7 +11,7 @@ def load_data(
     data: pd.DataFrame,
     concept_var: str,
     value_var: str,
-    group_vars: Iterable[str],
+    group_vars: list[str],
 ) -> pd.DataFrame:
     if inst._ratios_df.empty:
         msg: str = "You must load the ratio definitions before the data."
@@ -25,9 +25,8 @@ def load_data(
 
 
 def validate_data_names(inst: CalcRatio, data: pd.DataFrame) -> None:
-    reserved_vars = inst._reserved_vars
     data_vars = data.columns.to_list()
-    illegal_vars = [var for var in data_vars if var in reserved_vars]
+    illegal_vars = [var for var in data_vars if var in inst._ratio_vars]
     if illegal_vars:
         msg = f"""
         {illegal_vars} are reserved names.
@@ -37,8 +36,7 @@ def validate_data_names(inst: CalcRatio, data: pd.DataFrame) -> None:
 
 
 def validate_data_keys(inst: CalcRatio, data: pd.DataFrame) -> None:
-    keys: list[str] = list(inst._data_group)
-    keys.append(inst._data_concept)
+    keys=inst._data_keys
     unique_counts = data[keys].value_counts()
     ndistinct = len(unique_counts)
     if ndistinct != data.shape[0]:

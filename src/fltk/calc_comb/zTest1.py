@@ -72,7 +72,7 @@ if add_to_xl:
         dfs = {
             "invalid_data": comb.invalid_data,
             # "undetermined_data": comb.undetermined_data,
-            "valid_data": comb.output,
+            "output": comb.output,
         }
         for sheet_name, df in dfs.items():
             df.to_excel(writer, sheet_name=sheet_name, index=False)
