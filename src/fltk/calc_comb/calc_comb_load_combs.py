@@ -19,4 +19,4 @@ def validate_comb_keys(inst: CalcComb, combs_df: pd.Dataframe) -> None:
     unique_counts = combs_df[keys].value_counts()
     if len(unique_counts) != combs_df.shape[0]:
         msg: str = f"Combinations df has invalid keys {keys}."
-        raise ValueError(msg)
+        raise KeyError(msg)

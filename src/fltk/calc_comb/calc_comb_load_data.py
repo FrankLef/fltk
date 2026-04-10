@@ -28,36 +28,32 @@ def load_data(
 
 
 def validate_data_names(inst: CalcComb, data: pd.DataFrame, newvalue_var: str) -> None:
-    data_vars = data.columns.to_list()
-    if newvalue_var in data_vars:
+    cols = data.columns.to_list()
+    if newvalue_var in cols:
         msg: str = f"'{newvalue_var}' will be replaced with new calculations?"
         if not Confirm.ask(msg, default=True):
             msg = f"Cancelled by user because of '{newvalue_var}'."
             raise ValueError(msg)
     else:
-        data_vars.append(newvalue_var)
-    illegal_vars = [var for var in data_vars if var in inst._comb_vars]
+        cols.append(newvalue_var)
+    illegal_vars = [var for var in cols if var in inst._comb_vars]
     if illegal_vars:
         msg = f"""
         {illegal_vars} are reserved names.
         Please change these column names.
         """
         raise ValueError(msg)
-    args_vars = inst._data_group.copy()
-    args_vars.append(inst._data_idx)
-    args_vars.append(inst._data_value)
-    invalid_vars = [var for var in args_vars if var not in data_vars]
+    
+    invalid_vars = [var for var in inst._data_vars if var not in cols]
     if invalid_vars:
-        msg = f"{invalid_vars} are not in columns of data."
+        msg = f"{invalid_vars} are not in data columns."
         raise KeyError(msg)
 
 
 def validate_data_keys(inst: CalcComb, data: pd.DataFrame) -> None:
-    keys: list[str] = list(inst._data_group)
-    keys.append(inst._data_idx)
+    keys = inst._data_keys
     unique_counts = data[keys].value_counts()
     ndistinct = len(unique_counts)
     if ndistinct != data.shape[0]:
         msg: str = f"Data has invalid keys {keys}."
-        raise ValueError(msg)
-    inst._data_keys = keys
+        raise KeyError(msg)
