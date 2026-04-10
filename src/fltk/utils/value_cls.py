@@ -9,7 +9,8 @@ class StrName(str):
         val = str(value)
         val = val.replace(" ", "")
         if not val:
-            raise ValueError("Empty name.")
-        if re.search(r"\W", val):
-            raise ValueError(f"'{val}' is invalid for a name.")
+            raise ValueError("Empty name not allowed.")
+        check = re.search(r"\W", string=val,flags=re.IGNORECASE)
+        if check:
+            raise ValueError(f"'{val}' not an allowed name.")
         return super().__new__(cls, val)
