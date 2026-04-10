@@ -138,6 +138,7 @@ class CalcComb:
         self._data = data
 
     def _init_data_vars(self) -> None:
+        """Initialize the variables."""
         self._data_vars: list[str] = []
         self._data_keys: list[str] = []
         iv._init_data_vars(self)

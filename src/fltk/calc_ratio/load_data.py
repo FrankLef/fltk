@@ -36,7 +36,7 @@ def validate_data_names(inst: CalcRatio, data: pd.DataFrame) -> None:
 
 
 def validate_data_keys(inst: CalcRatio, data: pd.DataFrame) -> None:
-    keys=inst._data_keys
+    keys = inst._data_keys
     unique_counts = data[keys].value_counts()
     ndistinct = len(unique_counts)
     if ndistinct != data.shape[0]:

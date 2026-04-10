@@ -31,7 +31,7 @@ def find_invalid_items(inst: CalcComb, groups_df: pd.DataFrame) -> pd.DataFrame:
     idx_df = inst._combs_df
     group_vars = inst._data_group
     invalid_items = []
-    i = 0
+    i: int = 0
     for ndx, row in groups_df.iterrows():
         groups_dict = row.to_dict()
         left_df = pd.DataFrame([groups_dict])

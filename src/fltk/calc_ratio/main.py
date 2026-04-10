@@ -140,9 +140,9 @@ class CalcRatio:
         self._data_value = StrName(value_var)
         self._data_group = [str(StrName(var)) for var in group_vars]
         self._data: pd.DataFrame = pd.DataFrame()
-        
+
         self._init_data_vars()
-        
+
         data = ld.load_data(
             self,
             data=data,
@@ -151,8 +151,9 @@ class CalcRatio:
             group_vars=group_vars,
         )
         self._data = data
-        
+
     def _init_data_vars(self) -> None:
+        """Initialize the variables."""
         self._data_vars: list[str] = []
         self._data_keys: list[str] = []
         iv._init_data_vars(self)

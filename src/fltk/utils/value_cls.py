@@ -1,6 +1,7 @@
 from typing import Any, Self
 import re
 
+
 class StrName(str):
     """Name must be non-empty and have valid characters."""
 
