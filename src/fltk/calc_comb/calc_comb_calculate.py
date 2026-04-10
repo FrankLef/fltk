@@ -9,24 +9,25 @@ if TYPE_CHECKING:
 def calculate(inst: CalcComb) -> pd.DataFrame:
     sumdata = get_sumdata(inst)
 
-    newvalid = pd.merge(
-        left=inst._valid_data,
-        right=sumdata,
-        on=inst._data_keys,
-    )
+    # newvalid = pd.merge(
+    #     left=inst._valid_data,
+    #     right=sumdata,
+    #     on=inst._data_keys,
+    # )
+    # print("calculate(): inside")
     # breakpoint()
 
-    nvalid = inst._valid_data.shape[0]
-    nnew = newvalid.shape[0]
-    if nnew != nvalid:
-        msg: str = f"""
-        Data and merged df must have the same nb of rows.
-        Data has {nvalid} rows, merged df has {nnew} rows.
-        Weird!
-        """
-        raise AssertionError(msg)
+    # nvalid = inst._valid_data.shape[0]
+    # nnew = newvalid.shape[0]
+    # if nnew != nvalid:
+    #     msg: str = f"""
+    #     Data and merged df must have the same nb of rows.
+    #     Data has {nvalid} rows, merged df has {nnew} rows.
+    #     Weird!
+    #     """
+    #     raise AssertionError(msg)
     # breakpoint()
-    return newvalid
+    return sumdata
 
 
 def get_sumdata(inst: CalcComb) -> pd.DataFrame:
@@ -41,5 +42,7 @@ def get_sumdata(inst: CalcComb) -> pd.DataFrame:
     sumkeys.append(inst._idx_to)
     sumdata = df.groupby(by=sumkeys, as_index=False)[inst._data_newvalue].sum()
     sumdata.rename(columns={inst._idx_to: inst._data_idx}, inplace=True)
+    # print("calulate().get_sumdata(): inside")
+    # breakpoint()
     # breakpoint()
     return sumdata

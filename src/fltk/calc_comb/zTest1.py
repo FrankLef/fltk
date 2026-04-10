@@ -9,7 +9,7 @@ from fltk.calc_comb.calc_comb import CalcComb
 
 fixtures_path = Path("C:/Users/Public/MyPy/Packages/fltk/tests/fixtures")
 comb_path = fixtures_path.joinpath("comb.xlsx")
-out_fn = f"ratio_z1_{dt.now().date().isoformat()}.xlsx"
+out_fn = f"comb_z1_{dt.now().date().isoformat()}.xlsx"
 out_path = fixtures_path.joinpath(out_fn)
 idx_sheet: str = "rolly"
 data_sheet = "data1"
@@ -17,7 +17,7 @@ newvalue_var = "rolly_amt"
 
 comb = CalcComb(name="testCombZ1", idx_to="idx")
 comb.load_mat_from_xl(comb_path, sheet_nm=idx_sheet)
-comb.comb_df.info()
+comb.combs_df.info()
 
 print(comb_path)
 raw_data = pd.read_excel(
@@ -51,7 +51,7 @@ comb.transform(is_merged=True)
 
 # print(f"\nfinal data {comb.data.shape}:\n", comb.data)
 
-add_to_xl: bool = False
+add_to_xl: bool = True
 if add_to_xl:
     # IMPORTANT INFO FOR USER:
     msg: str = """
@@ -65,7 +65,7 @@ if add_to_xl:
 
     # Create the initial file
     comb.data.to_excel(
-        out_path, sheet_name="final_data", index=False, engine="openpyxl"
+        out_path, sheet_name="data", index=False, engine="openpyxl"
     )
     # Append other sheets
     with pd.ExcelWriter(
@@ -73,7 +73,7 @@ if add_to_xl:
     ) as writer:
         dfs = {
             "invalid_data": comb.invalid_data,
-            "undetermined_data": comb.undetermined_data,
+            # "undetermined_data": comb.undetermined_data,
             "valid_data": comb.valid_data,
         }
         for sheet_name, df in dfs.items():

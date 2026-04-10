@@ -79,7 +79,7 @@ class CalcComb:
         nrows_data = self._data.shape[0]
         nrows_valid = self._valid_data.shape[0]
         nrows_invalid = self._invalid_data.shape[0]
-        nrows_undetermined = self._undetermined_data.shape[0]
+        # nrows_undetermined = self._undetermined_data.shape[0]
         if verbose:
             msg: str = f"""
             Summary of {self._name}
@@ -88,7 +88,6 @@ class CalcComb:
             Data: {nrows_data} rows
             Valid data: {nrows_valid} rows
             Invalid data: {nrows_invalid} rows
-            Undetermined data: {nrows_undetermined} rows
             """
             rprint(msg)
             out = {
@@ -96,7 +95,7 @@ class CalcComb:
                 "data": nrows_data,
                 "valid": nrows_valid,
                 "invalid": nrows_invalid,
-                "undetermined": nrows_undetermined,
+                # "undetermined": nrows_undetermined,
             }
         return out
 
@@ -168,7 +167,7 @@ class CalcComb:
     def fit(self) -> None:
         """Fit the data. Find invalid and undetermined data."""
         self.get_invalid_data()
-        self.get_undetermined_data()
+        # self.get_undetermined_data()
         rprint(f"{self._name} fit() completed.")
 
     def transform(self, is_merged: bool = False) -> None:
@@ -178,6 +177,8 @@ class CalcComb:
             is_merged (bool, optional): If True, merge the calculated data to the original dataframe. Otherwise, don't do it. Defaults to False.
         """
         self.get_valid_data()
+        # print("transform()")
+        # breakpoint()
         self.calculate()
         if is_merged:
             self.add_calc()
@@ -192,7 +193,11 @@ class CalcComb:
             raise
 
     def calculate(self) -> None:
+        # print("calculate(): before")
+        # breakpoint()
         self._valid_data = calc.calculate(self)
+        # print("calculate(): after")
+        # breakpoint()
 
     def add_calc(self) -> None:
         self._data = ac.add_calc(self)

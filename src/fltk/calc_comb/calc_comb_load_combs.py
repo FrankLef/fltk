@@ -7,8 +7,11 @@ if TYPE_CHECKING:
 
 
 def load_combs(inst: CalcComb, data: pd.DataFrame) -> None:
-    validate_comb_keys(inst, data)
-    inst._combs_df = data
+    # sometimes combs_df is given with extra variables, e.g. pertype. Only keep the reserved_vars
+    # inst._comb_value is not in original combs
+    vars = [var for var in inst._reserved_vars if var != inst._comb_value]
+    inst._combs_df = data[vars]
+    validate_comb_keys(inst, inst._combs_df)
 
 
 def validate_comb_keys(inst: CalcComb, comb_df: pd.Dataframe) -> None:

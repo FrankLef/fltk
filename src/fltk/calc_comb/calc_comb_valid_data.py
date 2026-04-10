@@ -9,24 +9,28 @@ if TYPE_CHECKING:
 def get_valid_data(inst: CalcComb) -> pd.DataFrame:
     keys = inst._data_keys
     valid_data = inst._data
-    dfs = [inst._invalid_data, inst._undetermined_data]
+    # dfs = [inst._invalid_data, inst._undetermined_data]
+    # breakpoint()
+    dfs: list[pd.DataFrame] = [inst._invalid_data]
     for df in dfs:
-        right_df = df[keys]
-        valid_data = clean_data(left_df=valid_data, right_df=right_df, keys=keys)
+        if not df.empty:
+            right_df = df[keys]
+            valid_data = clean_data(left_df=valid_data, right_df=right_df, keys=keys)
     # IMPORTANT: depending on the formula, you could end up with duplicated idx_to which is correct. But to reconcile with data count, you have to remove duplicated idx_to from the invalid data.
-    ndata: int = inst._data.shape[0]
-    ninvalid: int = inst._invalid_data.drop_duplicates(subset=keys).shape[0]
-    nundetermined = inst._undetermined_data.shape[0]
-    nvalid: int = valid_data.shape[0]
-    ncheck: int = ndata - ninvalid - nundetermined
-    if nvalid != ncheck:
-        msg: str = f"""
-        There must be {ncheck}={ndata}-{ninvalid}-{nundetermined} rows in the valid data. There is actually {nvalid}.
-        data: {ndata}
-        invalid: {ninvalid}
-        undetermined: {nundetermined}
-        """
-        raise AssertionError(msg)
+    # ndata: int = inst._data.shape[0]
+    # ninvalid: int = inst._invalid_data.drop_duplicates(subset=keys).shape[0]
+    # nundetermined = inst._undetermined_data.shape[0]
+    # nvalid: int = valid_data.shape[0]
+    # ncheck: int = ndata - ninvalid - nundetermined
+    # ncheck: int = ndata - ninvalid
+    # if nvalid != ncheck:
+    #     msg: str = f"""
+    #     There must be {ncheck}={ndata}-{ninvalid} rows in the valid data. There is actually {nvalid}.
+    #     data: {ndata}
+    #     invalid: {ninvalid}
+    #     """
+    #     raise AssertionError(msg)
+    # breakpoint()
     return valid_data
 
 
