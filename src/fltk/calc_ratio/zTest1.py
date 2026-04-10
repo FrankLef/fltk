@@ -4,7 +4,7 @@ from datetime import datetime as dt
 
 # from rich.prompt import Confirm
 # from rich.console import Console
-from fltk.calc_ratio.calc_ratio import CalcRatio
+from fltk.calc_ratio.main import CalcRatio
 
 
 fixtures_path = Path("C:/Users/Public/MyPy/Packages/fltk/tests/fixtures")

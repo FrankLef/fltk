@@ -7,7 +7,9 @@ if TYPE_CHECKING:
     from .main import CalcComb  # Only imported when checking types
 
 
-def load_mat_from_xl(inst: CalcComb, path: Path, sheet_nm: str | None = None) -> pd.DataFrame:
+def load_mat_from_xl(
+    inst: CalcComb, path: Path, sheet_nm: str | None = None
+) -> pd.DataFrame:
     df = pd.read_excel(path, sheet_name=sheet_nm)
     top_name = df.columns[0]
     if inst._idx_to != top_name:

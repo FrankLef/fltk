@@ -4,11 +4,11 @@ from pathlib import Path
 from typing import Iterable
 from rich import print as rprint
 
-from . import calc_ratio_load_ratios as lr
-from . import calc_ratio_load_data as ld
-from . import calc_ratio_merge_data as md
-from . import calc_ratio_invalid_data as gid
-from . import calc_ratio_calculate as calc
+from . import load_ratios as lr
+from . import load_data as ld
+from . import merge_data as md
+from . import invalid_data as gid
+from . import calculate as calc
 
 
 class CalcRatio:

@@ -10,7 +10,6 @@ from . import load_mat_xl as lmx
 from . import load_combs as lc
 from . import load_data as ld
 from . import invalid_data as gid
-from . import undetermined_data as gud
 from . import valid_data as gvd
 from . import calculate as calc
 from . import add_calc as ac
@@ -60,8 +59,8 @@ class CalcComb:
 
     def _init_comb_vars(self) -> None:
         self._comb_vars: list[str] = []
-        self._comb_keys: list[str]=[]
-        self._comb_vars_base: list[str]=[]
+        self._comb_keys: list[str] = []
+        self._comb_vars_base: list[str] = []
         iv._init_comb_vars(self)
 
     @property
@@ -80,35 +79,29 @@ class CalcComb:
         return self._invalid_data
 
     @property
-    def undetermined_data(self) -> pd.DataFrame:
-        """Dataframe of rows not used in the calculations."""
-        return self._undetermined_data
-
-    @property
-    def valid_data(self) -> pd.DataFrame:
+    def output(self) -> pd.DataFrame:
         """Dataframe of calulated data."""
-        return self._valid_data
+        return self._output
 
     def summary(self, verbose: bool = True) -> dict[str, int]:
         nrows_combs = self._combs_df.shape[0]
         nrows_data = self._data.shape[0]
-        nrows_valid = self._valid_data.shape[0]
+        nrows_output = self._output.shape[0]
         nrows_invalid = self._invalid_data.shape[0]
-        # nrows_undetermined = self._undetermined_data.shape[0]
         if verbose:
             msg: str = f"""
             Summary of {self._name}
             -------------------------
             Combinations: {nrows_combs} rows
             Data: {nrows_data} rows
-            Valid data: {nrows_valid} rows
+            Output data: {nrows_output} rows
             Invalid data: {nrows_invalid} rows
             """
             rprint(msg)
             out = {
                 "combinations": nrows_combs,
                 "data": nrows_data,
-                "valid": nrows_valid,
+                "valid": nrows_output,
                 "invalid": nrows_invalid,
                 # "undetermined": nrows_undetermined,
             }
@@ -139,14 +132,14 @@ class CalcComb:
             group_vars (Iterable[str]): Columns making up a composite key.
             newvalue_var (str): New column for calculated values.
         """
-        self._data_idx= str(StrName(idx_var))
+        self._data_idx = str(StrName(idx_var))
         self._data_value = str(StrName(value_var))
         self._data_group = [str(StrName(var)) for var in group_vars]
         self._data_newvalue = str(StrName(newvalue_var))
         self._data: pd.DataFrame = pd.DataFrame()
-        
+
         self._init_data_vars()
-        
+
         data = ld.load_data(
             self,
             data=data,
@@ -156,10 +149,10 @@ class CalcComb:
             newvalue_var=newvalue_var,
         )
         self._data = data
-        
+
     def _init_data_vars(self) -> None:
         self._data_vars: list[str] = []
-        self._data_keys: list[str]=[]
+        self._data_keys: list[str] = []
         iv._init_data_vars(self)
 
     def load_mat_from_xl(self, path: Path, sheet_nm: str | None = None) -> None:
@@ -175,9 +168,6 @@ class CalcComb:
     def get_invalid_data(self) -> None:
         self._invalid_data: pd.DataFrame = gid.get_invalid_data(self)
 
-    def get_undetermined_data(self) -> None:
-        self._undetermined_data: pd.DataFrame = gud.get_undetermined_data(self)
-
     def fit_transform(self, is_merged: bool = False) -> None:
         """Process the fit and transform steps in a sequence.
 
@@ -190,7 +180,6 @@ class CalcComb:
     def fit(self) -> None:
         """Fit the data. Find invalid and undetermined data."""
         self.get_invalid_data()
-        # self.get_undetermined_data()
         rprint(f"{self._name} fit() completed.")
 
     def transform(self, is_merged: bool = False) -> None:
@@ -200,8 +189,6 @@ class CalcComb:
             is_merged (bool, optional): If True, merge the calculated data to the original dataframe. Otherwise, don't do it. Defaults to False.
         """
         self.get_valid_data()
-        # print("transform()")
-        # breakpoint()
         self.calculate()
         if is_merged:
             self.add_calc()
@@ -209,18 +196,14 @@ class CalcComb:
 
     def get_valid_data(self) -> None:
         try:
-            self._valid_data = gvd.get_valid_data(self)
+            self._output = gvd.get_valid_data(self)
         except AttributeError as e:
             msg: str = "Attribute Error: Are you sure you ran fit()?"
             e.add_note(msg)
             raise
 
     def calculate(self) -> None:
-        # print("calculate(): before")
-        # breakpoint()
         self._valid_data = calc.calculate(self)
-        # print("calculate(): after")
-        # breakpoint()
 
     def add_calc(self) -> None:
         self._data = ac.add_calc(self)

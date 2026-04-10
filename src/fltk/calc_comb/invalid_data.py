@@ -10,9 +10,7 @@ if TYPE_CHECKING:
 def get_invalid_data(inst: CalcComb) -> pd.DataFrame:
     groups_df = get_groups(inst)
     invalid_data = find_invalid_items(inst, groups_df=groups_df)
-    # print(f"\ninvalid_data {invalid_data.shape}:\n", invalid_data)
     cleaned_invalid_data = clean_invalid_data(inst, invalid_data=invalid_data)
-    # print("\nclean_invalid_data:\n", clean_invalid_data)
     return cleaned_invalid_data
 
 
@@ -27,8 +25,6 @@ def get_groups(inst: CalcComb) -> pd.DataFrame:
 
 def find_invalid_items(inst: CalcComb, groups_df: pd.DataFrame) -> pd.DataFrame:
     MERGE: Final[str] = "_merge"
-    MERGE_BOTH: Final[str] = "both"
-    HOW_INNER: Final[str] = "inner"
     raw_data = inst._data
     idx_from = inst._idx_from
     idx_to = inst._idx_to
@@ -39,11 +35,9 @@ def find_invalid_items(inst: CalcComb, groups_df: pd.DataFrame) -> pd.DataFrame:
     for ndx, row in groups_df.iterrows():
         groups_dict = row.to_dict()
         left_df = pd.DataFrame([groups_dict])
-        matching_df = pd.merge(
-            left=left_df, right=raw_data, on=group_vars, how=HOW_INNER
-        )
+        matching_df = pd.merge(left=left_df, right=raw_data, on=group_vars, how="inner")
         merged_df = get_invalid_rows(inst, idx_df=idx_df, data=matching_df)
-        invalid_df = merged_df.loc[merged_df._merge != MERGE_BOTH]
+        invalid_df = merged_df.loc[merged_df._merge != "both"]
         invalid_df = invalid_df[[idx_from, idx_to, MERGE]]
         final_df = create_invalid_df(groups_dict, invalid_df)
         if not final_df.empty:
@@ -64,7 +58,6 @@ def find_invalid_items(inst: CalcComb, groups_df: pd.DataFrame) -> pd.DataFrame:
 def get_invalid_rows(
     inst: CalcComb, idx_df: pd.Dataframe, data: pd.DataFrame
 ) -> pd.DataFrame:
-    HOW_LEFT: Final[str] = "left"
     left_df = idx_df
     right_df = data
     left_on = inst._idx_from
@@ -74,7 +67,7 @@ def get_invalid_rows(
         right=right_df,
         left_on=left_on,
         right_on=right_on,
-        how=HOW_LEFT,
+        how="left",
         indicator=True,
     )
     if merged_df.empty:
@@ -124,8 +117,6 @@ def clean_invalid_data(inst: CalcComb, invalid_data: pd.DataFrame) -> pd.DataFra
     if merged_df.empty:
         msg = "The merged_df is empty."
         raise AssertionError(msg)
-    # print("\nclean_invalid_data, merged_df:\n", merged_df)
     clean_invalid_data = merged_df.loc[merged_df[MERGE] == MERGE_BOTH]
     clean_invalid_data.drop(columns=[MERGE], inplace=True)
-    # print("\nclean_invalid_data:\n", clean_invalid_data)
     return clean_invalid_data

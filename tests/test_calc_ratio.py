@@ -5,7 +5,7 @@ from pathlib import Path
 import pandas as pd
 
 # from typing import Any
-from fltk.calc_ratio.calc_ratio import CalcRatio
+from fltk.calc_ratio.main import CalcRatio
 
 
 @pytest.fixture

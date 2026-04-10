@@ -116,4 +116,4 @@ def transform_comb(fit_comb) -> CalcComb:
 
 
 def test_transform_comb(transform_comb) -> None:
-    transform_comb.valid_data.shape == (25, 6)
+    transform_comb.output.shape == (25, 6)
