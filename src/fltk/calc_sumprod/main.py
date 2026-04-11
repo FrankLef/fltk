@@ -7,7 +7,7 @@ from fltk.utils.value_cls import StrName
 
 from . import init_vars as iv
 from . import load_mat_xl as lmx
-from . import load_combs as lc
+from . import load_sump as lc
 from . import load_data as ld
 from . import invalid_data as gid
 from . import valid_data as gvd
@@ -15,23 +15,23 @@ from . import calculate as calc
 from . import add_calc as ac
 
 
-class CalcComb:
+class CalcSumprod:
     def __init__(
         self,
         name: str,
         idx_to: str = "idx_to",
         idx_from: str = "idx_from",
-        comb_coef: str = "comb_coef",
-        comb_value: str = "comb_value",
+        sump_coef: str = "sump_coef",
+        sump_value: str = "sump_value",
     ):
-        """Create object to calculate combinations of amounts.
+        """Create object to calculate the sum of products.
 
         Args:
             name (str): Name to identify the object. Does not affect the process itself.
             idx_to (str, optional): Name of the column with the target index used. Same as the upper left corner of the matrix. Defaults to "idx_to".
             idx_from (str, optional): Name of the column with the source index used. It is recommended to keep the default value. Defaults to "idx_from".
-            comb_coef (str, optional): Column of coefficients to use. It is recommended to keep the default value. Defaults to "comb_coef".
-            comb_value (str, optional): Column of values to use. It is recommended to keep the default value. Defaults to "comb_value".
+            sump_coef (str, optional): Column of coefficients to use. It is recommended to keep the default value. Defaults to "sump_coef".
+            sump_value (str, optional): Column of values to use. It is recommended to keep the default value. Defaults to "sump_value".
 
         Raises:
             ValueError: Duplicate names.
@@ -39,21 +39,21 @@ class CalcComb:
         self._name = StrName(name)
         self._idx_to = StrName(idx_to)
         self._idx_from = StrName(idx_from)
-        self._comb_coef = StrName(comb_coef)
-        self._comb_value = StrName(comb_value)
-        self._combs_df = pd.DataFrame()
-        self._init_comb_vars()
+        self._sump_coef = StrName(sump_coef)
+        self._sump_value = StrName(sump_value)
+        self._sump_df = pd.DataFrame()
+        self._init_sump_vars()
 
-    def _init_comb_vars(self) -> None:
-        self._comb_vars: list[str] = []
-        self._comb_keys: list[str] = []
-        self._comb_vars_base: list[str] = []
-        iv._init_comb_vars(self)
+    def _init_sump_vars(self) -> None:
+        self._sump_vars: list[str] = []
+        self._sump_keys: list[str] = []
+        self._sump_vars_base: list[str] = []
+        iv._init_sump_vars(self)
 
     @property
-    def combs_df(self) -> pd.DataFrame:
+    def sump_df(self) -> pd.DataFrame:
         """Dataframe of combinations' specifications."""
-        return self._combs_df
+        return self._sump_df
 
     @property
     def data(self) -> pd.DataFrame:
@@ -81,7 +81,7 @@ class CalcComb:
         return self._output
 
     def summary(self, verbose: bool = True) -> dict[str, int]:
-        ncombs = self._combs_df.shape[0]
+        nsump = self._sump_df.shape[0]
         ndata = self._data.shape[0]
         ninvalid = self._invalid_data.shape[0]
         nvalid = self._valid_data.shape[0]
@@ -91,7 +91,7 @@ class CalcComb:
             msg: str = f"""
             Summary of {self._name}
             -------------------------
-            Combinations: {ncombs} rows
+            Sum products: {nsump} rows
             Data: {ndata} rows
             Invalid data: {ninvalid} rows
             Valid data: {nvalid} rows
@@ -100,7 +100,7 @@ class CalcComb:
             """
             rprint(msg)
             out = {
-                "combinations": ncombs,
+                "sumprod": nsump,
                 "data": ndata,
                 "invalid": ninvalid,
                 "valid": nvalid,
@@ -109,13 +109,13 @@ class CalcComb:
             }
         return out
 
-    def load_combs(self, data: pd.DataFrame) -> None:
-        """Load combinations from a pandas dataframe.
+    def load_sump(self, data: pd.DataFrame) -> None:
+        """Load sumproduct specifications from a pandas dataframe.
 
         Args:
-            data (pd.DataFrame): Dataframe of combinations.
+            data (pd.DataFrame): Dataframe of sumproduct specifications.
         """
-        lc.load_combs(self, data=data)
+        lc.load_sump(self, data=data)
 
     def load_data(
         self,
@@ -166,38 +166,47 @@ class CalcComb:
             sheet_nm (str | None, optional): Name of excel sheet. Defaults to None.
         """
         df = lmx.load_mat_from_xl(self, path=path, sheet_nm=sheet_nm)
-        self.load_combs(df)
+        self.load_sump(df)
 
     def get_invalid_data(self) -> None:
         self._invalid_data: pd.DataFrame = gid.get_invalid_data(self)
 
-    def fit_transform(self, is_merged: bool = False) -> None:
+    def fit_transform(self, is_merged: bool, verbose:bool=False) -> None:
         """Process the fit and transform steps in a sequence.
 
         Args:
-            is_merged (bool, optional): If True, merge the calculated data to the original dataframe. Otherwise, don't do it. Defaults to False.
+            is_merged (bool, optional): If True, merge the calculated data to the original dataframe. Otherwise, don't do it. 
+            verbose (bool, optional): If True, display info. Defaults to False.
         """
-        self.fit()
-        self.transform(is_merged=is_merged)
+        self.fit(verbose=verbose)
+        self.transform(is_merged=is_merged,verbose=verbose)
 
-    def fit(self) -> None:
-        """Fit the data. Find invalid and undetermined data."""
+
+    def fit(self, verbose:bool=False) -> None:
+        """Fit the data. Find invalid and undetermined data.
+
+        Args:
+            verbose (bool, optional): If True, display info. Defaults to False.
+        """
         self.get_invalid_data()
         self.get_valid_data()
-        rprint(f"{self._name} fit() completed.")
+        if verbose:
+            rprint(f"{self._name} CalcSumprod.fit() completed.")
 
-    def transform(self, is_merged: bool = False) -> None:
+    def transform(self, is_merged: bool, verbose:bool=False) -> None:
         """Do the calculations.
 
         Args:
-            is_merged (bool, optional): If True, merge the calculated data to the original dataframe. Otherwise, don't do it. Defaults to False.
+            is_merged (bool, optional): If True, merge the calculated data to the original dataframe. Otherwise, don't do it.
+            verbose (bool, optional): If True, display info. Defaults to False.
         """
         self.calculate()
         if is_merged:
             self._output=self.add_calc()
         else:
             self._output=self._calc_data
-        rprint(f"{self._name} transform() completed.")
+        if verbose:
+            rprint(f"{self._name} CalcSumprod.transform() completed.")
 
     def get_valid_data(self) -> None:
         try:
@@ -208,6 +217,7 @@ class CalcComb:
             raise
 
     def calculate(self) -> None:
+        """Calculate sumprods."""
         self._calc_data = calc.calculate(self)
 
     def add_calc(self) -> pd.DataFrame:

@@ -4,18 +4,18 @@ import pandas as pd
 from rich.prompt import Confirm
 
 if TYPE_CHECKING:
-    from .main import CalcComb  # Only imported when checking types
+    from .main import CalcSumprod  # Only imported when checking types
 
 
 def load_data(
-    inst: CalcComb,
+    inst: CalcSumprod,
     data: pd.DataFrame,
     idx_var: str,
     value_var: str,
     group_vars: list[str],
     newvalue_var: str,
 ) -> pd.DataFrame:
-    if inst._combs_df.empty:
+    if inst._sump_df.empty:
         msg: str = "You must load the matrix before the data."
         raise ValueError(msg)
     inst._data_idx = idx_var
@@ -27,7 +27,7 @@ def load_data(
     return data
 
 
-def validate_data_names(inst: CalcComb, data: pd.DataFrame, newvalue_var: str) -> None:
+def validate_data_names(inst: CalcSumprod, data: pd.DataFrame, newvalue_var: str) -> None:
     cols = data.columns.to_list()
     if newvalue_var in cols:
         msg: str = f"'{newvalue_var}' will be replaced with new calculations?"
@@ -36,7 +36,7 @@ def validate_data_names(inst: CalcComb, data: pd.DataFrame, newvalue_var: str) -
             raise ValueError(msg)
     else:
         cols.append(newvalue_var)
-    illegal_vars = [var for var in cols if var in inst._comb_vars]
+    illegal_vars = [var for var in cols if var in inst._sump_vars]
     if illegal_vars:
         msg = f"""
         {illegal_vars} are reserved names.
@@ -50,7 +50,7 @@ def validate_data_names(inst: CalcComb, data: pd.DataFrame, newvalue_var: str) -
         raise KeyError(msg)
 
 
-def validate_data_keys(inst: CalcComb, data: pd.DataFrame) -> None:
+def validate_data_keys(inst: CalcSumprod, data: pd.DataFrame) -> None:
     keys = inst._data_keys
     unique_counts = data[keys].value_counts()
     ndistinct = len(unique_counts)

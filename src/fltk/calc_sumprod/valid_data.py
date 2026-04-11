@@ -3,10 +3,10 @@ from typing import TYPE_CHECKING
 import pandas as pd
 
 if TYPE_CHECKING:
-    from .main import CalcComb  # Only imported when checking types
+    from .main import CalcSumprod  # Only imported when checking types
 
 
-def get_valid_data(inst: CalcComb) -> pd.DataFrame:
+def get_valid_data(inst: CalcSumprod) -> pd.DataFrame:
     keys = inst._data_keys
     valid_data = inst._data
     dfs: list[pd.DataFrame] = [inst._invalid_data]

@@ -9,8 +9,8 @@ from . import init_vars as iv
 from . import load_ratios as lr
 from . import load_data as ld
 from . import merge_data as md
-from . import valid_data as gvd
 from . import invalid_data as gid
+from . import valid_data as gvd
 from . import calculate as calc
 
 
@@ -90,7 +90,6 @@ class CalcRatio:
         return self._calc_data
 
     def summary(self, verbose: bool = True) -> dict[str, int]:
-        pass
         ndata = self._data.shape[0]
         nmerged = self._merged_data.shape[0]
         ninvalid = self._invalid_data.shape[0]
@@ -165,30 +164,48 @@ class CalcRatio:
     def get_valid_data(self) -> None:
         self._valid_data: pd.DataFrame = gvd.get_valid_data(self)
     
+    def fit_transform(self, is_cleaned: bool, verbose:bool=False) -> None:
+        """Process the the fit and transform steps in sequence.
 
-    def fit_transform(self, is_cleaned: bool) -> None:
-        """Process the the fit and transform steps in sequence."""
-        self.fit()
-        self.transform(is_cleaned=is_cleaned)
+        Args:
+            is_cleaned (bool): If True, remove rows with null of inf/-inf from calc_data.
+            verbose (bool, optional): If True, display info. Defaults to False.
+        """
+        self.fit(verbose=verbose)
+        self.transform(is_cleaned=is_cleaned, verbose=verbose)
+        
+        
+    def fit(self, verbose:bool=False) -> None:
+        """Create merged data and flag invalid.
 
-    def fit(self) -> None:
-        """Create merged data and flag invalid."""
+        Args:
+            verbose (bool, optional): If True, display info. Defaults to False.
+        """
         self.merge_data()
         self.get_invalid_data()
         self.get_valid_data()
-        rprint(f"{self._name} fit() completed.")
+        if verbose:
+            rprint(f"{self._name} fit() completed.")
 
-    def transform(self, is_cleaned: bool) -> None:
-        """Do the actual calculations."""
+    def transform(self, is_cleaned: bool, verbose:bool=False) -> None:
+        """Calculate ratios.
+
+        Args:
+            is_cleaned (bool): If True, remove rows with null of inf/-inf from calc_data.
+            verbose (bool, optional): If True, display info. Defaults to False.
+        """
         self.calculate()
         if is_cleaned:
             self.clean()
-        rprint(f"{self._name} transform() completed.")
+        if verbose:
+            rprint(f"{self._name} transform() completed.")
 
     def calculate(self) -> None:
+        """Calculate ratios."""
         self._calc_data = calc.calculate(self)
 
     def clean(self) -> None:
+        """Remove rows with null of inf/-inf from calc_data."""
         df = self._calc_data
         cols = (self._value_ratio, self._value_num, self._value_den)
         df.replace([float("inf"), float("-inf")], value=None, inplace=True)

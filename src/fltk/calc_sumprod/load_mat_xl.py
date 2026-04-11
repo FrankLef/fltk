@@ -4,11 +4,11 @@ import pandas as pd
 from pathlib import Path
 
 if TYPE_CHECKING:
-    from .main import CalcComb  # Only imported when checking types
+    from .main import CalcSumprod  # Only imported when checking types
 
 
 def load_mat_from_xl(
-    inst: CalcComb, path: Path, sheet_nm: str | None = None
+    inst: CalcSumprod, path: Path, sheet_nm: str | None = None
 ) -> pd.DataFrame:
     df = pd.read_excel(path, sheet_name=sheet_nm)
     top_name = df.columns[0]
@@ -24,7 +24,7 @@ def load_mat_from_xl(
         id_vars=inst._idx_to,
         value_vars=cols,
         var_name=inst._idx_from,
-        value_name=inst._comb_coef,
+        value_name=inst._sump_coef,
     )
     df.dropna(inplace=True)
     return df

@@ -4,12 +4,12 @@ import pytest
 from pathlib import Path
 import pandas as pd
 from typing import Any
-from fltk.calc_comb.main import CalcComb
+from fltk.calc_sumprod.main import CalcSumprod
 
 
 @pytest.fixture
-def comb() -> CalcComb:
-    return CalcComb(name="test_comb", idx_to="idx")
+def sumprod() -> CalcSumprod:
+    return CalcSumprod(name="test_sumprod", idx_to="idx")
 
 
 @pytest.fixture
@@ -19,19 +19,19 @@ def fixtures_path() -> Path:
 
 @pytest.fixture
 def qrtr_mat_xl(fixtures_path) -> dict[str, str]:
-    out = {"path": fixtures_path.joinpath("comb.xlsx"), "sheet": "qrtr"}
+    out = {"path": fixtures_path.joinpath("sumprod.xlsx"), "sheet": "qrtr"}
     return out
 
 
 @pytest.fixture
 def rolly_mat_xl(fixtures_path) -> dict[str, str]:
-    out = {"path": fixtures_path.joinpath("comb.xlsx"), "sheet": "rolly"}
+    out = {"path": fixtures_path.joinpath("sumprod.xlsx"), "sheet": "rolly"}
     return out
 
 
 @pytest.fixture
 def data_xl(fixtures_path) -> dict[str, str]:
-    out = {"path": fixtures_path.joinpath("comb.xlsx"), "sheet": "data1"}
+    out = {"path": fixtures_path.joinpath("sumprod.xlsx"), "sheet": "data1"}
     return out
 
 
@@ -57,21 +57,21 @@ def data_vars() -> dict[str, Any]:
     return out
 
 
-def test_err_name() -> CalcComb:
+def test_err_name() -> CalcSumprod:
     with pytest.raises(ValueError):
-        CalcComb(name=" ", idx_to="idx")
+        CalcSumprod(name=" ", idx_to="idx")
     with pytest.raises(ValueError):
-        CalcComb(name="?", idx_to="idx")
+        CalcSumprod(name="?", idx_to="idx")
 
 
-def test_load_mat_xl(comb, qrtr_mat_xl: dict[str, Path]) -> None:
-    comb.load_mat_from_xl(path=qrtr_mat_xl["path"], sheet_nm=qrtr_mat_xl["sheet"])
-    assert comb.combs_df.shape == (16, 3)
+def test_load_mat_xl(sumprod, qrtr_mat_xl: dict[str, Path]) -> None:
+    sumprod.load_mat_from_xl(path=qrtr_mat_xl["path"], sheet_nm=qrtr_mat_xl["sheet"])
+    assert sumprod.sump_df.shape == (16, 3)
 
 
-def test_load_data(comb, raw_data, data_vars) -> None:
+def test_load_data(sumprod, raw_data, data_vars) -> None:
     with pytest.raises(ValueError):
-        comb.load_data(
+        sumprod.load_data(
             raw_data,
             idx_var=data_vars["idx_var"],
             value_var=data_vars["value_var"],
@@ -81,39 +81,38 @@ def test_load_data(comb, raw_data, data_vars) -> None:
 
 
 @pytest.fixture
-def init_comb(comb, qrtr_mat_xl, raw_data, data_vars) -> CalcComb:
-    comb.load_mat_from_xl(path=qrtr_mat_xl["path"], sheet_nm=qrtr_mat_xl["sheet"])
-    comb.load_data(
+def init_sumprod(sumprod, qrtr_mat_xl, raw_data, data_vars) -> CalcSumprod:
+    sumprod.load_mat_from_xl(path=qrtr_mat_xl["path"], sheet_nm=qrtr_mat_xl["sheet"])
+    sumprod.load_data(
         raw_data,
         idx_var=data_vars["idx_var"],
         value_var=data_vars["value_var"],
         group_vars=data_vars["group_vars"],
         newvalue_var=data_vars["newvalue_var"],
     )
-    return comb
+    return sumprod
 
 
-def test_init_comb(init_comb) -> None:
-    assert init_comb.combs_df.shape == (16, 3)
-    assert init_comb.data.shape == (33, 7)
-
-
-@pytest.fixture
-def fit_comb(init_comb) -> CalcComb:
-    init_comb.fit()
-    return init_comb
-
-
-def test_fit_comb(fit_comb) -> None:
-    assert fit_comb.invalid_data.shape == (3, 6)
-    # assert fit_comb.undetermined_data.shape == (1, 4)
+def test_init_sumprod(init_sumprod) -> None:
+    assert init_sumprod.sump_df.shape == (16, 3)
+    assert init_sumprod.data.shape == (33, 7)
 
 
 @pytest.fixture
-def transform_comb(fit_comb) -> CalcComb:
-    fit_comb.transform(is_merged=True)
-    return fit_comb
+def fit_sumprod(init_sumprod) -> CalcSumprod:
+    init_sumprod.fit()
+    return init_sumprod
 
 
-def test_transform_comb(transform_comb) -> None:
-    transform_comb.output.shape == (25, 6)
+def test_fit_sumprod(fit_sumprod) -> None:
+    assert fit_sumprod.invalid_data.shape == (3, 6)
+
+
+@pytest.fixture
+def transform_sumprod(fit_sumprod) -> CalcSumprod:
+    fit_sumprod.transform(is_merged=True)
+    return fit_sumprod
+
+
+def test_transform_sumprod(transform_sumprod) -> None:
+    transform_sumprod.output.shape == (25, 6)
