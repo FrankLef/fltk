@@ -19,29 +19,30 @@ class QryClean:
         WHERE {col} IS NOT NULL;
         """
         self._conn.sql(qry)
-
+        
+        pat:str=r"\s+"
         qry = f"""
         UPDATE {self.table_nm}
-        SET {col} = regexp_replace({col}, r"\s+", ' ','g')
+        SET {col} = regexp_replace({col}, '{pat}', ' ','g')
         WHERE {col} IS NOT NULL;
         """
         self._conn.sql(qry)
 
     def clean_nonprint(self, col: str) -> None:
         """Remove non-printable characters."""
-        rgx = r"[[:cntrl:]]"  # all non-printable ASCII (0-31, 127)
+        pat = r"[[:cntrl:]]"  # all non-printable ASCII (0-31, 127)
         qry = f"""
         UPDATE {self.table_nm}
-        SET {col} = regexp_replace({col}, '{rgx}', '','g')
+        SET {col} = regexp_replace({col}, '{pat}', '','g')
         WHERE {col} IS NOT NULL;
         """
         self._conn.sql(qry)
 
         #  any character that is not a printable character, tab, carriage return, or newline.
-        rgx = r"[^[:print:]\t\r\n]"
+        pat = r"[^[:print:]\t\r\n]"
         qry = f"""
         UPDATE {self.table_nm}
-        SET {col} = regexp_replace({col}, '{rgx}', '','g')
+        SET {col} = regexp_replace({col}, '{pat}', '','g')
         WHERE {col} IS NOT NULL;
         """
         self._conn.sql(qry)
