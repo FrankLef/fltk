@@ -221,3 +221,28 @@ class CalcSumprod:
 
     def add_calc(self) -> pd.DataFrame:
         return ac.add_calc(self)
+
+    def to_excel(self, path: Path) -> None:
+        """Export data to excel.
+
+        Args:
+            path (Path): Path to excel file, including file name.
+        """
+        msg: str = f"Exporting CalcSumprod to {path}"
+        rprint(msg)
+        rprint("'data'")
+        self._data.to_excel(path, sheet_name="data", index=False, engine="openpyxl")
+        with pd.ExcelWriter(
+            path, mode="a", engine="openpyxl", if_sheet_exists="replace"
+        ) as writer:
+            dfs = {
+                "sumprod_df": self._sump_df,
+                "invalid_data": self._sump_df,
+                "valid_data": self._valid_data,
+                "calc_data": self._calc_data,
+                "output": self._output,
+            }
+            for sheet_name, df in dfs.items():
+                msg = f"'{sheet_name}'"
+                rprint(msg)
+                df.to_excel(writer, sheet_name=sheet_name, index=False)

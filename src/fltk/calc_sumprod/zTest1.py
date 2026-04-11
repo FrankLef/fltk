@@ -42,38 +42,4 @@ print("load_data")
 sumprod.fit()
 sumprod.transform(is_merged=True)
 
-# print(f"\ninvalid data {comb.invalid_data.shape}:\n", comb.invalid_data)
-# print(
-#     f"\nundetermined data {comb.undetermined_data.shape}:\n",
-#     comb.undetermined_data,
-# )
-# print(f"\nvalid data {comb.valid_data.shape}:\n", comb.valid_data)
-
-# print(f"\nfinal data {comb.data.shape}:\n", comb.data)
-
-add_to_xl: bool = True
-if add_to_xl:
-    # IMPORTANT INFO FOR USER:
-    msg: str = """
-    If you use this, make sure to recalculate the spreadheet by adding any value and pressing F9 in Excel.
-    Otherwise, next time, pandas will load the cell with formula as formula, not as value.
-    The best way to avoid this issue is to output the data in a different file.
-    Do you want to do it anyway?
-    """
-    # is_ok = Confirm.ask(prompt=msg)
-    # if is_ok:
-
-    # Create the initial file
-    sumprod.data.to_excel(out_path, sheet_name="data", index=False, engine="openpyxl")
-    # Append other sheets
-    with pd.ExcelWriter(
-        out_path, mode="a", engine="openpyxl", if_sheet_exists="replace"
-    ) as writer:
-        dfs = {
-            "invalid_data": sumprod.invalid_data,
-            "valid_data": sumprod.valid_data,
-            "calc_data": sumprod.calc_data,
-            "output": sumprod.output,
-        }
-        for sheet_name, df in dfs.items():
-            df.to_excel(writer, sheet_name=sheet_name, index=False)
+sumprod.to_excel(out_path)

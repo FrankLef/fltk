@@ -16,12 +16,16 @@ def load_data(
     if inst._ratios_df.empty:
         msg: str = "You must load the ratio definitions before the data."
         raise ValueError(msg)
+    if data.empty:
+        raise ValueError("The data is empty.")
     inst._data_concept = concept_var
     inst._data_value = value_var
     inst._data_group = group_vars
     validate_data_names(inst, data=data)
     validate_data_keys(inst, data=data)
-    return data
+    all_vars: list[str] = group_vars + [concept_var, value_var]
+    reduced_data = data[all_vars]
+    return reduced_data
 
 
 def validate_data_names(inst: CalcRatio, data: pd.DataFrame) -> None:

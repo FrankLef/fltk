@@ -15,31 +15,41 @@ def merge_data(inst: CalcRatio) -> pd.DataFrame:
         left_on=inst._data_concept,
         right_on=inst._concept_name,
     )
-    cols = [inst._data_concept, inst._concept_name]
+    if merged_data.empty:
+        msg: str = (
+            "Merged data is empty. Maybe the concepts don't match with each other."
+        )
+        raise AssertionError(msg)
+    # cols = [inst._data_concept, inst._concept_name]
+    # print("after merge")
     # breakpoint()
-    merged_data.drop(columns=cols, inplace=True)
+    # merged_data.drop(columns=cols, inplace=True)
+    # # pivot_cols = [inst._data_group, inst._concept_num]
+    # # to_pivot_data = merged_data[pivot_cols]
     # breakpoint()
-    pivoted_data = pivot_data(inst, merged_data=merged_data)
-    validate_data_keys(inst, data=pivoted_data)
+    # pivoted_data = pivot_data(inst, merged_data=merged_data)
+    # # breakpoint()
+    # validate_data_keys(inst, data=pivoted_data)
+    # augmented_data = augment_data(inst, data=pivoted_data)
     # breakpoint()
-    augmented_data = augment_data(inst, data=pivoted_data)
-    final_data = move_cols(inst, data=augmented_data)
-    return final_data
+    # final_data = move_cols(inst, data=augmented_data)
+    return merged_data
 
 
 def pivot_data(inst: CalcRatio, merged_data: pd.DataFrame) -> pd.DataFrame:
-    keys: list[str] = list(inst._data_group)
+    keys: list[str] = inst._data_group.copy()
     keys.append(inst._concept_ratio)
     pivoted_data = merged_data.pivot(
         index=keys, columns=inst._concept_pos, values=inst._data_value
     )
+    # breakpoint()
     pivoted_data.reset_index(inplace=True)
     return pivoted_data
 
 
 def validate_data_keys(inst: CalcRatio, data: pd.DataFrame) -> None:
-    keys: list[str] = list(inst._data_group)
-    keys.append(inst._concept_ratio)
+    keys: list[str] = inst._data_group.copy()
+    # keys.append(inst._concept_ratio)
     unique_counts = data[keys].value_counts()
     ndistinct = len(unique_counts)
     if ndistinct != data.shape[0]:

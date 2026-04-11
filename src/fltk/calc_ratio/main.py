@@ -1,6 +1,7 @@
 from __future__ import annotations  # Must be at the top
 import pandas as pd
 from rich import print as rprint
+from pathlib import Path
 
 from fltk.utils.value_cls import StrName
 
@@ -186,7 +187,7 @@ class CalcRatio:
         """
         self.merge_data()
         self.get_invalid_data()
-        self.get_valid_data()
+        # self.get_valid_data()
         if verbose:
             rprint(f"{self._name} fit() completed.")
 
@@ -213,3 +214,27 @@ class CalcRatio:
         cols = (self._value_ratio, self._value_num, self._value_den)
         df.replace([float("inf"), float("-inf")], value=None, inplace=True)
         df.dropna(subset=cols, inplace=True)
+
+    def to_excel(self, path: Path) -> None:
+        """Export data to excel.
+
+        Args:
+            path (Path): Path to excel file, including file name.
+        """
+        msg: str = f"Exporting CalcRatio to {path}"
+        rprint(msg)
+        rprint("'data'")
+        self._data.to_excel(path, sheet_name="data", index=False, engine="openpyxl")
+        with pd.ExcelWriter(
+            path, mode="a", engine="openpyxl", if_sheet_exists="replace"
+        ) as writer:
+            dfs = {
+                "ratios_df": self._ratios_df,
+                "merged_data": self._merged_data,
+                # "valid_data": self._valid_data,
+                # "calc_data": self._calc_data,
+            }
+            for sheet_name, df in dfs.items():
+                msg = f"'{sheet_name}'"
+                rprint(msg)
+                df.to_excel(writer, sheet_name=sheet_name, index=False)

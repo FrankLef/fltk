@@ -22,7 +22,7 @@ class QryClean:
 
         qry = f"""
         UPDATE {self.table_nm}
-        SET {col} = regexp_replace({col}, '\s+', ' ','g')
+        SET {col} = regexp_replace({col}, r"\s+", ' ','g')
         WHERE {col} IS NOT NULL;
         """
         self._conn.sql(qry)
