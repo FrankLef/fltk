@@ -19,8 +19,8 @@ class QryClean:
         WHERE {col} IS NOT NULL;
         """
         self._conn.sql(qry)
-        
-        pat:str=r"\s+"
+
+        pat: str = r"\s+"
         qry = f"""
         UPDATE {self.table_nm}
         SET {col} = regexp_replace({col}, '{pat}', ' ','g')

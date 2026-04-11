@@ -20,20 +20,18 @@ def merge_data(inst: CalcRatio) -> pd.DataFrame:
             "Merged data is empty. Maybe the concepts don't match with each other."
         )
         raise AssertionError(msg)
-    # cols = [inst._data_concept, inst._concept_name]
+    cols = [inst._data_concept, inst._concept_name]
     # print("after merge")
     # breakpoint()
-    # merged_data.drop(columns=cols, inplace=True)
-    # # pivot_cols = [inst._data_group, inst._concept_num]
-    # # to_pivot_data = merged_data[pivot_cols]
+    merged_data.drop(columns=cols, inplace=True)
     # breakpoint()
-    # pivoted_data = pivot_data(inst, merged_data=merged_data)
+    pivoted_data = pivot_data(inst, merged_data=merged_data)
     # # breakpoint()
-    # validate_data_keys(inst, data=pivoted_data)
-    # augmented_data = augment_data(inst, data=pivoted_data)
-    # breakpoint()
-    # final_data = move_cols(inst, data=augmented_data)
-    return merged_data
+    validate_data_keys(inst, data=pivoted_data)
+    augmented_data = augment_data(inst, data=pivoted_data)
+    breakpoint()
+    final_data = move_cols(inst, data=augmented_data)
+    return final_data
 
 
 def pivot_data(inst: CalcRatio, merged_data: pd.DataFrame) -> pd.DataFrame:
@@ -49,7 +47,7 @@ def pivot_data(inst: CalcRatio, merged_data: pd.DataFrame) -> pd.DataFrame:
 
 def validate_data_keys(inst: CalcRatio, data: pd.DataFrame) -> None:
     keys: list[str] = inst._data_group.copy()
-    # keys.append(inst._concept_ratio)
+    keys.append(inst._concept_ratio)
     unique_counts = data[keys].value_counts()
     ndistinct = len(unique_counts)
     if ndistinct != data.shape[0]:

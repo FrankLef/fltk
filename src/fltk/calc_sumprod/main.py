@@ -2,6 +2,7 @@ from __future__ import annotations  # Must be at the top
 import pandas as pd
 from pathlib import Path
 from rich import print as rprint
+from rich.console import Console
 
 from fltk.utils.value_cls import StrName
 
@@ -228,8 +229,11 @@ class CalcSumprod:
         Args:
             path (Path): Path to excel file, including file name.
         """
-        msg: str = f"Exporting CalcSumprod to {path}"
-        rprint(msg)
+        console = Console()
+        msg: str = (
+            f"[bright_white]Exporting CalcRatio to:[/bright_white]\n[cyan]{path}[/cyan]"
+        )
+        console.print(msg)
         rprint("'data'")
         self._data.to_excel(path, sheet_name="data", index=False, engine="openpyxl")
         with pd.ExcelWriter(

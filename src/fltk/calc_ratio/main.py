@@ -1,6 +1,7 @@
 from __future__ import annotations  # Must be at the top
 import pandas as pd
 from rich import print as rprint
+from rich.console import Console
 from pathlib import Path
 
 from fltk.utils.value_cls import StrName
@@ -187,7 +188,7 @@ class CalcRatio:
         """
         self.merge_data()
         self.get_invalid_data()
-        # self.get_valid_data()
+        self.get_valid_data()
         if verbose:
             rprint(f"{self._name} fit() completed.")
 
@@ -221,8 +222,11 @@ class CalcRatio:
         Args:
             path (Path): Path to excel file, including file name.
         """
-        msg: str = f"Exporting CalcRatio to {path}"
-        rprint(msg)
+        console = Console()
+        msg: str = (
+            f"[bright_white]Exporting CalcRatio to:[/bright_white]\n[cyan]{path}[/cyan]"
+        )
+        console.print(msg)
         rprint("'data'")
         self._data.to_excel(path, sheet_name="data", index=False, engine="openpyxl")
         with pd.ExcelWriter(
@@ -232,7 +236,7 @@ class CalcRatio:
                 "ratios_df": self._ratios_df,
                 "merged_data": self._merged_data,
                 # "valid_data": self._valid_data,
-                # "calc_data": self._calc_data,
+                "calc_data": self._calc_data,
             }
             for sheet_name, df in dfs.items():
                 msg = f"'{sheet_name}'"

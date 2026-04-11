@@ -48,7 +48,7 @@ print("\ndata:", ratio.data.shape)
 # ratio.data.info()
 
 ratio.fit()
-# ratio.transform(is_cleaned=True)
+ratio.transform(is_cleaned=True)
 # print("\nmerged_data:", ratio.merged_data.shape)
 # print(ratio.merged_data.head(20))
 
