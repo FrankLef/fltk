@@ -16,7 +16,15 @@ data_sheet: str = "data1"
 
 ratio = CalcRatio(name="testRatioZ1")
 
-ratio.load_ratios(ratio_path, sheet_nm=ratio_sheet)
+
+ratios_df = pd.read_excel(
+    ratio_path,
+    sheet_name=ratio_sheet,
+    engine="openpyxl",
+    engine_kwargs={"data_only": True},
+)
+
+ratio.load_ratios(ratios_df)
 print("\nratios_df:", ratio.ratios_df.shape)
 # ratio.ratios_df.info()
 print("\nratios_df_long:", ratio.ratios_df_long.shape)
@@ -52,16 +60,16 @@ ratio.merged_data.to_excel(
     out_path, sheet_name="merged_data", index=False, engine="openpyxl"
 )
 
-    # Create the initial file
+# Create the initial file
 ratio.data.to_excel(out_path, sheet_name="data", index=False, engine="openpyxl")
-    # Append other sheets
+# Append other sheets
 with pd.ExcelWriter(
-        out_path, mode="a", engine="openpyxl", if_sheet_exists="replace"
-    ) as writer:
-        dfs = {
-            "invalid_data": ratio.invalid_data,
-            "valid_data": ratio.valid_data,
-            "calc_data": ratio.calc_data,
-        }
-        for sheet_name, df in dfs.items():
-            df.to_excel(writer, sheet_name=sheet_name, index=False)
+    out_path, mode="a", engine="openpyxl", if_sheet_exists="replace"
+) as writer:
+    dfs = {
+        "invalid_data": ratio.invalid_data,
+        "valid_data": ratio.valid_data,
+        "calc_data": ratio.calc_data,
+    }
+    for sheet_name, df in dfs.items():
+        df.to_excel(writer, sheet_name=sheet_name, index=False)

@@ -64,12 +64,12 @@ class CalcSumprod:
     def invalid_data(self):
         """Dataframe of rows that cannot be calculated."""
         return self._invalid_data
-    
+
     @property
     def valid_data(self):
         """Dataframe of rows without invalid rows. Used for be calulations."""
         return self._valid_data
-    
+
     @property
     def calc_data(self):
         """Dataframe of calculated results."""
@@ -105,7 +105,7 @@ class CalcSumprod:
                 "invalid": ninvalid,
                 "valid": nvalid,
                 "calculated": ncalc,
-                "output": noutput
+                "output": noutput,
             }
         return out
 
@@ -171,18 +171,17 @@ class CalcSumprod:
     def get_invalid_data(self) -> None:
         self._invalid_data: pd.DataFrame = gid.get_invalid_data(self)
 
-    def fit_transform(self, is_merged: bool, verbose:bool=False) -> None:
+    def fit_transform(self, is_merged: bool, verbose: bool = False) -> None:
         """Process the fit and transform steps in a sequence.
 
         Args:
-            is_merged (bool, optional): If True, merge the calculated data to the original dataframe. Otherwise, don't do it. 
+            is_merged (bool, optional): If True, merge the calculated data to the original dataframe. Otherwise, don't do it.
             verbose (bool, optional): If True, display info. Defaults to False.
         """
         self.fit(verbose=verbose)
-        self.transform(is_merged=is_merged,verbose=verbose)
+        self.transform(is_merged=is_merged, verbose=verbose)
 
-
-    def fit(self, verbose:bool=False) -> None:
+    def fit(self, verbose: bool = False) -> None:
         """Fit the data. Find invalid and undetermined data.
 
         Args:
@@ -193,7 +192,7 @@ class CalcSumprod:
         if verbose:
             rprint(f"{self._name} CalcSumprod.fit() completed.")
 
-    def transform(self, is_merged: bool, verbose:bool=False) -> None:
+    def transform(self, is_merged: bool, verbose: bool = False) -> None:
         """Do the calculations.
 
         Args:
@@ -202,9 +201,9 @@ class CalcSumprod:
         """
         self.calculate()
         if is_merged:
-            self._output=self.add_calc()
+            self._output = self.add_calc()
         else:
-            self._output=self._calc_data
+            self._output = self._calc_data
         if verbose:
             rprint(f"{self._name} CalcSumprod.transform() completed.")
 

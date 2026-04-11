@@ -1,6 +1,5 @@
 from __future__ import annotations  # Must be at the top
 import pandas as pd
-from pathlib import Path
 from rich import print as rprint
 
 from fltk.utils.value_cls import StrName
@@ -80,11 +79,11 @@ class CalcRatio:
     @property
     def invalid_data(self) -> pd.DataFrame:
         return self._invalid_data
-    
+
     @property
     def valid_data(self) -> pd.DataFrame:
         return self._valid_data
-    
+
     @property
     def calc_data(self) -> pd.DataFrame:
         return self._calc_data
@@ -115,8 +114,13 @@ class CalcRatio:
             }
         return out
 
-    def load_ratios(self, path: Path, sheet_nm: str | None = None) -> None:
-        lr.load_ratios(self, path=path, sheet_nm=sheet_nm)
+    def load_ratios(self, data: pd.Dataframe) -> None:
+        """Load dataframe of ratio definitions.
+
+        Args:
+            data (pd.Dataframe): dataframe of ratio definitions.
+        """
+        lr.load_ratios(self, data=data)
 
     def load_data(
         self,
@@ -160,11 +164,11 @@ class CalcRatio:
 
     def get_invalid_data(self) -> None:
         self._invalid_data: pd.DataFrame = gid.get_invalid_data(self)
-    
+
     def get_valid_data(self) -> None:
         self._valid_data: pd.DataFrame = gvd.get_valid_data(self)
-    
-    def fit_transform(self, is_cleaned: bool, verbose:bool=False) -> None:
+
+    def fit_transform(self, is_cleaned: bool, verbose: bool = False) -> None:
         """Process the the fit and transform steps in sequence.
 
         Args:
@@ -173,9 +177,8 @@ class CalcRatio:
         """
         self.fit(verbose=verbose)
         self.transform(is_cleaned=is_cleaned, verbose=verbose)
-        
-        
-    def fit(self, verbose:bool=False) -> None:
+
+    def fit(self, verbose: bool = False) -> None:
         """Create merged data and flag invalid.
 
         Args:
@@ -187,7 +190,7 @@ class CalcRatio:
         if verbose:
             rprint(f"{self._name} fit() completed.")
 
-    def transform(self, is_cleaned: bool, verbose:bool=False) -> None:
+    def transform(self, is_cleaned: bool, verbose: bool = False) -> None:
         """Calculate ratios.
 
         Args:

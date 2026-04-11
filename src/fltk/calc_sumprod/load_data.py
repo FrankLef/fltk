@@ -27,7 +27,9 @@ def load_data(
     return data
 
 
-def validate_data_names(inst: CalcSumprod, data: pd.DataFrame, newvalue_var: str) -> None:
+def validate_data_names(
+    inst: CalcSumprod, data: pd.DataFrame, newvalue_var: str
+) -> None:
     cols = data.columns.to_list()
     if newvalue_var in cols:
         msg: str = f"'{newvalue_var}' will be replaced with new calculations?"

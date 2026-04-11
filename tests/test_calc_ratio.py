@@ -19,8 +19,15 @@ def fixtures_path() -> Path:
 
 
 @pytest.fixture
-def ratios_xl(fixtures_path) -> dict[str, str]:
-    out = {"path": fixtures_path.joinpath("ratio.xlsx"), "sheet": "concepts_ratios"}
+def ratios_xl(fixtures_path) -> pd.DataFrame:
+    # out = {"path": fixtures_path.joinpath("ratio.xlsx"), "sheet": "concepts_ratios"}
+    fn = fixtures_path.joinpath("ratio.xlsx")
+    out = pd.read_excel(
+        fn,
+        sheet_name="concepts_ratios",
+        engine="openpyxl",
+        engine_kwargs={"data_only": True},
+    )
     return out
 
 
@@ -42,7 +49,7 @@ def raw_data(data_xl) -> pd.DataFrame:
 
 
 def test_load_ratios(ratio, ratios_xl: dict[str, Path | str]) -> None:
-    ratio.load_ratios(path=ratios_xl["path"], sheet_nm=ratios_xl["sheet"])
+    ratio.load_ratios(ratios_xl)
     assert ratio.ratios_df.shape == (6, 3)
 
 
@@ -58,7 +65,7 @@ def test_load_data(ratio, raw_data) -> None:
 
 @pytest.fixture
 def init_ratio(ratio, ratios_xl, raw_data) -> CalcRatio:
-    ratio.load_ratios(path=ratios_xl["path"], sheet_nm=ratios_xl["sheet"])
+    ratio.load_ratios(ratios_xl)
     ratio.load_data(
         raw_data,
         concept_var="concept",
