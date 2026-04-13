@@ -29,7 +29,7 @@ def merge_data(inst: CalcRatio) -> pd.DataFrame:
     # # breakpoint()
     validate_data_keys(inst, data=pivoted_data)
     augmented_data = augment_data(inst, data=pivoted_data)
-    breakpoint()
+    # breakpoint()
     final_data = move_cols(inst, data=augmented_data)
     return final_data
 
