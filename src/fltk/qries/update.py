@@ -37,7 +37,7 @@ class QryUpdate:
         """
         return qry
 
-    def add_cols(self, cols:dict[str,str]) -> None:
+    def add_cols(self, cols: dict[str, str]) -> None:
         for name, dtype in cols.items():
             qry_add = self.write_add_col(col=name, dtype=dtype)
             self._conn.sql(qry_add)
@@ -57,7 +57,7 @@ class QryUpdate:
         self._conn.sql(qry_update_from)
 
     def add_update(self, col: str, dtype: str, upd_text: str) -> None:
-        self.add_cols({col:dtype})
+        self.add_cols({col: dtype})
         self.update(col=col, upd_text=upd_text)
 
     def add_update_from(
@@ -68,7 +68,7 @@ class QryUpdate:
         from_table: str,
         join_vars: tuple[str, str],
     ) -> None:
-        self.add_cols({col:dtype})
+        self.add_cols({col: dtype})
         self.update_from(
             col=col, upd_text=upd_text, from_table=from_table, join_vars=join_vars
         )

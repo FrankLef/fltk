@@ -2,6 +2,7 @@ from __future__ import annotations  # Must be at the top
 import pandas as pd
 from pathlib import Path
 from rich import print as rprint
+from rich.pretty import pprint
 from rich.console import Console
 
 from fltk.utils.value_cls import StrName
@@ -80,35 +81,6 @@ class CalcSumprod:
     def output(self) -> pd.DataFrame:
         """Dataframe of final output data."""
         return self._output
-
-    def summary(self, verbose: bool = True) -> dict[str, int]:
-        nsump = self._sump_df.shape[0]
-        ndata = self._data.shape[0]
-        ninvalid = self._invalid_data.shape[0]
-        nvalid = self._valid_data.shape[0]
-        ncalc = self._calc_data.shape[0]
-        noutput = self._output.shape[0]
-        if verbose:
-            msg: str = f"""
-            Summary of {self._name}
-            -------------------------
-            Sum products: {nsump} rows
-            Data: {ndata} rows
-            Invalid data: {ninvalid} rows
-            Valid data: {nvalid} rows
-            Calculated data: {ncalc} rows
-            Output data: {noutput} rows
-            """
-            rprint(msg)
-            out = {
-                "sumprod": nsump,
-                "data": ndata,
-                "invalid": ninvalid,
-                "valid": nvalid,
-                "calculated": ncalc,
-                "output": noutput,
-            }
-        return out
 
     def load_sump(self, data: pd.DataFrame) -> None:
         """Load sumproduct specifications from a pandas dataframe.
@@ -223,6 +195,25 @@ class CalcSumprod:
     def add_calc(self) -> pd.DataFrame:
         return ac.add_calc(self)
 
+    def summary(self, verbose: bool = True) -> dict[str, int]:
+        nsump = self._sump_df.shape[0]
+        ndata = self._data.shape[0]
+        ninvalid = self._invalid_data.shape[0]
+        nvalid = self._valid_data.shape[0]
+        ncalc = self._calc_data.shape[0]
+        noutput = self._output.shape[0]
+        if verbose:
+            out = {
+                "sumprod": nsump,
+                "data": ndata,
+                "invalid": ninvalid,
+                "valid": nvalid,
+                "calculated": ncalc,
+                "output": noutput,
+            }
+            pprint(out)
+        return out
+
     def to_excel(self, path: Path) -> None:
         """Export data to excel.
 
@@ -230,9 +221,7 @@ class CalcSumprod:
             path (Path): Path to excel file, including file name.
         """
         console = Console()
-        msg: str = (
-            f"[bright_white]Exporting CalcRatio to:[/bright_white]\n[cyan]{path}[/cyan]"
-        )
+        msg: str = f"\n[bright_white]Exporting CalcRatio to:[/bright_white]\n[cyan]{path}[/cyan]"
         console.print(msg)
         rprint("'data'")
         self._data.to_excel(path, sheet_name="data", index=False, engine="openpyxl")

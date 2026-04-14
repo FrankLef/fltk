@@ -21,15 +21,10 @@ def merge_data(inst: CalcRatio) -> pd.DataFrame:
         )
         raise AssertionError(msg)
     cols = [inst._data_concept, inst._concept_name]
-    # print("after merge")
-    # breakpoint()
     merged_data.drop(columns=cols, inplace=True)
-    # breakpoint()
     pivoted_data = pivot_data(inst, merged_data=merged_data)
-    # # breakpoint()
     validate_data_keys(inst, data=pivoted_data)
     augmented_data = augment_data(inst, data=pivoted_data)
-    # breakpoint()
     final_data = move_cols(inst, data=augmented_data)
     return final_data
 

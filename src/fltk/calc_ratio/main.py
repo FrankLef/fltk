@@ -1,6 +1,7 @@
 from __future__ import annotations  # Must be at the top
 import pandas as pd
 from rich import print as rprint
+from rich.pretty import pprint
 from rich.console import Console
 from pathlib import Path
 
@@ -89,32 +90,6 @@ class CalcRatio:
     @property
     def calc_data(self) -> pd.DataFrame:
         return self._calc_data
-
-    def summary(self, verbose: bool = True) -> dict[str, int]:
-        ndata = self._data.shape[0]
-        nmerged = self._merged_data.shape[0]
-        ninvalid = self._invalid_data.shape[0]
-        nvalid = self._valid_data.shape[0]
-        ncalc = self._calc_data.shape[0]
-        if verbose:
-            msg: str = f"""
-            Summary of {self._name}
-            -------------------------
-            Data: {ndata} rows
-            Merged data: {nmerged} rows
-            Invalid data: {ninvalid} rows
-            Valid data: {nvalid} rows
-            Calculated data: {ncalc} rows
-            """
-            rprint(msg)
-            out = {
-                "data": ndata,
-                "merged": nmerged,
-                "invalid": ninvalid,
-                "valid": nvalid,
-                "calculated": ncalc,
-            }
-        return out
 
     def load_ratios(self, data: pd.Dataframe) -> None:
         """Load dataframe of ratio definitions.
@@ -216,6 +191,27 @@ class CalcRatio:
         df.replace([float("inf"), float("-inf")], value=None, inplace=True)
         df.dropna(subset=cols, inplace=True)
 
+    def summary(self, verbose: bool = True) -> dict[str, int]:
+        ndata = self._data.shape[0]
+        nratios_df = (self._ratios_df.shape[0],)
+        nratios_df_long = (self._ratios_df_long.shape[0],)
+        nmerged = self._merged_data.shape[0]
+        ninvalid = self._invalid_data.shape[0]
+        nvalid = self._valid_data.shape[0]
+        ncalc = self._calc_data.shape[0]
+        if verbose:
+            out = {
+                "data": ndata,
+                "ratios_df": nratios_df,
+                "ratios_df_long": nratios_df_long,
+                "merged": nmerged,
+                "invalid": ninvalid,
+                "valid": nvalid,
+                "calculated": ncalc,
+            }
+            pprint(out)
+        return out
+
     def to_excel(self, path: Path) -> None:
         """Export data to excel.
 
@@ -223,9 +219,7 @@ class CalcRatio:
             path (Path): Path to excel file, including file name.
         """
         console = Console()
-        msg: str = (
-            f"[bright_white]Exporting CalcRatio to:[/bright_white]\n[cyan]{path}[/cyan]"
-        )
+        msg: str = f"\n[bright_white]Exporting CalcRatio to:[/bright_white]\n[cyan]{path}[/cyan]"
         console.print(msg)
         rprint("'data'")
         self._data.to_excel(path, sheet_name="data", index=False, engine="openpyxl")
@@ -234,9 +228,11 @@ class CalcRatio:
         ) as writer:
             dfs = {
                 "ratios_df": self._ratios_df,
+                "ratios_long_df": self._ratios_df_long,
                 "merged_data": self._merged_data,
-                # "valid_data": self._valid_data,
-                "calc_data": self._calc_data,
+                "invalid": self._invalid_data,
+                "valid_data": self._valid_data,
+                "calc_data": self.calc_data,
             }
             for sheet_name, df in dfs.items():
                 msg = f"'{sheet_name}'"
