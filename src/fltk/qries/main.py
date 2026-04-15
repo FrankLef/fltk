@@ -26,7 +26,7 @@ class QryFltk:
         return QryEnums(self._conn, self._table_nm)
 
     @property
-    def into(self) -> QryInfo:
+    def info(self) -> QryInfo:
         return QryInfo(self._conn, self._table_nm)
 
     @property
