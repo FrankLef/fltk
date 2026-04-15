@@ -9,14 +9,15 @@ from fltk.calc_sumprod.main import CalcSumprod
 
 fixtures_path = Path("C:/Users/Public/MyPy/Packages/fltk/tests/fixtures")
 sumprod_path = fixtures_path.joinpath("sumprod.xlsx")
-out_fn = f"sumprod_z1_{dt.now().date().isoformat()}.xlsx"
+out_fn = f"sumprod_z2_{dt.now().date().isoformat()}.xlsx"
 out_path = fixtures_path.joinpath(out_fn)
-idx_sheet: str = "rolly"
-data_sheet = "data1"
-newvalue_var = "rolly_amt"
+idx_sheet: str = "concepts_adds"
+data_sheet = "data2"
+newvalue_var = "adds_amt"
 
-sumprod = CalcSumprod(name="testSumprodZ1", idx_to="idx")
-sumprod.load_mat_from_xl(sumprod_path, sheet_nm=idx_sheet)
+sumprod = CalcSumprod(name="testSumprodZ2", idx_to="concept_add", idx_from="concept_from", sump_coef="coef", sump_value="summ_amt")
+sump_df = pd.read_excel(sumprod_path, sheet_name="concepts_adds")
+sumprod.load_sump(sump_df)
 sumprod.sump_df.info()
 
 print(sumprod_path)
@@ -30,15 +31,13 @@ raw_data.info()
 
 sumprod.load_data(
     raw_data,
-    idx_var="period",
+    idx_var="concept",
     value_var="amount",
-    group_vars=["entity", "concept", "pertype"],
+    group_vars=["entity", "period", "pertype"],
     newvalue_var=newvalue_var,
 )
-print("load_data")
-# breakpoint()
 
-sumprod.fit(is_fillna=False)
-sumprod.transform(is_merged=True)
+sumprod.fit(is_fillna=True)
+sumprod.transform(is_merged=False)
 
 sumprod.to_excel(out_path)

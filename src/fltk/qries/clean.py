@@ -13,13 +13,13 @@ class QryClean:
     def clean_ws(self, col: str) -> None:
         """Remove leading and trailing white spaces and replace multiple whitespaces.
 
-        Including white space but also tab, linefeed, etc. See Python docs.
+        Including white space but also tab, linefeed, etc.
+
+        Args:
+            col (str): Column name.
         """
-
-        # \s include white space but also tab, linefeed, etc. See Python docs.
-
-        pats = {r"^\s+|\s$": "", r"[\t\n\r\v\f]+": "", r" +": " "}
-        for pat, replace in pats.items():
+        pats = ((r"^\s+|\s$", ""), (r"[\t\n\r\v\f]+", ""), (r" +", " "))
+        for pat, replace in pats:
             qry = f"""
             UPDATE {self.table_nm}
             SET {col} = regexp_replace({col}, '{pat}', '{replace}', 'g')
