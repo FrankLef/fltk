@@ -144,24 +144,31 @@ class CalcSumprod:
     def get_invalid_data(self) -> None:
         self._invalid_data: pd.DataFrame = gid.get_invalid_data(self)
 
-    def fit_transform(self, is_merged: bool, verbose: bool = False) -> None:
+    def fit_transform(
+        self, is_fillna: bool, is_merged: bool, verbose: bool = False
+    ) -> None:
         """Process the fit and transform steps in a sequence.
 
         Args:
             is_merged (bool, optional): If True, merge the calculated data to the original dataframe. Otherwise, don't do it.
             verbose (bool, optional): If True, display info. Defaults to False.
         """
-        self.fit(verbose=verbose)
+        self.fit(is_fillna=is_fillna, verbose=verbose)
         self.transform(is_merged=is_merged, verbose=verbose)
 
-    def fit(self, verbose: bool = False) -> None:
+    def fit(self, is_fillna: bool, verbose: bool = False) -> None:
         """Fit the data. Find invalid and undetermined data.
 
         Args:
+            is_fillna (bool): If True, replace missing values by zero. If False, eliminate rows summprod that have invalid input, e.g. when computing period values.
             verbose (bool, optional): If True, display info. Defaults to False.
         """
-        self.get_invalid_data()
-        self.get_valid_data()
+        if is_fillna:
+            self.fillna()
+            self._invalid_data = pd.DataFrame()
+        else:
+            self.get_invalid_data()
+            self.get_valid_data()
         if verbose:
             rprint(f"{self._name} CalcSumprod.fit() completed.")
 
@@ -187,6 +194,9 @@ class CalcSumprod:
             msg: str = "Attribute Error: Are you sure you ran fit()?"
             e.add_note(msg)
             raise
+
+    def fillna(self) -> None:
+        self._valid_data = gvd.fill_na(self)
 
     def calculate(self) -> None:
         """Calculate sumprods."""
