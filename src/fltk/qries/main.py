@@ -9,25 +9,25 @@ from .update import QryUpdate
 
 class QryFltk(QryRepo):
     @property
-    def clean(self) -> QryClean:
+    def clean(self) -> QryRepo:
         return QryClean(self._conn, self._table_nm)
 
     @property
-    def constraints(self) -> QryConstraints:
+    def constraints(self) -> QryRepo:
         return QryConstraints(self._conn, self._table_nm)
 
     @property
-    def enums(self) -> QryEnums:
+    def enums(self) -> QryRepo:
         return QryEnums(self._conn, self._table_nm)
 
     @property
-    def info(self) -> QryInfo:
+    def info(self) -> QryRepo:
         return QryInfo(self._conn, self._table_nm)
 
     @property
-    def transform_log(self) -> QryTransformLog:
+    def transform_log(self) -> QryRepo:
         return QryTransformLog(self._conn, table_nm=self._table_nm)
 
     @property
-    def update(self) -> QryUpdate:
+    def update(self) -> QryRepo:
         return QryUpdate(self._conn, table_nm=self._table_nm)
