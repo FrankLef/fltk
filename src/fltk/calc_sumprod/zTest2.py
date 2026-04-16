@@ -15,7 +15,13 @@ idx_sheet: str = "concepts_adds"
 data_sheet = "data2"
 newvalue_var = "adds_amt"
 
-sumprod = CalcSumprod(name="testSumprodZ2", idx_to="concept_add", idx_from="concept_from", sump_coef="coef", sump_value="summ_amt")
+sumprod = CalcSumprod(
+    name="testSumprodZ2",
+    idx_to="concept_add",
+    idx_from="concept_from",
+    sump_coef="coef",
+    sump_value="summ_amt",
+)
 sump_df = pd.read_excel(sumprod_path, sheet_name="concepts_adds")
 sumprod.load_sump(sump_df)
 sumprod.sump_df.info()

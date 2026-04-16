@@ -1,5 +1,4 @@
-import duckdb as ddb
-
+from ._qry_repo import QryRepo
 from .clean import QryClean
 from .constraints import QryConstraints
 from .enums import QryEnums
@@ -8,11 +7,7 @@ from .transform_log import QryTransformLog
 from .update import QryUpdate
 
 
-class QryFltk:
-    def __init__(self, conn: ddb.DuckDBPyConnection, table_nm: str):
-        self._conn = conn
-        self._table_nm = table_nm
-
+class QryFltk(QryRepo):
     @property
     def clean(self) -> QryClean:
         return QryClean(self._conn, self._table_nm)

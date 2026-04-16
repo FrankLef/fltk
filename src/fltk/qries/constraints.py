@@ -1,12 +1,10 @@
 import duckdb as ddb
 from typing import Iterable
 
+from ._qry_repo import QryRepo
 
-class QryConstraints:
-    def __init__(self, conn: ddb.DuckDBPyConnection, table_nm: str):
-        self._conn = conn
-        self._table_nm = table_nm
 
+class QryConstraints(QryRepo):
     @property
     def table_nm(self) -> str:
         return self._table_nm
@@ -34,9 +32,8 @@ class QryConstraints:
             qry = self.write_set_not_null(col)
             try:
                 self._conn.sql(qry)
-            except Exception as e:
-                pass_it: bool = "Binder Error" in str(e) and skip_on_error
-                if pass_it:
+            except ddb.BinderException:
+                if skip_on_error:
                     pass
                 else:
                     raise

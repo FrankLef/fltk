@@ -1,14 +1,11 @@
 import duckdb as ddb
 from duckdb.typing import DOUBLE
 
+from ._qry_repo import QryRepo
 from .log1ps import log1ps10, expm1s10
 
 
-class QryTransformLog:
-    def __init__(self, conn: ddb.DuckDBPyConnection, table_nm: str):
-        self._conn = conn
-        self._table_nm = table_nm
-
+class QryTransformLog(QryRepo):
     @property
     def table_nm(self) -> str:
         return self._table_nm

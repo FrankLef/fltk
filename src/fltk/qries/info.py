@@ -1,11 +1,7 @@
-import duckdb as ddb
+from ._qry_repo import QryRepo
 
 
-class QryInfo:
-    def __init__(self, conn: ddb.DuckDBPyConnection, table_nm: str):
-        self._conn = conn
-        self._table_nm = table_nm
-
+class QryInfo(QryRepo):
     @property
     def table_nm(self) -> str:
         return self._table_nm
