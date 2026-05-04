@@ -12,6 +12,7 @@ from . import vars
 from . import load_raw_data as lrd
 from . import load_ratios as lr
 from . import periods as per
+from . import bridge
 
 
 class CalcBridge:
@@ -40,8 +41,8 @@ class CalcBridge:
 
     def __repr__(self):
         summary = self.get_summary()
-        type_nm = type(self).__name__
-        out = f"{type_nm}\n" + "-" * len(type_nm) + "\n"
+        title = f"{type(self).__name__}: {self.name}\n"
+        out = title + "-" * (len(title) - 1) + "\n"
         for key, value in summary.items():
             out += f"{key:<10}: {value}\n"
         return out
@@ -68,17 +69,21 @@ class CalcBridge:
     def get_periods(self) -> None:
         self.periods_df = per.get_periods(self)
 
+    def get_bridge(self) -> None:
+        self.bridge_df = bridge.get_bridge(self)
+
     def fit_transform(self, verbose: bool = False) -> None:
         self.fit(verbose=verbose)
         self.transform(verbose=verbose)
 
     def fit(self, verbose: bool = False) -> None:
+        self.get_periods()
+        self.get_bridge()
         if verbose:
             type_nm = type(self).__name__
             rprint(f"{self._name} {type_nm}.fit() completed.")
 
     def transform(self, verbose: bool = False) -> None:
-        self.get_periods()
         if verbose:
             type_nm = type(self).__name__
             rprint(f"{self._name} {type_nm}.transform() completed.")
@@ -87,5 +92,7 @@ class CalcBridge:
         summary = {
             "raw data": self.ratios_df.shape,
             "ratios": self.raw_df.shape,
+            "periods": self.periods_df.shape,
+            "bridge": self.bridge_df.shape,
         }
         return summary

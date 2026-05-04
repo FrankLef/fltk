@@ -13,6 +13,7 @@ def get_periods(inst: CalcBridge) -> pd.DataFrame:
     _end = inst.periods.end
 
     the_periods = sorted(_data[_period].unique())
+    assert len(the_periods) >= 2, "There must be at least 2 distinct periods."
     the_starts = the_periods[:-1]
     the_ends = the_periods[1:]
     periods_df = pd.DataFrame({_start: the_starts, _end: the_ends})
