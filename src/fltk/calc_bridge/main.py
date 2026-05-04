@@ -1,6 +1,5 @@
 from __future__ import annotations  # Must be at the top
 import pandas as pd
-from datetime import date
 
 # from pathlib import Path
 from rich import print as rprint
@@ -19,6 +18,8 @@ class CalcBridge:
     def __init__(
         self,
         name: str,
+        period_start: str = "period_start",
+        period_end: str = "period_end",
         price: str = "price",
         from_sfx: str = "from",
         to_sfx: str = "to",
@@ -26,6 +27,9 @@ class CalcBridge:
         den_val: str = "den_val",
     ):
         self._name = StrName(name)
+        self.periods = vars.Periods(
+            start=str(StrName(period_start)), end=str(StrName(period_end))
+        )
         self.bridge = vars.Bridge(
             price=str(StrName(price)),
             from_sfx=str(StrName(from_sfx)),
@@ -36,8 +40,8 @@ class CalcBridge:
 
     def __repr__(self):
         summary = self.get_summary()
-        nm = type(self).__name__
-        out = f"{nm}\n" + "-" * len(nm) + "\n"
+        type_nm = type(self).__name__
+        out = f"{type_nm}\n" + "-" * len(type_nm) + "\n"
         for key, value in summary.items():
             out += f"{key:<10}: {value}\n"
         return out
@@ -61,9 +65,8 @@ class CalcBridge:
         self.raw = vars.Raw(groups=groups, period=period, ratio=ratio, value=value)
         self.raw_df = lrd.load_raw_data(self, data=data)
 
-    def get_periods(self, start: date, end: date) -> None:
-        self.periods = vars.Periods(start=start, end=end)
-        self.periods_df = per.get_periods(self, data=self.raw_df)
+    def get_periods(self) -> None:
+        self.periods_df = per.get_periods(self)
 
     def fit_transform(self, verbose: bool = False) -> None:
         self.fit(verbose=verbose)
@@ -71,11 +74,14 @@ class CalcBridge:
 
     def fit(self, verbose: bool = False) -> None:
         if verbose:
-            rprint(f"{self._name} {type}.fit() completed.")
+            type_nm = type(self).__name__
+            rprint(f"{self._name} {type_nm}.fit() completed.")
 
     def transform(self, verbose: bool = False) -> None:
+        self.get_periods()
         if verbose:
-            rprint(f"{self._name} {type}.transform() completed.")
+            type_nm = type(self).__name__
+            rprint(f"{self._name} {type_nm}.transform() completed.")
 
     def get_summary(self) -> dict[str, int]:
         summary = {

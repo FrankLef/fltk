@@ -6,11 +6,15 @@ if TYPE_CHECKING:
     from .main import CalcBridge  # Only imported when checking types
 
 
-def get_periods(
-    inst: CalcBridge,
-    data: pd.DataFrame
-) -> pd.DataFrame:
+def get_periods(inst: CalcBridge) -> pd.DataFrame:
+    _data = inst.raw_df
     _period = inst.raw.period
     _start = inst.periods.start
     _end = inst.periods.end
-    return data
+
+    the_periods = sorted(_data[_period].unique())
+    the_starts = the_periods[:-1]
+    the_ends = the_periods[1:]
+    periods_df = pd.DataFrame({_start: the_starts, _end: the_ends})
+    assert not periods_df.empty, "Periods df is empty!"
+    return periods_df

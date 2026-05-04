@@ -1,5 +1,4 @@
 from typing import NamedTuple
-from datetime import date
 
 
 class Raw(NamedTuple):
@@ -20,8 +19,8 @@ class Raw(NamedTuple):
 
 
 class Periods(NamedTuple):
-    start: date
-    end: date
+    start: str
+    end: str
 
 
 class Ratios(NamedTuple):

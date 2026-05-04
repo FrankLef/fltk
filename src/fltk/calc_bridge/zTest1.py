@@ -12,7 +12,7 @@ ratio_path = fixtures_path.joinpath("ratio.xlsx")
 out_fn = f"bridge_z1_{dt.now().date().isoformat()}.xlsx"
 out_path = fixtures_path.joinpath(out_fn)
 ratio_sheet: str = "concepts_ratios"
-data_sheet: str = "data1"
+calc_sheet: str = "calc"
 
 bridge = CalcBridge(name="testBridgeZ1")
 
@@ -31,8 +31,8 @@ bridge.load_ratios(
 
 raw_data = pd.read_excel(
     ratio_path,
-    sheet_name=data_sheet,
-    names=("entity", "pertype", "period", "concept_ratio", "ratio"),
+    sheet_name=calc_sheet,
+    usecols=("entity", "pertype", "period", "concept_ratio", "ratio"),
     engine="openpyxl",
     engine_kwargs={"data_only": True},
 )
