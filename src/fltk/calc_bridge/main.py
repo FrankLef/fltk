@@ -1,10 +1,11 @@
 from __future__ import annotations  # Must be at the top
 import pandas as pd
 
-# from pathlib import Path
+from pathlib import Path
 from rich import print as rprint
+
 # from rich.pretty import pprint
-# from rich.console import Console
+from rich.console import Console
 
 from fltk.utils.value_cls import StrName
 
@@ -24,8 +25,6 @@ class CalcBridge:
         price: str = "price",
         from_sfx: str = "from",
         to_sfx: str = "to",
-        num_val: str = "num_val",
-        den_val: str = "den_val",
     ):
         self._name = StrName(name)
         self.periods = vars.Periods(
@@ -35,8 +34,6 @@ class CalcBridge:
             price=str(StrName(price)),
             from_sfx=str(StrName(from_sfx)),
             to_sfx=str(StrName(to_sfx)),
-            num_val=str(StrName(num_val)),
-            den_val=str(StrName(den_val)),
         )
 
     def __repr__(self):
@@ -60,10 +57,23 @@ class CalcBridge:
         data: pd.DataFrame,
         groups: tuple[str, ...],
         period: str,
-        ratio: str,
-        value: str,
+        ratio_nm: str,
+        ratio_val: str,
+        num_nm: str,
+        num_val: str,
+        den_nm: str,
+        den_val: str,
     ) -> None:
-        self.raw = vars.Raw(groups=groups, period=period, ratio=ratio, value=value)
+        self.raw = vars.Raw(
+            groups=groups,
+            period=period,
+            ratio_nm=ratio_nm,
+            ratio_val=ratio_val,
+            num_nm=num_nm,
+            num_val=num_val,
+            den_nm=den_nm,
+            den_val=den_val,
+        )
         self.raw_df = lrd.load_raw_data(self, data=data)
 
     def get_periods(self) -> None:
@@ -96,3 +106,28 @@ class CalcBridge:
             "bridge": self.bridge_df.shape,
         }
         return summary
+
+    def to_excel(self, path: Path) -> None:
+        """Export data to excel.
+
+        Args:
+            path (Path): Path to excel file, including file name.
+        """
+        console = Console()
+        type_nm = type(self).__name__
+        msg: str = f"\n[bright_white]Exporting {type_nm} to:[/bright_white]\n[cyan]{path}[/cyan]"
+        console.print(msg)
+        rprint("'data'")
+        self.raw_df.to_excel(path, sheet_name="data", index=False, engine="openpyxl")
+        with pd.ExcelWriter(
+            path, mode="a", engine="openpyxl", if_sheet_exists="replace"
+        ) as writer:
+            dfs = {
+                "ratios": self.ratios_df,
+                "periods": self.periods_df,
+                "bridge": self.bridge_df,
+            }
+            for sheet_name, df in dfs.items():
+                msg = f"'{sheet_name}'"
+                rprint(msg)
+                df.to_excel(writer, sheet_name=sheet_name, index=False)

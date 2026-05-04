@@ -30,7 +30,17 @@ bridge.load_ratios(
 raw_data = pd.read_excel(
     ratio_path,
     sheet_name=data_sheet,
-    usecols=("entity", "pertype", "period", "concept_ratio", "ratio"),
+    usecols=(
+        "entity",
+        "pertype",
+        "period",
+        "concept_ratio",
+        "concept_num",
+        "concept_den",
+        "ratio",
+        "num",
+        "den",
+    ),
     engine="openpyxl",
     engine_kwargs={"data_only": True},
 )
@@ -39,8 +49,12 @@ bridge.load_raw_data(
     raw_data,
     groups=("entity", "pertype"),
     period="period",
-    ratio="concept_ratio",
-    value="ratio",
+    ratio_nm="concept_ratio",
+    ratio_val="ratio",
+    num_nm="concept_num",
+    num_val="num",
+    den_nm="concept_den",
+    den_val="den",
 )
 
 bridge.fit(verbose=True)
@@ -48,4 +62,4 @@ bridge.transform(verbose=True)
 
 print(bridge)
 
-# bridge.to_excel(out_path)
+bridge.to_excel(out_path)

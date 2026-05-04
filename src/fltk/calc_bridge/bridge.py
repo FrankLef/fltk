@@ -11,7 +11,7 @@ def get_bridge(inst: CalcBridge) -> pd.DataFrame:
     _periods = inst.periods_df
     _period = inst.raw.period
     _groups = inst.raw.groups
-    _ratio_nm = inst.raw.ratio
+    _ratio_nm = inst.raw.ratio_nm
     _start = inst.periods.start
     _end = inst.periods.end
 

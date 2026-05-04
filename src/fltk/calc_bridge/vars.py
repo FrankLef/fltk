@@ -4,17 +4,28 @@ from typing import NamedTuple
 class Raw(NamedTuple):
     groups: tuple[str, ...]
     period: str
-    ratio: str
-    value: str
+    ratio_nm: str
+    ratio_val: str
+    num_nm: str
+    den_nm: str
+    num_val: str
+    den_val: str
 
     @property
     def keys(self) -> tuple[str, ...]:
-        keys = (*self.groups, self.period, self.ratio)
+        keys = (*self.groups, self.period, self.ratio_nm)
         return keys
 
     @property
     def vars(self) -> tuple[str, ...]:
-        vars = (*self.keys, self.value)
+        vars = (
+            *self.keys,
+            self.ratio_val,
+            self.num_nm,
+            self.num_val,
+            self.den_nm,
+            self.den_val,
+        )
         return vars
 
 
@@ -41,6 +52,4 @@ class Ratios(NamedTuple):
 class Bridge(NamedTuple):
     from_sfx: str
     to_sfx: str
-    num_val: str
-    den_val: str
     price: str
