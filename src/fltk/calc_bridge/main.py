@@ -1,5 +1,6 @@
 from __future__ import annotations  # Must be at the top
 import pandas as pd
+from datetime import date
 
 # from pathlib import Path
 from rich import print as rprint
@@ -11,6 +12,7 @@ from fltk.utils.value_cls import StrName
 from . import vars
 from . import load_raw_data as lrd
 from . import load_ratios as lr
+from . import periods as per
 
 
 class CalcBridge:
@@ -32,12 +34,20 @@ class CalcBridge:
             den_val=str(StrName(den_val)),
         )
 
+    def __repr__(self):
+        summary = self.get_summary()
+        nm = type(self).__name__
+        out = f"{nm}\n" + "-" * len(nm) + "\n"
+        for key, value in summary.items():
+            out += f"{key:<10}: {value}\n"
+        return out
+
     @property
     def name(self) -> str:
         return self._name
 
-    def load_ratios(self, data: pd.DataFrame, name: str, num_nm: str, den_nm: str):
-        self.ratios = vars.Ratios(name=name, num_nm=num_nm, den_nm=den_nm)
+    def load_ratios(self, data: pd.DataFrame, ratio_nm: str, num_nm: str, den_nm: str):
+        self.ratios = vars.Ratios(ratio_nm=ratio_nm, num_nm=num_nm, den_nm=den_nm)
         self.ratios_df = lr.load_ratios(self, data=data)
 
     def load_raw_data(
@@ -51,6 +61,10 @@ class CalcBridge:
         self.raw = vars.Raw(groups=groups, period=period, ratio=ratio, value=value)
         self.raw_df = lrd.load_raw_data(self, data=data)
 
+    def get_periods(self, start: date, end: date) -> None:
+        self.periods = vars.Periods(start=start, end=end)
+        self.periods_df = per.get_periods(self, data=self.raw_df)
+
     def fit_transform(self, verbose: bool = False) -> None:
         self.fit(verbose=verbose)
         self.transform(verbose=verbose)
@@ -62,3 +76,10 @@ class CalcBridge:
     def transform(self, verbose: bool = False) -> None:
         if verbose:
             rprint(f"{self._name} {type}.transform() completed.")
+
+    def get_summary(self) -> dict[str, int]:
+        summary = {
+            "raw data": self.ratios_df.shape,
+            "ratios": self.raw_df.shape,
+        }
+        return summary

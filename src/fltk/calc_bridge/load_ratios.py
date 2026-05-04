@@ -6,10 +6,7 @@ if TYPE_CHECKING:
     from .main import CalcBridge  # Only imported when checking types
 
 
-def load_ratios(
-    inst: CalcBridge,
-    data: pd.DataFrame
-) -> pd.DataFrame:
+def load_ratios(inst: CalcBridge, data: pd.DataFrame) -> pd.DataFrame:
     if data.empty:
         raise ValueError("The data is empty.")
     validate_data_names(data=data, vars=inst.ratios.vars)

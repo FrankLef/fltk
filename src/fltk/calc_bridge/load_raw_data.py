@@ -6,10 +6,7 @@ if TYPE_CHECKING:
     from .main import CalcBridge  # Only imported when checking types
 
 
-def load_raw_data(
-    inst: CalcBridge,
-    data: pd.DataFrame
-) -> pd.DataFrame:
+def load_raw_data(inst: CalcBridge, data: pd.DataFrame) -> pd.DataFrame:
     if data.empty:
         raise ValueError("The data is empty.")
     validate_data_names(data=data, vars=inst.raw.vars)
@@ -26,7 +23,7 @@ def validate_data_names(data: pd.DataFrame, vars: tuple[str, ...]) -> None:
 
 
 def validate_data_keys(data: pd.DataFrame, keys: tuple[str, ...]) -> None:
-    unique_counts = data[keys].value_counts()
+    unique_counts = data[list(keys)].value_counts()
     ndistinct = len(unique_counts)
     check = data.shape[0] - ndistinct
     if check:
