@@ -2,10 +2,9 @@ from __future__ import annotations  # Must be at the top
 import pandas as pd
 from pathlib import Path
 from rich import print as rprint
-from rich.pretty import pprint
-from rich.console import Console
 
-from fltk.utils.value_cls import StrName
+from ..utils.value_cls import StrName
+from ..utils import to_excel as xl
 
 from . import init_vars as iv
 from . import load_mat_xl as lmx
@@ -45,6 +44,14 @@ class CalcSumprod:
         self._sump_value = StrName(sump_value)
         self._sump_df = pd.DataFrame()
         self._init_sump_vars()
+
+    def __repr__(self):
+        summary = self.get_summary()
+        title = f"{type(self).__name__}: {self._name}"
+        out = title + "\n" + ("-" * len(title)) + "\n"
+        for key, value in summary.items():
+            out += f"{key:<10}: {value}\n"
+        return out
 
     def _init_sump_vars(self) -> None:
         self._sump_vars: list[str] = []
@@ -205,47 +212,70 @@ class CalcSumprod:
     def add_calc(self) -> pd.DataFrame:
         return ac.add_calc(self)
 
-    def summary(self, verbose: bool = True) -> dict[str, int]:
-        nsump = self._sump_df.shape[0]
-        ndata = self._data.shape[0]
-        ninvalid = self._invalid_data.shape[0]
-        nvalid = self._valid_data.shape[0]
-        ncalc = self._calc_data.shape[0]
-        noutput = self._output.shape[0]
-        if verbose:
-            out = {
-                "sumprod": nsump,
-                "data": ndata,
-                "invalid": ninvalid,
-                "valid": nvalid,
-                "calculated": ncalc,
-                "output": noutput,
-            }
-            pprint(out)
-        return out
+    def get_summary(self) -> dict[str, tuple[int, ...]]:
+        summary = {
+            "raw data": self._data.shape,
+            "sumprod": self._sump_df.shape,
+            "invalid": self._invalid_data.shape,
+            "valid": self._valid_data.shape,
+            "calculated": self._calc_data.shape,
+            "output": self._output.shape,
+        }
+        return summary
+
+    # def summary(self, verbose: bool = True) -> dict[str, int]:
+    #     nsump = self._sump_df.shape[0]
+    #     ndata = self._data.shape[0]
+    #     ninvalid = self._invalid_data.shape[0]
+    #     nvalid = self._valid_data.shape[0]
+    #     ncalc = self._calc_data.shape[0]
+    #     noutput = self._output.shape[0]
+    #     if verbose:
+    #         out = {
+    #             "sumprod": nsump,
+    #             "data": ndata,
+    #             "invalid": ninvalid,
+    #             "valid": nvalid,
+    #             "calculated": ncalc,
+    #             "output": noutput,
+    #         }
+    #         pprint(out)
+    #     return out
 
     def to_excel(self, path: Path) -> None:
-        """Export data to excel.
+        dfs = {
+            "data": self._data,
+            "sumprod_df": self._sump_df,
+            "invalid_data": self._sump_df,
+            "valid_data": self._valid_data,
+            "calc_data": self._calc_data,
+            "output": self._output,
+        }
+        name = f"{type(self).__name__} '{self._name}'"
+        xl.to_excel(name, path=path, dfs=dfs)
 
-        Args:
-            path (Path): Path to excel file, including file name.
-        """
-        console = Console()
-        msg: str = f"\n[bright_white]Exporting CalcRatio to:[/bright_white]\n[cyan]{path}[/cyan]"
-        console.print(msg)
-        rprint("'data'")
-        self._data.to_excel(path, sheet_name="data", index=False, engine="openpyxl")
-        with pd.ExcelWriter(
-            path, mode="a", engine="openpyxl", if_sheet_exists="replace"
-        ) as writer:
-            dfs = {
-                "sumprod_df": self._sump_df,
-                "invalid_data": self._sump_df,
-                "valid_data": self._valid_data,
-                "calc_data": self._calc_data,
-                "output": self._output,
-            }
-            for sheet_name, df in dfs.items():
-                msg = f"'{sheet_name}'"
-                rprint(msg)
-                df.to_excel(writer, sheet_name=sheet_name, index=False)
+    # def to_excel(self, path: Path) -> None:
+    #     """Export data to excel.
+
+    #     Args:
+    #         path (Path): Path to excel file, including file name.
+    #     """
+    #     console = Console()
+    #     msg: str = f"\n[bright_white]Exporting CalcRatio to:[/bright_white]\n[cyan]{path}[/cyan]"
+    #     console.print(msg)
+    #     rprint("'data'")
+    #     self._data.to_excel(path, sheet_name="data", index=False, engine="openpyxl")
+    #     with pd.ExcelWriter(
+    #         path, mode="a", engine="openpyxl", if_sheet_exists="replace"
+    #     ) as writer:
+    #         dfs = {
+    #             "sumprod_df": self._sump_df,
+    #             "invalid_data": self._sump_df,
+    #             "valid_data": self._valid_data,
+    #             "calc_data": self._calc_data,
+    #             "output": self._output,
+    #         }
+    #         for sheet_name, df in dfs.items():
+    #             msg = f"'{sheet_name}'"
+    #             rprint(msg)
+    #             df.to_excel(writer, sheet_name=sheet_name, index=False)

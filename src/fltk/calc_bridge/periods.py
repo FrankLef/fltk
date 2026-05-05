@@ -7,10 +7,10 @@ if TYPE_CHECKING:
 
 
 def get_periods(inst: CalcBridge) -> pd.DataFrame:
-    _data = inst.raw_df
-    _period = inst.raw.period
-    _start = inst.periods.start
-    _end = inst.periods.end
+    _data = inst.raw
+    _period = inst.raw_vars.period
+    _start = inst.periods_vars.start
+    _end = inst.periods_vars.end
 
     the_periods = sorted(_data[_period].unique())
     assert len(the_periods) >= 2, "There must be at least 2 distinct periods."

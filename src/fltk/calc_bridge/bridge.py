@@ -14,8 +14,8 @@ def get_bridge(inst: CalcBridge) -> pd.DataFrame:
 
 def validate_vars(inst: CalcBridge) -> None:
     """Validate that no bridge variable is used by raw data."""
-    _raw_vars = inst.raw.vars
-    _bridge_vars = inst.bridge.vars
+    _raw_vars = inst.raw_vars.vars
+    _bridge_vars = inst.bridge_vars.vars
 
     invalid_vars = [var for var in _raw_vars if var in _bridge_vars]
     if invalid_vars:
@@ -24,15 +24,15 @@ def validate_vars(inst: CalcBridge) -> None:
 
 
 def get_data(inst: CalcBridge) -> pd.DataFrame:
-    _raw = inst.raw_df
-    _periods = inst.periods_df
-    _period = inst.raw.period
-    _groups = inst.raw.groups
-    _ratio_nm = inst.raw.ratio_nm
-    _start = inst.periods.start
-    _end = inst.periods.end
+    _raw = inst.raw
+    _periods = inst.periods
+    _period = inst.raw_vars.period
+    _groups = inst.raw_vars.groups
+    _ratio_nm = inst.raw_vars.ratio_nm
+    _start = inst.periods_vars.start
+    _end = inst.periods_vars.end
 
-    data = _raw[list(inst.raw.vars)]
+    data = _raw[list(inst.raw_vars.vars)]
     bridge_start = _periods.merge(
         right=data, how="inner", left_on=_start, right_on=_period
     )
@@ -42,7 +42,8 @@ def get_data(inst: CalcBridge) -> pd.DataFrame:
     bridge_end.drop(columns=[_period, _start], inplace=True)
 
     _on = (*_groups, _ratio_nm, _end)
-    suffixes = ("_" + inst.bridge.from_sfx, "_" + inst.bridge.to_sfx)
+    suffixes = inst.add_suffix("")
+    # suffixes = ("_" + inst.bridge_vars.from_sfx, "_" + inst.bridge_vars.to_sfx)
     bridge_df = bridge_start.merge(
         right=bridge_end, how="inner", on=_on, suffixes=suffixes
     )

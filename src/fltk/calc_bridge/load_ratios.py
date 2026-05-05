@@ -9,8 +9,8 @@ if TYPE_CHECKING:
 def load_ratios(inst: CalcBridge, data: pd.DataFrame) -> pd.DataFrame:
     if data.empty:
         raise ValueError("The data is empty.")
-    validate_data_names(data=data, vars=inst.ratios.vars)
-    validate_data_keys(data=data, keys=inst.ratios.keys)
+    validate_data_names(data=data, vars=inst.ratios_vars.vars)
+    validate_data_keys(data=data, keys=inst.ratios_vars.keys)
     return data
 
 
@@ -22,7 +22,7 @@ def validate_data_names(data: pd.DataFrame, vars: tuple[str, ...]) -> None:
         raise ValueError(msg)
 
 
-def validate_data_keys(data: pd.DataFrame, keys: tuple[str, ...]) -> None:
+def validate_data_keys(data: pd.DataFrame, keys: str | tuple[str, ...]) -> None:
     unique_counts = data[keys].value_counts()
     ndistinct = len(unique_counts)
     check = data.shape[0] - ndistinct

@@ -17,16 +17,13 @@ newvalue_var = "rolly_amt"
 
 sumprod = CalcSumprod(name="testSumprodZ1", idx_to="idx")
 sumprod.load_mat_from_xl(sumprod_path, sheet_nm=idx_sheet)
-sumprod.sump_df.info()
 
-print(sumprod_path)
 raw_data = pd.read_excel(
     sumprod_path,
     sheet_name=data_sheet,
     engine="openpyxl",
     engine_kwargs={"data_only": True},
 )
-raw_data.info()
 
 sumprod.load_data(
     raw_data,
@@ -35,10 +32,10 @@ sumprod.load_data(
     group_vars=["entity", "concept", "pertype"],
     newvalue_var=newvalue_var,
 )
-print("load_data")
-# breakpoint()
 
 sumprod.fit(is_fillna=False)
 sumprod.transform(is_merged=True)
+
+print("\n", sumprod, sep="")
 
 sumprod.to_excel(out_path)

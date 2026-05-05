@@ -12,7 +12,7 @@ class Raw(NamedTuple):
     den_val: str
 
     @property
-    def keys(self) -> tuple[str, ...]:
+    def keys(self) -> str | tuple[str, ...]:
         keys = (*self.groups, self.period, self.ratio_nm)
         return keys
 
@@ -40,12 +40,15 @@ class Ratios(NamedTuple):
     den_nm: str
 
     @property
-    def keys(self) -> str:
+    def keys(self) -> str | tuple[str, ...]:
         return self.ratio_nm
 
     @property
     def vars(self) -> tuple[str, ...]:
-        vars = (self.keys, self.num_nm, self.den_nm)
+        if isinstance(self.keys, str):
+            vars: tuple[str, ...] = (self.keys, self.num_nm, self.den_nm)
+        else:
+            vars = tuple(list(self.keys) + [self.num_nm, self.den_nm])
         return vars
 
 
@@ -58,7 +61,7 @@ class Bridge(NamedTuple):
     total_diff: str
     total_check: str
     check_diff: str
-    is_err: str
+    err: str
 
     @property
     def vars(self) -> tuple[str, ...]:
@@ -69,6 +72,6 @@ class Bridge(NamedTuple):
             self.total_diff,
             self.total_check,
             self.check_diff,
-            self.is_err,
+            self.err,
         )
         return vars

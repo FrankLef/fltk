@@ -9,8 +9,8 @@ if TYPE_CHECKING:
 def load_raw_data(inst: CalcBridge, data: pd.DataFrame) -> pd.DataFrame:
     if data.empty:
         raise ValueError("The data is empty.")
-    validate_data_names(data=data, vars=inst.raw.vars)
-    validate_data_keys(data=data, keys=inst.raw.keys)
+    validate_data_names(data=data, vars=inst.raw_vars.vars)
+    validate_data_keys(data=data, keys=inst.raw_vars.keys)
     return data
 
 
@@ -22,7 +22,7 @@ def validate_data_names(data: pd.DataFrame, vars: tuple[str, ...]) -> None:
         raise ValueError(msg)
 
 
-def validate_data_keys(data: pd.DataFrame, keys: tuple[str, ...]) -> None:
+def validate_data_keys(data: pd.DataFrame, keys: str | tuple[str, ...]) -> None:
     unique_counts = data[list(keys)].value_counts()
     ndistinct = len(unique_counts)
     check = data.shape[0] - ndistinct

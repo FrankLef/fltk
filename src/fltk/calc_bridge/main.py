@@ -4,7 +4,8 @@ import pandas as pd
 from pathlib import Path
 from rich import print as rprint
 
-from fltk.utils.value_cls import StrName
+from ..utils.value_cls import StrName
+from ..utils import to_excel as xl
 
 from . import vars
 from . import load_raw_data as lrd
@@ -12,7 +13,6 @@ from . import load_ratios as lr
 from . import periods as per
 from . import bridge
 from . import calculate as calc
-from ..utils import to_excel as xl
 
 
 class CalcBridge:
@@ -29,13 +29,13 @@ class CalcBridge:
         total_diff: str = "tot_diff",
         total_check: str = "tot_check",
         check_diff: str = "check_diff",
-        is_err: str = "is_err",
+        err: str = "err",
     ):
-        self._name = StrName(name)
-        self.periods = vars.Periods(
+        self.name = StrName(name)
+        self.periods_vars = vars.Periods(
             start=str(StrName(period_start)), end=str(StrName(period_end))
         )
-        self.bridge = vars.Bridge(
+        self.bridge_vars = vars.Bridge(
             from_sfx=str(StrName(from_sfx)),
             to_sfx=str(StrName(to_sfx)),
             volume_diff=str(StrName(volume_diff)),
@@ -44,7 +44,7 @@ class CalcBridge:
             total_diff=str(StrName(total_diff)),
             total_check=str(StrName(total_check)),
             check_diff=str(StrName(check_diff)),
-            is_err=str(StrName(is_err)),
+            err=str(StrName(err)),
         )
 
     def __repr__(self):
@@ -55,20 +55,16 @@ class CalcBridge:
             out += f"{key:<10}: {value}\n"
         return out
 
-    @property
-    def name(self) -> str:
-        return self._name
-
     def add_suffix(self, var: str) -> tuple[str, str]:
         out = (
-            var + "_" + self.bridge.from_sfx,
-            var + "_" + self.bridge.to_sfx,
+            var + "_" + self.bridge_vars.from_sfx,
+            var + "_" + self.bridge_vars.to_sfx,
         )
         return out
 
     def load_ratios(self, data: pd.DataFrame, ratio_nm: str, num_nm: str, den_nm: str):
-        self.ratios = vars.Ratios(ratio_nm=ratio_nm, num_nm=num_nm, den_nm=den_nm)
-        self.ratios_df = lr.load_ratios(self, data=data)
+        self.ratios_vars = vars.Ratios(ratio_nm=ratio_nm, num_nm=num_nm, den_nm=den_nm)
+        self.ratios = lr.load_ratios(self, data=data)
 
     def load_raw_data(
         self,
@@ -82,7 +78,7 @@ class CalcBridge:
         den_nm: str,
         den_val: str,
     ) -> None:
-        self.raw = vars.Raw(
+        self.raw_vars = vars.Raw(
             groups=groups,
             period=period,
             ratio_nm=ratio_nm,
@@ -92,16 +88,16 @@ class CalcBridge:
             den_nm=den_nm,
             den_val=den_val,
         )
-        self.raw_df = lrd.load_raw_data(self, data=data)
+        self.raw = lrd.load_raw_data(self, data=data)
 
     def get_periods(self) -> None:
-        self.periods_df = per.get_periods(self)
+        self.periods = per.get_periods(self)
 
     def get_bridge(self) -> None:
-        self.bridge_df = bridge.get_bridge(self)
+        self.bridge = bridge.get_bridge(self)
 
     def calculate(self) -> None:
-        self.bridge_df = calc.calculate(self)
+        self.bridge = calc.calculate(self)
 
     def fit_transform(self, verbose: bool = False) -> None:
         self.fit(verbose=verbose)
@@ -112,29 +108,29 @@ class CalcBridge:
         self.get_bridge()
         if verbose:
             type_nm = type(self).__name__
-            rprint(f"{self._name} {type_nm}.fit() completed.")
+            rprint(f"{self.name} {type_nm}.fit() completed.")
 
     def transform(self, verbose: bool = False) -> None:
         self.calculate()
         if verbose:
             type_nm = type(self).__name__
-            rprint(f"{self._name} {type_nm}.transform() completed.")
+            rprint(f"{self.name} {type_nm}.transform() completed.")
 
-    def get_summary(self) -> dict[str, int]:
+    def get_summary(self) -> dict[str, tuple[int, ...]]:
         summary = {
-            "raw data": self.ratios_df.shape,
-            "ratios": self.raw_df.shape,
-            "periods": self.periods_df.shape,
-            "bridge": self.bridge_df.shape,
+            "raw data": self.ratios.shape,
+            "ratios": self.raw.shape,
+            "periods": self.periods.shape,
+            "bridge": self.bridge.shape,
         }
         return summary
 
     def to_excel(self, path: Path) -> None:
         dfs = {
-            "raw": self.raw_df,
-            "ratios": self.ratios_df,
-            "periods": self.periods_df,
-            "bridge": self.bridge_df,
+            "raw": self.raw,
+            "ratios": self.ratios,
+            "periods": self.periods,
+            "bridge": self.bridge,
         }
         name = f"{type(self).__name__} '{self.name}'"
         xl.to_excel(name, path=path, dfs=dfs)

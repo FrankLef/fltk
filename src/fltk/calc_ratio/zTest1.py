@@ -25,10 +25,6 @@ ratios_df = pd.read_excel(
 )
 
 ratio.load_ratios(ratios_df)
-print("\nratios_df:", ratio.ratios_df.shape)
-# ratio.ratios_df.info()
-print("\nratios_df_long:", ratio.ratios_df_long.shape)
-# ratio.ratios_df_long.info()
 
 
 raw_data = pd.read_excel(
@@ -44,14 +40,10 @@ ratio.load_data(
     value_var="amount",
     group_vars=group_vars,
 )
-print("\ndata:", ratio.data.shape)
-# ratio.data.info()
 
 ratio.fit()
 ratio.transform(is_cleaned=True)
-# print("\nmerged_data:", ratio.merged_data.shape)
-# print(ratio.merged_data.head(20))
 
-# ratio.summary()
+print("\n", ratio, sep="")
 
 ratio.to_excel(out_path)

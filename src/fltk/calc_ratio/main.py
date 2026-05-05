@@ -2,10 +2,10 @@ from __future__ import annotations  # Must be at the top
 import pandas as pd
 from rich import print as rprint
 from rich.pretty import pprint
-from rich.console import Console
 from pathlib import Path
 
-from fltk.utils.value_cls import StrName
+from ..utils.value_cls import StrName
+from ..utils import to_excel as xl
 
 from . import init_vars as iv
 from . import load_ratios as lr
@@ -57,6 +57,14 @@ class CalcRatio:
         self._ratios_df: pd.Dataframe = pd.DataFrame()
         self._ratios_df_long: pd.Dataframe = pd.DataFrame()
         self._init_ratio_vars()
+
+    def __repr__(self):
+        summary = self.get_summary()
+        title = f"{type(self).__name__}: {self._name}"
+        out = title + "\n" + ("-" * len(title)) + "\n"
+        for key, value in summary.items():
+            out += f"{key:<10}: {value}\n"
+        return out
 
     def _init_ratio_vars(self) -> None:
         self._ratio_vars: list[str] = []
@@ -212,29 +220,27 @@ class CalcRatio:
             pprint(out)
         return out
 
-    def to_excel(self, path: Path) -> None:
-        """Export data to excel.
+    def get_summary(self) -> dict[str, tuple[int, ...]]:
+        summary = {
+            "raw data": self._data.shape,
+            "ratios_df": self._ratios_df.shape,
+            "ratios_long_df": self._ratios_df_long.shape,
+            "merged_data": self._merged_data.shape,
+            "invalid": self._invalid_data.shape,
+            "valid_data": self._valid_data.shape,
+            "calc_data": self.calc_data.shape,
+        }
+        return summary
 
-        Args:
-            path (Path): Path to excel file, including file name.
-        """
-        console = Console()
-        msg: str = f"\n[bright_white]Exporting CalcRatio to:[/bright_white]\n[cyan]{path}[/cyan]"
-        console.print(msg)
-        rprint("'data'")
-        self._data.to_excel(path, sheet_name="data", index=False, engine="openpyxl")
-        with pd.ExcelWriter(
-            path, mode="a", engine="openpyxl", if_sheet_exists="replace"
-        ) as writer:
-            dfs = {
-                "ratios_df": self._ratios_df,
-                "ratios_long_df": self._ratios_df_long,
-                "merged_data": self._merged_data,
-                "invalid": self._invalid_data,
-                "valid_data": self._valid_data,
-                "calc_data": self.calc_data,
-            }
-            for sheet_name, df in dfs.items():
-                msg = f"'{sheet_name}'"
-                rprint(msg)
-                df.to_excel(writer, sheet_name=sheet_name, index=False)
+    def to_excel(self, path: Path) -> None:
+        dfs = {
+            "data": self._data,
+            "ratios_df": self._ratios_df,
+            "ratios_long_df": self._ratios_df_long,
+            "merged_data": self._merged_data,
+            "invalid": self._invalid_data,
+            "valid_data": self._valid_data,
+            "calc_data": self.calc_data,
+        }
+        name = f"{type(self).__name__} '{self._name}'"
+        xl.to_excel(name, path=path, dfs=dfs)

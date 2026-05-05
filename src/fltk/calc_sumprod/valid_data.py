@@ -37,5 +37,7 @@ def clean_data(
 
 def fill_na(inst: CalcSumprod, value: float = 0) -> pd.DataFrame:
     valid_data = inst._data.copy()
-    valid_data[inst._data_value].fillna(value=value, inplace=True)
+    # NOTE: Error msg from pandas, use this command instead of next one
+    valid_data.fillna({inst._data_value: value}, inplace=True)
+    # valid_data[inst._data_value].fillna(value=value, inplace=True)
     return valid_data

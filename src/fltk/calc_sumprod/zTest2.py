@@ -2,8 +2,6 @@ import pandas as pd
 from pathlib import Path
 from datetime import datetime as dt
 
-# from rich.prompt import Confirm
-# from rich.console import Console
 from fltk.calc_sumprod.main import CalcSumprod
 
 
@@ -24,16 +22,15 @@ sumprod = CalcSumprod(
 )
 sump_df = pd.read_excel(sumprod_path, sheet_name="concepts_adds")
 sumprod.load_sump(sump_df)
-sumprod.sump_df.info()
+# sumprod.sump_df.info()
 
-print(sumprod_path)
 raw_data = pd.read_excel(
     sumprod_path,
     sheet_name=data_sheet,
     engine="openpyxl",
     engine_kwargs={"data_only": True},
 )
-raw_data.info()
+# raw_data.info()
 
 sumprod.load_data(
     raw_data,
@@ -45,5 +42,7 @@ sumprod.load_data(
 
 sumprod.fit(is_fillna=True)
 sumprod.transform(is_merged=False)
+
+print("\n", sumprod, sep="")
 
 sumprod.to_excel(out_path)
