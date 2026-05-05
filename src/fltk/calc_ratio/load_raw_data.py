@@ -6,31 +6,22 @@ if TYPE_CHECKING:
     from .main import CalcRatio  # Only imported when checking types
 
 
-def load_data(
-    inst: CalcRatio,
-    data: pd.DataFrame,
-    concept_var: str,
-    value_var: str,
-    group_vars: list[str],
-) -> pd.DataFrame:
-    if inst._ratios_df.empty:
+def load_raw_data(inst: CalcRatio, data: pd.DataFrame) -> pd.DataFrame:
+    if inst.ratios.empty:
         msg: str = "You must load the ratio definitions before the data."
         raise ValueError(msg)
     if data.empty:
-        raise ValueError("The data is empty.")
-    inst._data_concept = concept_var
-    inst._data_value = value_var
-    inst._data_group = group_vars
+        raise ValueError("The raw data is empty.")
     validate_data_names(inst, data=data)
     validate_data_keys(inst, data=data)
-    all_vars: list[str] = group_vars + [concept_var, value_var]
+    all_vars = list(inst.raw_vars.vars)
     reduced_data = data[all_vars]
     return reduced_data
 
 
 def validate_data_names(inst: CalcRatio, data: pd.DataFrame) -> None:
     data_vars = data.columns.to_list()
-    illegal_vars = [var for var in data_vars if var in inst._ratio_vars]
+    illegal_vars = [var for var in data_vars if var in inst.ratios_vars]
     if illegal_vars:
         msg = f"""
         {illegal_vars} are reserved names.
@@ -40,10 +31,9 @@ def validate_data_names(inst: CalcRatio, data: pd.DataFrame) -> None:
 
 
 def validate_data_keys(inst: CalcRatio, data: pd.DataFrame) -> None:
-    keys = inst._data_keys
+    keys = list(inst.raw_vars.keys)
     unique_counts = data[keys].value_counts()
     ndistinct = len(unique_counts)
     if ndistinct != data.shape[0]:
         msg: str = f"Data has invalid keys {keys}."
         raise ValueError(msg)
-    inst._data_keys = keys

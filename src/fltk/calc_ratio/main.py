@@ -7,9 +7,9 @@ from pathlib import Path
 from ..utils.value_cls import StrName
 from ..utils import to_excel as xl
 
-from . import init_vars as iv
+from . import vars
 from . import load_ratios as lr
-from . import load_data as ld
+from . import load_raw_data as lrd
 from . import merge_data as md
 from . import invalid_data as gid
 from . import valid_data as gvd
@@ -45,59 +45,27 @@ class CalcRatio:
         Raises:
             ValueError: Duplicate names.
         """
-        self._name = StrName(name)
-        self._concept_ratio = StrName(concept_ratio)
-        self._concept_num = StrName(concept_num)
-        self._concept_den = StrName(concept_den)
-        self._concept_name = StrName(concept_name)
-        self._concept_pos = StrName(concept_pos)
-        self._value_ratio = StrName(value_ratio)
-        self._value_num = StrName(value_num)
-        self._value_den = StrName(value_den)
-        self._ratios_df: pd.Dataframe = pd.DataFrame()
-        self._ratios_df_long: pd.Dataframe = pd.DataFrame()
-        self._init_ratio_vars()
+        self.name = StrName(name)
+        self.ratios_vars = vars.Ratios(
+            concept_ratio=StrName(concept_ratio),
+            concept_num=StrName(concept_num),
+            concept_den=StrName(concept_den),
+            concept_name=StrName(concept_name),
+            concept_pos=StrName(concept_pos),
+            value_ratio=StrName(value_ratio),
+            value_num=StrName(value_num),
+            value_den=StrName(value_den),
+        )
+        self.ratios: pd.Dataframe = pd.DataFrame()
+        self.ratios_long: pd.Dataframe = pd.DataFrame()
 
     def __repr__(self):
         summary = self.get_summary()
-        title = f"{type(self).__name__}: {self._name}"
+        title = f"{type(self).__name__}: {self.name}"
         out = title + "\n" + ("-" * len(title)) + "\n"
         for key, value in summary.items():
             out += f"{key:<10}: {value}\n"
         return out
-
-    def _init_ratio_vars(self) -> None:
-        self._ratio_vars: list[str] = []
-        self._ratio_keys: list[str] = []
-        iv._init_ratio_vars(self)
-
-    @property
-    def ratios_df(self) -> pd.DataFrame:
-        return self._ratios_df
-
-    @property
-    def ratios_df_long(self) -> pd.DataFrame:
-        return self._ratios_df_long
-
-    @property
-    def data(self) -> pd.DataFrame:
-        return self._data
-
-    @property
-    def merged_data(self) -> pd.DataFrame:
-        return self._merged_data
-
-    @property
-    def invalid_data(self) -> pd.DataFrame:
-        return self._invalid_data
-
-    @property
-    def valid_data(self) -> pd.DataFrame:
-        return self._valid_data
-
-    @property
-    def calc_data(self) -> pd.DataFrame:
-        return self._calc_data
 
     def load_ratios(self, data: pd.Dataframe) -> None:
         """Load dataframe of ratio definitions.
@@ -107,12 +75,12 @@ class CalcRatio:
         """
         lr.load_ratios(self, data=data)
 
-    def load_data(
+    def load_raw_data(
         self,
         data: pd.DataFrame,
         concept_var: str,
         value_var: str,
-        group_vars: list[str],
+        group_vars: tuple[str, ...],
     ) -> None:
         """Load the data for processing.
 
@@ -122,36 +90,21 @@ class CalcRatio:
             value_var (str): Column with values used for calculations.
             group_vars (Iterable[str]): Columns making up a composite key.
         """
-        self._data_concept = StrName(concept_var)
-        self._data_value = StrName(value_var)
-        self._data_group = [str(StrName(var)) for var in group_vars]
-        self._data: pd.DataFrame = pd.DataFrame()
-
-        self._init_data_vars()
-
-        data = ld.load_data(
-            self,
-            data=data,
-            concept_var=concept_var,
-            value_var=value_var,
-            group_vars=group_vars,
+        self.raw_vars = vars.Raw(
+            groups=group_vars, concept=concept_var, value=value_var
         )
-        self._data = data
 
-    def _init_data_vars(self) -> None:
-        """Initialize the variables."""
-        self._data_vars: list[str] = []
-        self._data_keys: list[str] = []
-        iv._init_data_vars(self)
+        data = lrd.load_raw_data(self, data=data)
+        self.raw = data
 
     def merge_data(self) -> None:
-        self._merged_data: pd.DataFrame = md.merge_data(self)
+        self.merged: pd.DataFrame = md.merge_data(self)
 
     def get_invalid_data(self) -> None:
-        self._invalid_data: pd.DataFrame = gid.get_invalid_data(self)
+        self.invalid: pd.DataFrame = gid.get_invalid_data(self)
 
     def get_valid_data(self) -> None:
-        self._valid_data: pd.DataFrame = gvd.get_valid_data(self)
+        self.valid: pd.DataFrame = gvd.get_valid_data(self)
 
     def fit_transform(self, is_cleaned: bool, verbose: bool = False) -> None:
         """Process the the fit and transform steps in sequence.
@@ -173,7 +126,7 @@ class CalcRatio:
         self.get_invalid_data()
         self.get_valid_data()
         if verbose:
-            rprint(f"{self._name} fit() completed.")
+            rprint(f"{self.name} fit() completed.")
 
     def transform(self, is_cleaned: bool, verbose: bool = False) -> None:
         """Calculate ratios.
@@ -186,27 +139,30 @@ class CalcRatio:
         if is_cleaned:
             self.clean()
         if verbose:
-            rprint(f"{self._name} transform() completed.")
+            rprint(f"{self.name} transform() completed.")
 
     def calculate(self) -> None:
         """Calculate ratios."""
-        self._calc_data = calc.calculate(self)
+        self.calc = calc.calculate(self)
 
     def clean(self) -> None:
         """Remove rows with null of inf/-inf from calc_data."""
-        df = self._calc_data
-        cols = (self._value_ratio, self._value_num, self._value_den)
+        _value_ratio = self.ratios_vars.value_ratio
+        _value_num = self.ratios_vars.value_num
+        _value_den = self.ratios_vars.value_den
+        df = self.calc
+        cols = (_value_ratio, _value_num, _value_den)
         df.replace([float("inf"), float("-inf")], value=None, inplace=True)
         df.dropna(subset=cols, inplace=True)
 
     def summary(self, verbose: bool = True) -> dict[str, int]:
-        ndata = self._data.shape[0]
-        nratios_df = (self._ratios_df.shape[0],)
-        nratios_df_long = (self._ratios_df_long.shape[0],)
-        nmerged = self._merged_data.shape[0]
-        ninvalid = self._invalid_data.shape[0]
-        nvalid = self._valid_data.shape[0]
-        ncalc = self._calc_data.shape[0]
+        ndata = self.raw.shape[0]
+        nratios_df = (self.ratios.shape[0],)
+        nratios_df_long = (self.ratios_long.shape[0],)
+        nmerged = self.merged.shape[0]
+        ninvalid = self.invalid.shape[0]
+        nvalid = self.valid.shape[0]
+        ncalc = self.calc.shape[0]
         if verbose:
             out = {
                 "data": ndata,
@@ -222,25 +178,25 @@ class CalcRatio:
 
     def get_summary(self) -> dict[str, tuple[int, ...]]:
         summary = {
-            "raw data": self._data.shape,
-            "ratios_df": self._ratios_df.shape,
-            "ratios_long_df": self._ratios_df_long.shape,
-            "merged_data": self._merged_data.shape,
-            "invalid": self._invalid_data.shape,
-            "valid_data": self._valid_data.shape,
-            "calc_data": self.calc_data.shape,
+            "raw data": self.raw.shape,
+            "ratios_df": self.ratios.shape,
+            "ratios_long_df": self.ratios_long.shape,
+            "merged_data": self.merged.shape,
+            "invalid": self.invalid.shape,
+            "valid_data": self.valid.shape,
+            "calc_data": self.calc.shape,
         }
         return summary
 
     def to_excel(self, path: Path) -> None:
         dfs = {
-            "data": self._data,
-            "ratios_df": self._ratios_df,
-            "ratios_long_df": self._ratios_df_long,
-            "merged_data": self._merged_data,
-            "invalid": self._invalid_data,
-            "valid_data": self._valid_data,
-            "calc_data": self.calc_data,
+            "data": self.raw,
+            "ratios_df": self.ratios,
+            "ratios_long_df": self.ratios_long,
+            "merged_data": self.merged,
+            "invalid": self.invalid,
+            "valid_data": self.valid,
+            "calc_data": self.calc,
         }
-        name = f"{type(self).__name__} '{self._name}'"
+        name = f"{type(self).__name__} '{self.name}'"
         xl.to_excel(name, path=path, dfs=dfs)

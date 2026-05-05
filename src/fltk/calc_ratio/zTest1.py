@@ -34,7 +34,7 @@ raw_data = pd.read_excel(
     engine_kwargs={"data_only": True},
 )
 group_vars = ["entity", "pertype", "period"]
-ratio.load_data(
+ratio.load_raw_data(
     raw_data,
     concept_var="concept",
     value_var="amount",

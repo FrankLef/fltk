@@ -7,20 +7,22 @@ if TYPE_CHECKING:
 
 
 def merge_data(inst: CalcRatio) -> pd.DataFrame:
-    raw_data = inst._data
-    ratios_data = inst._ratios_df_long
+    raw_data = inst.raw
+    ratios_data = inst.ratios_long
+    _data_concept = inst.raw_vars.concept
+    _concept_name = inst.ratios_vars.concept_name
     merged_data = raw_data.merge(
         ratios_data,
         how="inner",
-        left_on=inst._data_concept,
-        right_on=inst._concept_name,
+        left_on=_data_concept,
+        right_on=_concept_name,
     )
     if merged_data.empty:
         msg: str = (
             "Merged data is empty. Maybe the concepts don't match with each other."
         )
         raise AssertionError(msg)
-    cols = [inst._data_concept, inst._concept_name]
+    cols = [_data_concept, _concept_name]
     merged_data.drop(columns=cols, inplace=True)
     pivoted_data = pivot_data(inst, merged_data=merged_data)
     validate_data_keys(inst, data=pivoted_data)
@@ -30,40 +32,42 @@ def merge_data(inst: CalcRatio) -> pd.DataFrame:
 
 
 def pivot_data(inst: CalcRatio, merged_data: pd.DataFrame) -> pd.DataFrame:
-    keys: list[str] = inst._data_group.copy()
-    keys.append(inst._concept_ratio)
+    keys: list[str] = list(inst.raw_vars.groups) + [inst.ratios_vars.concept_ratio]
+    _concept_pos = inst.ratios_vars.concept_pos
+    _data_value = inst.raw_vars.value
     pivoted_data = merged_data.pivot(
-        index=keys, columns=inst._concept_pos, values=inst._data_value
+        index=keys, columns=_concept_pos, values=_data_value
     )
-    # breakpoint()
     pivoted_data.reset_index(inplace=True)
     return pivoted_data
 
 
 def validate_data_keys(inst: CalcRatio, data: pd.DataFrame) -> None:
-    keys: list[str] = inst._data_group.copy()
-    keys.append(inst._concept_ratio)
+    keys: list[str] = list(inst.raw_vars.groups) + [inst.ratios_vars.concept_ratio]
     unique_counts = data[keys].value_counts()
     ndistinct = len(unique_counts)
     if ndistinct != data.shape[0]:
         msg: str = f"Merged data has invalid keys {keys}."
         raise ValueError(msg)
-    inst._data_keys = keys
 
 
 def augment_data(inst: CalcRatio, data: pd.DataFrame) -> pd.DataFrame:
-    cols = {inst._concept_num: inst._value_num, inst._concept_den: inst._value_den}
+    cols = {
+        inst.ratios_vars.concept_num: inst.ratios_vars.value_num,
+        inst.ratios_vars.concept_den: inst.ratios_vars.value_den,
+    }
     data.rename(columns=cols, inplace=True)
+    _concept_ratio = inst.ratios_vars.concept_ratio
     augmented_data = data.merge(
-        inst._ratios_df,
+        inst.ratios,
         how="inner",
-        left_on=inst._concept_ratio,
-        right_on=inst._concept_ratio,
+        left_on=_concept_ratio,
+        right_on=_concept_ratio,
     )
     return augmented_data
 
 
 def move_cols(inst: CalcRatio, data: pd.DataFrame) -> pd.DataFrame:
-    cols: list[str] = [inst._value_num, inst._value_den]
+    cols: list[str] = [inst.ratios_vars.value_num, inst.ratios_vars.value_den]
     new_cols = [col for col in data.columns if col not in cols] + cols
     return data[new_cols]

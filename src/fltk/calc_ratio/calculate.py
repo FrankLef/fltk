@@ -7,6 +7,9 @@ if TYPE_CHECKING:
 
 
 def calculate(inst: CalcRatio) -> pd.DataFrame:
-    data = inst._valid_data
-    data[inst._value_ratio] = data[inst._value_num] / data[inst._value_den]
+    data = inst.valid
+
+    data[inst.ratios_vars.value_ratio] = (
+        data[inst.ratios_vars.value_num] / data[inst.ratios_vars.value_den]
+    )
     return data

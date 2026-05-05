@@ -48,44 +48,44 @@ def raw_data(data_xl) -> pd.DataFrame:
 
 def test_load_ratios(ratio, ratios_xl: dict[str, Path | str]) -> None:
     ratio.load_ratios(ratios_xl)
-    assert ratio.ratios_df.shape == (6, 3)
+    assert ratio.ratios.shape == (6, 3)
 
 
 def test_load_data(ratio, raw_data) -> None:
     with pytest.raises(ValueError):
-        ratio.load_data(
+        ratio.load_raw_data(
             raw_data,
             concept_var="concept",
             value_var="amount",
-            group_vars=["entity", "pertype", "period"],
+            group_vars=("entity", "pertype", "period"),
         )
 
 
 @pytest.fixture
 def init_ratio(ratio, ratios_xl, raw_data) -> CalcRatio:
     ratio.load_ratios(ratios_xl)
-    ratio.load_data(
+    ratio.load_raw_data(
         raw_data,
         concept_var="concept",
         value_var="amount",
-        group_vars=["entity", "pertype", "period"],
+        group_vars=("entity", "pertype", "period"),
     )
     return ratio
 
 
 def test_init_ratio(init_ratio) -> None:
-    assert init_ratio.ratios_df.shape == (6, 3)
-    assert init_ratio.ratios_df_long.shape == (12, 3)
-    assert init_ratio.data.shape == (21, 5)
+    assert init_ratio.ratios.shape == (6, 3)
+    assert init_ratio.ratios_long.shape == (12, 3)
+    assert init_ratio.raw.shape == (21, 5)
 
 
 def test_fit(init_ratio) -> None:
     init_ratio.fit()
-    assert init_ratio.merged_data.shape == (30, 8)
+    assert init_ratio.merged.shape == (30, 8)
 
 
 def test_transform(init_ratio) -> None:
     init_ratio.fit()
     init_ratio.transform(is_cleaned=True)
-    assert init_ratio.merged_data.shape == (18, 9)
-    assert init_ratio.calc_data.shape == (18, 9)
+    assert init_ratio.merged.shape == (18, 9)
+    assert init_ratio.calc.shape == (18, 9)
