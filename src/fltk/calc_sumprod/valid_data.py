@@ -18,7 +18,7 @@ def get_valid_data(inst: CalcSumprod) -> pd.DataFrame:
 
 
 def clean_data(
-    left_df: pd.DataFrame, right_df: pd.DataFrame, keys: str | tuple[str, ...]
+    left_df: pd.DataFrame, right_df: pd.DataFrame, keys: list[str]
 ) -> pd.DataFrame:
     merged_df = pd.merge(
         left=left_df,
