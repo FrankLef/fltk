@@ -3,6 +3,8 @@ from typing import TYPE_CHECKING
 import pandas as pd
 from rich.prompt import Confirm
 
+from ..utils import audit_vars as audit
+
 if TYPE_CHECKING:
     from .main import CalcSumprod  # Only imported when checking types
 
@@ -13,7 +15,7 @@ def load_raw_data(inst: CalcSumprod, data: pd.DataFrame) -> pd.DataFrame:
         msg: str = "You must load the matrix before the data."
         raise ValueError(msg)
     validate_data_names(inst, data=data, newvalue_var=inst.raw_vars.newvalue)
-    validate_data_keys(inst, data=data)
+    audit.audit_keys(data, keys=inst.raw_vars.keys)
     return data
 
 
@@ -39,11 +41,3 @@ def validate_data_names(
     invalid_vars = [var for var in inst.raw_vars.vars if var not in cols]
     if invalid_vars:
         raise KeyError(f"{invalid_vars} are not in data columns.")
-
-
-def validate_data_keys(inst: CalcSumprod, data: pd.DataFrame) -> None:
-    keys = list(inst.raw_vars.keys)
-    unique_counts = data[keys].value_counts()
-    ndistinct = len(unique_counts)
-    if ndistinct != data.shape[0]:
-        raise KeyError(f"Data has invalid keys {keys}.")

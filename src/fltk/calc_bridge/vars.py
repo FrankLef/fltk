@@ -45,10 +45,7 @@ class Ratios(NamedTuple):
 
     @property
     def vars(self) -> tuple[str, ...]:
-        if isinstance(self.keys, str):
-            vars: tuple[str, ...] = (self.keys, self.num_nm, self.den_nm)
-        else:
-            vars = tuple(list(self.keys) + [self.num_nm, self.den_nm])
+        vars = (self.ratio_nm, self.num_nm, self.den_nm)
         return vars
 
 

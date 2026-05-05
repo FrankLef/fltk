@@ -46,4 +46,4 @@ ratio.transform(is_cleaned=True)
 
 print("\n", ratio, sep="")
 
-ratio.to_excel(out_path)
+# ratio.to_excel(out_path)

@@ -36,4 +36,4 @@ sumprod.transform(is_merged=True)
 
 print("\n", sumprod, sep="")
 
-sumprod.to_excel(out_path)
+# sumprod.to_excel(out_path)
