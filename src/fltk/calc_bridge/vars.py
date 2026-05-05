@@ -52,4 +52,23 @@ class Ratios(NamedTuple):
 class Bridge(NamedTuple):
     from_sfx: str
     to_sfx: str
-    price: str
+    volume_diff: str
+    price_diff: str
+    mix_diff: str
+    total_diff: str
+    total_check: str
+    check_diff: str
+    is_err: str
+
+    @property
+    def vars(self) -> tuple[str, ...]:
+        vars = (
+            self.volume_diff,
+            self.price_diff,
+            self.mix_diff,
+            self.total_diff,
+            self.total_check,
+            self.check_diff,
+            self.is_err,
+        )
+        return vars

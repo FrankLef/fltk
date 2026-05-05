@@ -7,6 +7,23 @@ if TYPE_CHECKING:
 
 
 def get_bridge(inst: CalcBridge) -> pd.DataFrame:
+    validate_vars(inst)
+    bridge_df = get_data(inst)
+    return bridge_df
+
+
+def validate_vars(inst: CalcBridge) -> None:
+    """Validate that no bridge variable is used by raw data."""
+    _raw_vars = inst.raw.vars
+    _bridge_vars = inst.bridge.vars
+
+    invalid_vars = [var for var in _raw_vars if var in _bridge_vars]
+    if invalid_vars:
+        msg: str = f"{invalid_vars} are found in raw and bridge."
+        raise KeyError(msg)
+
+
+def get_data(inst: CalcBridge) -> pd.DataFrame:
     _raw = inst.raw_df
     _periods = inst.periods_df
     _period = inst.raw.period
@@ -29,5 +46,4 @@ def get_bridge(inst: CalcBridge) -> pd.DataFrame:
     bridge_df = bridge_start.merge(
         right=bridge_end, how="inner", on=_on, suffixes=suffixes
     )
-    # breakpoint()
     return bridge_df

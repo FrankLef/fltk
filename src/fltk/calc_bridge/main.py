@@ -12,7 +12,7 @@ from . import load_ratios as lr
 from . import periods as per
 from . import bridge
 from . import calculate as calc
-from . import to_excel as xl
+from ..utils import to_excel as xl
 
 
 class CalcBridge:
@@ -21,18 +21,30 @@ class CalcBridge:
         name: str,
         period_start: str = "period_start",
         period_end: str = "period_end",
-        price: str = "price",
         from_sfx: str = "from",
         to_sfx: str = "to",
+        volume_diff: str = "vol_diff",
+        price_diff: str = "price_diff",
+        mix_diff: str = "mix_diff",
+        total_diff: str = "tot_diff",
+        total_check: str = "tot_check",
+        check_diff: str = "check_diff",
+        is_err: str = "is_err",
     ):
         self._name = StrName(name)
         self.periods = vars.Periods(
             start=str(StrName(period_start)), end=str(StrName(period_end))
         )
         self.bridge = vars.Bridge(
-            price=str(StrName(price)),
             from_sfx=str(StrName(from_sfx)),
             to_sfx=str(StrName(to_sfx)),
+            volume_diff=str(StrName(volume_diff)),
+            price_diff=str(StrName(price_diff)),
+            mix_diff=str(StrName(mix_diff)),
+            total_diff=str(StrName(total_diff)),
+            total_check=str(StrName(total_check)),
+            check_diff=str(StrName(check_diff)),
+            is_err=str(StrName(is_err)),
         )
 
     def __repr__(self):
@@ -46,6 +58,13 @@ class CalcBridge:
     @property
     def name(self) -> str:
         return self._name
+
+    def add_suffix(self, var: str) -> tuple[str, str]:
+        out = (
+            var + "_" + self.bridge.from_sfx,
+            var + "_" + self.bridge.to_sfx,
+        )
+        return out
 
     def load_ratios(self, data: pd.DataFrame, ratio_nm: str, num_nm: str, den_nm: str):
         self.ratios = vars.Ratios(ratio_nm=ratio_nm, num_nm=num_nm, den_nm=den_nm)
@@ -117,4 +136,5 @@ class CalcBridge:
             "periods": self.periods_df,
             "bridge": self.bridge_df,
         }
-        xl.to_excel(self.name, path=path, dfs=dfs)
+        name = f"{type(self).__name__} '{self.name}'"
+        xl.to_excel(name, path=path, dfs=dfs)
