@@ -55,9 +55,9 @@ def test_load_data(ratio, raw_data) -> None:
     with pytest.raises(ValueError):
         ratio.load_raw_data(
             raw_data,
-            concept_var="concept",
-            value_var="amount",
-            group_vars=("entity", "pertype", "period"),
+            concept="concept",
+            value="amount",
+            groups=("entity", "pertype", "period"),
         )
 
 
@@ -66,9 +66,9 @@ def init_ratio(ratio, ratios_xl, raw_data) -> CalcRatio:
     ratio.load_ratios(ratios_xl)
     ratio.load_raw_data(
         raw_data,
-        concept_var="concept",
-        value_var="amount",
-        group_vars=("entity", "pertype", "period"),
+        concept="concept",
+        value="amount",
+        groups=("entity", "pertype", "period"),
     )
     return ratio
 

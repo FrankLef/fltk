@@ -78,9 +78,9 @@ class CalcRatio:
     def load_raw_data(
         self,
         data: pd.DataFrame,
-        concept_var: str,
-        value_var: str,
-        group_vars: tuple[str, ...],
+        concept: str,
+        value: str,
+        groups: tuple[str, ...],
     ) -> None:
         """Load the data for processing.
 
@@ -90,9 +90,7 @@ class CalcRatio:
             value_var (str): Column with values used for calculations.
             group_vars (Iterable[str]): Columns making up a composite key.
         """
-        self.raw_vars = vars.Raw(
-            groups=group_vars, concept=concept_var, value=value_var
-        )
+        self.raw_vars = vars.Raw(groups=groups, concept=concept, value=value)
 
         data = lrd.load_raw_data(self, data=data)
         self.raw = data

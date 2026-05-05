@@ -36,9 +36,9 @@ raw_data = pd.read_excel(
 group_vars = ["entity", "pertype", "period"]
 ratio.load_raw_data(
     raw_data,
-    concept_var="concept",
-    value_var="amount",
-    group_vars=group_vars,
+    concept="concept",
+    value="amount",
+    groups=group_vars,
 )
 
 ratio.fit()
