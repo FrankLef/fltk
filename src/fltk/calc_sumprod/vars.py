@@ -23,12 +23,12 @@ class Sumprod(NamedTuple):
     idx_from: str
     sump_coef: str
     sump_value: str
-    
+
     @property
     def keys(self) -> tuple[str, ...]:
         vars = (self.idx_to, self.idx_from)
         return vars
-    
+
     @property
     def vars(self) -> tuple[str, ...]:
         vars = (
@@ -38,8 +38,8 @@ class Sumprod(NamedTuple):
             self.sump_value,
         )
         return vars
-    
+
     @property
-    def base(self)->tuple[str,...]:
-        vars=(self.idx_to, self.idx_from, self.sump_coef)
+    def base(self) -> tuple[str, ...]:
+        vars = (self.idx_to, self.idx_from, self.sump_coef)
         return vars

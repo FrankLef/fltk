@@ -59,7 +59,6 @@ class CalcSumprod:
         self._sump_keys: list[str] = []
         self._sump_vars_base: list[str] = []
 
-
     def load_sump(self, data: pd.DataFrame) -> None:
         """Load sumproduct specifications from a pandas dataframe.
 
@@ -88,10 +87,8 @@ class CalcSumprod:
         self.raw_vars = vars.Raw(groups=groups, idx=idx, value=value, newvalue=newvalue)
         self.raw: pd.DataFrame = pd.DataFrame()
 
-
         data = lrd.load_raw_data(self, data=data)
         self.raw = data
-
 
     def load_mat_from_xl(self, path: Path, sheet_nm: str | None = None) -> None:
         """Load combinations from Excel to a pandas dataframe.

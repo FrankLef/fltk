@@ -10,9 +10,9 @@ if TYPE_CHECKING:
 
 def load_ratios(inst: CalcRatio, data: pd.Dataframe) -> None:
     assert not data.empty, "Ratios dataframe is empty."
-    
+
     audit.audit_cols(data, vars=inst.ratios_vars.base)
-    audit.audit_keys(data, keys= inst.ratios_vars.keys)
+    audit.audit_keys(data, keys=inst.ratios_vars.keys)
     check_null: bool = data.isna().values.any()
     if check_null:
         raise ValueError("Some ratios have empty data.")

@@ -30,7 +30,7 @@ class Ratios(NamedTuple):
     @property
     def keys(self) -> str | tuple[str, ...]:
         return self.concept_ratio
-    
+
     @property
     def base(self) -> str | tuple[str, ...]:
         vars: tuple[str, ...] = (
@@ -39,7 +39,6 @@ class Ratios(NamedTuple):
             self.concept_den,
         )
         return vars
-        
 
     @property
     def vars(self) -> str | tuple[str, ...]:

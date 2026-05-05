@@ -10,7 +10,6 @@ if TYPE_CHECKING:
 
 
 def load_raw_data(inst: CalcSumprod, data: pd.DataFrame) -> pd.DataFrame:
-    
     if inst.sump.empty:
         msg: str = "You must load the matrix before the data."
         raise ValueError(msg)
