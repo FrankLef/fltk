@@ -2,8 +2,6 @@ import pandas as pd
 from pathlib import Path
 from datetime import datetime as dt
 
-# from rich.prompt import Confirm
-# from rich.console import Console
 from fltk.calc_sumprod.main import CalcSumprod
 
 

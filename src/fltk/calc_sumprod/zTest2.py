@@ -4,7 +4,6 @@ from datetime import datetime as dt
 
 from fltk.calc_sumprod.main import CalcSumprod
 
-
 fixtures_path = Path("C:/Users/Public/MyPy/Packages/fltk/tests/fixtures")
 sumprod_path = fixtures_path.joinpath("sumprod.xlsx")
 out_fn = f"sumprod_z2_{dt.now().date().isoformat()}.xlsx"

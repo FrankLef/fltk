@@ -36,7 +36,6 @@ def clean_data(
 
 
 def fill_na(inst: CalcSumprod, value: float = 0) -> pd.DataFrame:
-    # valid_data = inst._data.copy()
     valid_data = inst.raw
     # NOTE: Error msg from pandas, use this command instead of next one
     valid_data.fillna({inst.raw_vars.value: value}, inplace=True)

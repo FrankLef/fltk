@@ -12,10 +12,6 @@ def load_raw_data(inst: CalcSumprod, data: pd.DataFrame) -> pd.DataFrame:
     if inst.sump.empty:
         msg: str = "You must load the matrix before the data."
         raise ValueError(msg)
-    # inst._data_idx = idx_var
-    # inst._data_value = value_var
-    # inst._data_group = group_vars
-    # inst._data_newvalue = newvalue_var
     validate_data_names(inst, data=data, newvalue_var=inst.raw_vars.newvalue)
     validate_data_keys(inst, data=data)
     return data
@@ -46,7 +42,6 @@ def validate_data_names(
 
 
 def validate_data_keys(inst: CalcSumprod, data: pd.DataFrame) -> None:
-    # keys = inst._data_keys
     keys = list(inst.raw_vars.keys)
     unique_counts = data[keys].value_counts()
     ndistinct = len(unique_counts)

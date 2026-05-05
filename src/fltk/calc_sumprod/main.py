@@ -45,12 +45,6 @@ class CalcSumprod:
             sump_value=StrName(sump_value),
         )
         self.sump = pd.DataFrame()
-        # self._idx_to = StrName(idx_to)
-        # self._idx_from = StrName(idx_from)
-        # self._sump_coef = StrName(sump_coef)
-        # self._sump_value = StrName(sump_value)
-        # self._sump_df = pd.DataFrame()
-        # self._init_sump_vars()
 
     def __repr__(self):
         summary = self.get_summary()
@@ -64,37 +58,7 @@ class CalcSumprod:
         self._sump_vars: list[str] = []
         self._sump_keys: list[str] = []
         self._sump_vars_base: list[str] = []
-        # iv._init_sump_vars(self)
 
-    # @property
-    # def sump_df(self) -> pd.DataFrame:
-    #     """Dataframe of combinations' specifications."""
-    #     return self._sump_df
-
-    # @property
-    # def data(self) -> pd.DataFrame:
-    #     """Original data. Augmented with calculations if `is_merged` flag is True."""
-    #     return self._data
-
-    # @property
-    # def invalid_data(self):
-    #     """Dataframe of rows that cannot be calculated."""
-    #     return self._invalid_data
-
-    # @property
-    # def valid_data(self):
-    #     """Dataframe of rows without invalid rows. Used for be calulations."""
-    #     return self._valid_data
-
-    # @property
-    # def calc_data(self):
-    #     """Dataframe of calculated results."""
-    #     return self._calc_data
-
-    # @property
-    # def output(self) -> pd.DataFrame:
-    #     """Dataframe of final output data."""
-    #     return self._output
 
     def load_sump(self, data: pd.DataFrame) -> None:
         """Load sumproduct specifications from a pandas dataframe.
@@ -122,23 +86,12 @@ class CalcSumprod:
             newvalue (str): New column for calculated values.
         """
         self.raw_vars = vars.Raw(groups=groups, idx=idx, value=value, newvalue=newvalue)
-        # self._data_idx = str(StrName(idx_var))
-        # self._data_value = str(StrName(value_var))
-        # self._data_group = [str(StrName(var)) for var in group_vars]
-        # self._data_newvalue = str(StrName(newvalue_var))
-        # self._data: pd.DataFrame = pd.DataFrame()
         self.raw: pd.DataFrame = pd.DataFrame()
 
-        # self._init_data_vars()
 
         data = lrd.load_raw_data(self, data=data)
         self.raw = data
 
-    # def _init_data_vars(self) -> None:
-    #     """Initialize the variables."""
-    #     self._data_vars: list[str] = []
-    #     self._data_keys: list[str] = []
-    #     iv._init_data_vars(self)
 
     def load_mat_from_xl(self, path: Path, sheet_nm: str | None = None) -> None:
         """Load combinations from Excel to a pandas dataframe.
