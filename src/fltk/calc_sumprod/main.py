@@ -223,25 +223,6 @@ class CalcSumprod:
         }
         return summary
 
-    # def summary(self, verbose: bool = True) -> dict[str, int]:
-    #     nsump = self._sump_df.shape[0]
-    #     ndata = self._data.shape[0]
-    #     ninvalid = self._invalid_data.shape[0]
-    #     nvalid = self._valid_data.shape[0]
-    #     ncalc = self._calc_data.shape[0]
-    #     noutput = self._output.shape[0]
-    #     if verbose:
-    #         out = {
-    #             "sumprod": nsump,
-    #             "data": ndata,
-    #             "invalid": ninvalid,
-    #             "valid": nvalid,
-    #             "calculated": ncalc,
-    #             "output": noutput,
-    #         }
-    #         pprint(out)
-    #     return out
-
     def to_excel(self, path: Path) -> None:
         dfs = {
             "data": self._data,
@@ -253,29 +234,3 @@ class CalcSumprod:
         }
         name = f"{type(self).__name__} '{self._name}'"
         xl.to_excel(name, path=path, dfs=dfs)
-
-    # def to_excel(self, path: Path) -> None:
-    #     """Export data to excel.
-
-    #     Args:
-    #         path (Path): Path to excel file, including file name.
-    #     """
-    #     console = Console()
-    #     msg: str = f"\n[bright_white]Exporting CalcRatio to:[/bright_white]\n[cyan]{path}[/cyan]"
-    #     console.print(msg)
-    #     rprint("'data'")
-    #     self._data.to_excel(path, sheet_name="data", index=False, engine="openpyxl")
-    #     with pd.ExcelWriter(
-    #         path, mode="a", engine="openpyxl", if_sheet_exists="replace"
-    #     ) as writer:
-    #         dfs = {
-    #             "sumprod_df": self._sump_df,
-    #             "invalid_data": self._sump_df,
-    #             "valid_data": self._valid_data,
-    #             "calc_data": self._calc_data,
-    #             "output": self._output,
-    #         }
-    #         for sheet_name, df in dfs.items():
-    #             msg = f"'{sheet_name}'"
-    #             rprint(msg)
-    #             df.to_excel(writer, sheet_name=sheet_name, index=False)

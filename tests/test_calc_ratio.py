@@ -4,7 +4,6 @@ import pytest
 from pathlib import Path
 import pandas as pd
 
-# from typing import Any
 from fltk.calc_ratio.main import CalcRatio
 
 
@@ -20,7 +19,6 @@ def fixtures_path() -> Path:
 
 @pytest.fixture
 def ratios_xl(fixtures_path) -> pd.DataFrame:
-    # out = {"path": fixtures_path.joinpath("ratio.xlsx"), "sheet": "concepts_ratios"}
     fn = fixtures_path.joinpath("ratio.xlsx")
     out = pd.read_excel(
         fn,

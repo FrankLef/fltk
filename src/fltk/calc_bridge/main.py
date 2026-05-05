@@ -118,8 +118,8 @@ class CalcBridge:
 
     def get_summary(self) -> dict[str, tuple[int, ...]]:
         summary = {
-            "raw data": self.ratios.shape,
-            "ratios": self.raw.shape,
+            "raw data": self.raw.shape,
+            "ratios": self.ratios.shape,
             "periods": self.periods.shape,
             "bridge": self.bridge.shape,
         }

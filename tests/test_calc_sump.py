@@ -100,7 +100,7 @@ def test_init_sumprod(init_sumprod) -> None:
 
 @pytest.fixture
 def fit_sumprod(init_sumprod) -> CalcSumprod:
-    init_sumprod.fit()
+    init_sumprod.fit(is_fillna=False)
     return init_sumprod
 
 
