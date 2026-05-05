@@ -7,9 +7,9 @@ if TYPE_CHECKING:
 
 
 def get_valid_data(inst: CalcSumprod) -> pd.DataFrame:
-    keys = inst._data_keys
-    data = inst._data
-    invalid_dfs: tuple[pd.DataFrame, ...] = (inst._invalid_data,)
+    keys = list(inst.raw_vars.keys)
+    data = inst.raw
+    invalid_dfs: tuple[pd.DataFrame, ...] = (inst.invalid,)
     for invalid_df in invalid_dfs:
         if not invalid_df.empty:
             right_df = invalid_df[keys]
@@ -18,7 +18,7 @@ def get_valid_data(inst: CalcSumprod) -> pd.DataFrame:
 
 
 def clean_data(
-    left_df: pd.DataFrame, right_df: pd.DataFrame, keys: list[str]
+    left_df: pd.DataFrame, right_df: pd.DataFrame, keys: str | tuple[str, ...]
 ) -> pd.DataFrame:
     merged_df = pd.merge(
         left=left_df,
@@ -36,8 +36,9 @@ def clean_data(
 
 
 def fill_na(inst: CalcSumprod, value: float = 0) -> pd.DataFrame:
-    valid_data = inst._data.copy()
+    # valid_data = inst._data.copy()
+    valid_data = inst.raw
     # NOTE: Error msg from pandas, use this command instead of next one
-    valid_data.fillna({inst._data_value: value}, inplace=True)
+    valid_data.fillna({inst.raw_vars.value: value}, inplace=True)
     # valid_data[inst._data_value].fillna(value=value, inplace=True)
     return valid_data

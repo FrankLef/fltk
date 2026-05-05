@@ -66,36 +66,36 @@ def test_err_name() -> CalcSumprod:
 
 def test_load_mat_xl(sumprod, qrtr_mat_xl: dict[str, Path]) -> None:
     sumprod.load_mat_from_xl(path=qrtr_mat_xl["path"], sheet_nm=qrtr_mat_xl["sheet"])
-    assert sumprod.sump_df.shape == (16, 3)
+    assert sumprod.sump.shape == (16, 3)
 
 
 def test_load_data(sumprod, raw_data, data_vars) -> None:
     with pytest.raises(ValueError):
-        sumprod.load_data(
+        sumprod.load_raw_data(
             raw_data,
-            idx_var=data_vars["idx_var"],
-            value_var=data_vars["value_var"],
-            group_vars=data_vars["group_vars"],
-            newvalue_var=data_vars["newvalue_var"],
+            idx=data_vars["idx_var"],
+            value=data_vars["value_var"],
+            groups=data_vars["group_vars"],
+            newvalue=data_vars["newvalue_var"],
         )
 
 
 @pytest.fixture
 def init_sumprod(sumprod, qrtr_mat_xl, raw_data, data_vars) -> CalcSumprod:
     sumprod.load_mat_from_xl(path=qrtr_mat_xl["path"], sheet_nm=qrtr_mat_xl["sheet"])
-    sumprod.load_data(
+    sumprod.load_raw_data(
         raw_data,
-        idx_var=data_vars["idx_var"],
-        value_var=data_vars["value_var"],
-        group_vars=data_vars["group_vars"],
-        newvalue_var=data_vars["newvalue_var"],
+        idx=data_vars["idx_var"],
+        value=data_vars["value_var"],
+        groups=data_vars["group_vars"],
+        newvalue=data_vars["newvalue_var"],
     )
     return sumprod
 
 
 def test_init_sumprod(init_sumprod) -> None:
-    assert init_sumprod.sump_df.shape == (16, 3)
-    assert init_sumprod.data.shape == (33, 7)
+    assert init_sumprod.sump.shape == (16, 3)
+    assert init_sumprod.raw.shape == (33, 7)
 
 
 @pytest.fixture
@@ -105,7 +105,7 @@ def fit_sumprod(init_sumprod) -> CalcSumprod:
 
 
 def test_fit_sumprod(fit_sumprod) -> None:
-    assert fit_sumprod.invalid_data.shape == (3, 6)
+    assert fit_sumprod.invalid.shape == (3, 6)
 
 
 @pytest.fixture

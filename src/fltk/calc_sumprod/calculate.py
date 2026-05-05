@@ -8,13 +8,14 @@ if TYPE_CHECKING:
 
 def calculate(inst: CalcSumprod) -> pd.DataFrame:
     df = pd.merge(
-        left=inst._valid_data,
-        right=inst._sump_df,
-        left_on=inst._data_idx,
-        right_on=inst._idx_from,
+        left=inst.valid,
+        right=inst.sump,
+        left_on=inst.raw_vars.idx,
+        right_on=inst.sump_vars.idx_from,
     )
-    df[inst._data_newvalue] = df[inst._sump_coef] * df[inst._data_value]
-    sumkeys = inst._data_group.copy()
-    sumkeys.append(inst._idx_to)
-    calc_data = df.groupby(by=sumkeys, as_index=False)[inst._data_newvalue].sum()
+    df[inst.raw_vars.newvalue] = df[inst.sump_vars.sump_coef] * df[inst.raw_vars.value]
+    # sumkeys = inst._data_group.copy()
+    sumkeys = list(inst.raw_vars.groups)
+    sumkeys.append(inst.sump_vars.idx_to)
+    calc_data = df.groupby(by=sumkeys, as_index=False)[inst.raw_vars.newvalue].sum()
     return calc_data

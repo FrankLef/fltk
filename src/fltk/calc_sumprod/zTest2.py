@@ -32,12 +32,12 @@ raw_data = pd.read_excel(
 )
 # raw_data.info()
 
-sumprod.load_data(
+sumprod.load_raw_data(
     raw_data,
-    idx_var="concept",
-    value_var="amount",
-    group_vars=["entity", "period", "pertype"],
-    newvalue_var=newvalue_var,
+    idx="concept",
+    value="amount",
+    groups=("entity", "period", "pertype"),
+    newvalue=newvalue_var,
 )
 
 sumprod.fit(is_fillna=True)

@@ -7,17 +7,17 @@ if TYPE_CHECKING:
 
 
 def add_calc(inst: CalcSumprod) -> pd.DataFrame:
-    newvalue = inst._data_newvalue
+    newvalue = inst.raw_vars.newvalue
 
-    left_on = inst._data_group.copy()
-    left_on.append(inst._data_idx)
-    left_df = inst._valid_data
+    left_on = list(inst.raw_vars.groups)
+    left_on.append(inst.raw_vars.idx)
+    left_df = inst.valid
 
-    right_on = inst._data_group.copy()
-    right_on.append(inst._idx_to)
+    right_on = list(inst.raw_vars.groups)
+    right_on.append(inst.sump_vars.idx_to)
     right_cols = right_on.copy()
     right_cols.append(newvalue)
-    right_df = inst._calc_data[right_cols]
+    right_df = inst.calc[right_cols]
 
     if newvalue in left_df.columns:
         left_df.drop(columns=[newvalue], inplace=True)

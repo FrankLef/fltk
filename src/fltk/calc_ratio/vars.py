@@ -20,7 +20,7 @@ class Raw(NamedTuple):
 class Ratios(NamedTuple):
     concept_ratio: str
     concept_num: str
-    concept_den:str
+    concept_den: str
     concept_name: str
     concept_pos: str
     value_ratio: str
@@ -32,6 +32,15 @@ class Ratios(NamedTuple):
         return self.concept_ratio
 
     @property
-    def vars(self) -> str|tuple[str, ...]:
-        vars: tuple[str, ...] = (self.keys, self.concept_num, self.concept_den, self.concept_name, self.concept_pos, self.value_ratio, self.value_num, self.value_den)  # type: ignore
+    def vars(self) -> str | tuple[str, ...]:
+        vars: tuple[str, ...] = (
+            self.keys,
+            self.concept_num,
+            self.concept_den,
+            self.concept_name,
+            self.concept_pos,
+            self.value_ratio,
+            self.value_num,
+            self.value_den,
+        )  # type: ignore
         return vars

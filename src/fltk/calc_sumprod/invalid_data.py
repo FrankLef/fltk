@@ -15,7 +15,7 @@ def get_invalid_data(inst: CalcSumprod) -> pd.DataFrame:
 
 
 def get_groups(inst: CalcSumprod) -> pd.DataFrame:
-    groups_df = inst._data[inst._data_group]
+    groups_df = inst.raw[list(inst.raw_vars.groups)]
     groups_df.drop_duplicates(inplace=True)
     if groups_df.empty:
         msg = "The groups_df is empty."
@@ -25,11 +25,11 @@ def get_groups(inst: CalcSumprod) -> pd.DataFrame:
 
 def find_invalid_items(inst: CalcSumprod, groups_df: pd.DataFrame) -> pd.DataFrame:
     MERGE: Final[str] = "_merge"
-    raw_data = inst._data
-    idx_from = inst._idx_from
-    idx_to = inst._idx_to
-    idx_df = inst._sump_df
-    group_vars = inst._data_group
+    raw_data = inst.raw
+    idx_from = inst.sump_vars.idx_from
+    idx_to = inst.sump_vars.idx_to
+    idx_df = inst.sump
+    group_vars = inst.raw_vars.groups
     invalid_items = []
     i: int = 0
     for ndx, row in groups_df.iterrows():
@@ -60,8 +60,8 @@ def get_invalid_rows(
 ) -> pd.DataFrame:
     left_df = idx_df
     right_df = data
-    left_on = inst._idx_from
-    right_on = inst._data_idx
+    left_on = inst.sump_vars.idx_from
+    right_on = inst.raw_vars.idx
     merged_df = pd.merge(
         left=left_df,
         right=right_df,
@@ -96,13 +96,13 @@ def clean_invalid_data(inst: CalcSumprod, invalid_data: pd.DataFrame) -> pd.Data
     MERGE: Final[str] = "_merge"
     left_df = invalid_data
     invalid_data.drop(columns=MERGE, inplace=True)
-    right_df = inst._data[inst._data_keys]
-    idx_keys = inst._data_group.copy()
-    idx_keys.append(inst._idx_to)
+    right_df = inst.raw[list(inst.raw_vars.keys)]
+    idx_keys = list(inst.raw_vars.groups)
+    idx_keys.append(inst.sump_vars.idx_to)
     left_on = idx_keys
     # NOTE: redo data keys to ensure they have same ordering as idx_keys
-    data_keys = inst._data_group.copy()
-    data_keys.append(inst._data_idx)
+    data_keys = list(inst.raw_vars.groups)
+    data_keys.append(inst.raw_vars.idx)
     right_on = data_keys
     merged_df = pd.merge(
         left=left_df,

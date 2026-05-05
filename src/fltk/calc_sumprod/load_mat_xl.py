@@ -12,19 +12,22 @@ def load_mat_from_xl(
 ) -> pd.DataFrame:
     df = pd.read_excel(path, sheet_name=sheet_nm)
     top_name = df.columns[0]
-    if inst._idx_to != top_name:
+    _idx_to = inst.sump_vars.idx_to
+    _idx_from = inst.sump_vars.idx_from
+    _sump_coef = inst.sump_vars.sump_coef
+    if _idx_to != top_name:
         msg: str = f"""
-        '{inst._idx_to}' is not the name of the first column in the matrix.
+        '{_idx_to}' is not the name of the first column in the matrix.
         The name found is '{top_name}'.
         """
         raise KeyError(msg)
 
-    cols = df.columns[df.columns != inst._idx_to].to_list()
+    cols = df.columns[df.columns != _idx_to].to_list()
     df = df.melt(
-        id_vars=inst._idx_to,
+        id_vars=_idx_to,
         value_vars=cols,
-        var_name=inst._idx_from,
-        value_name=inst._sump_coef,
+        var_name=_idx_from,
+        value_name=_sump_coef,
     )
     df.dropna(inplace=True)
     return df
