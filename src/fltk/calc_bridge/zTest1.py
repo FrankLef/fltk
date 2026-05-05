@@ -60,6 +60,6 @@ bridge.load_raw_data(
 bridge.fit(verbose=True)
 bridge.transform(verbose=True)
 
-print(bridge)
+print("\n", bridge, sep="")
 
 bridge.to_excel(out_path)

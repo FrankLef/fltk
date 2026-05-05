@@ -4,9 +4,6 @@ import pandas as pd
 from pathlib import Path
 from rich import print as rprint
 
-# from rich.pretty import pprint
-from rich.console import Console
-
 from fltk.utils.value_cls import StrName
 
 from . import vars
@@ -14,6 +11,8 @@ from . import load_raw_data as lrd
 from . import load_ratios as lr
 from . import periods as per
 from . import bridge
+from . import calculate as calc
+from . import to_excel as xl
 
 
 class CalcBridge:
@@ -38,8 +37,8 @@ class CalcBridge:
 
     def __repr__(self):
         summary = self.get_summary()
-        title = f"{type(self).__name__}: {self.name}\n"
-        out = title + "-" * (len(title) - 1) + "\n"
+        title = f"{type(self).__name__}: {self.name}"
+        out = title + "\n" + ("-" * len(title)) + "\n"
         for key, value in summary.items():
             out += f"{key:<10}: {value}\n"
         return out
@@ -82,6 +81,9 @@ class CalcBridge:
     def get_bridge(self) -> None:
         self.bridge_df = bridge.get_bridge(self)
 
+    def calculate(self) -> None:
+        self.bridge_df = calc.calculate(self)
+
     def fit_transform(self, verbose: bool = False) -> None:
         self.fit(verbose=verbose)
         self.transform(verbose=verbose)
@@ -94,6 +96,7 @@ class CalcBridge:
             rprint(f"{self._name} {type_nm}.fit() completed.")
 
     def transform(self, verbose: bool = False) -> None:
+        self.calculate()
         if verbose:
             type_nm = type(self).__name__
             rprint(f"{self._name} {type_nm}.transform() completed.")
@@ -108,26 +111,10 @@ class CalcBridge:
         return summary
 
     def to_excel(self, path: Path) -> None:
-        """Export data to excel.
-
-        Args:
-            path (Path): Path to excel file, including file name.
-        """
-        console = Console()
-        type_nm = type(self).__name__
-        msg: str = f"\n[bright_white]Exporting {type_nm} to:[/bright_white]\n[cyan]{path}[/cyan]"
-        console.print(msg)
-        rprint("'data'")
-        self.raw_df.to_excel(path, sheet_name="data", index=False, engine="openpyxl")
-        with pd.ExcelWriter(
-            path, mode="a", engine="openpyxl", if_sheet_exists="replace"
-        ) as writer:
-            dfs = {
-                "ratios": self.ratios_df,
-                "periods": self.periods_df,
-                "bridge": self.bridge_df,
-            }
-            for sheet_name, df in dfs.items():
-                msg = f"'{sheet_name}'"
-                rprint(msg)
-                df.to_excel(writer, sheet_name=sheet_name, index=False)
+        dfs = {
+            "raw": self.raw_df,
+            "ratios": self.ratios_df,
+            "periods": self.periods_df,
+            "bridge": self.bridge_df,
+        }
+        xl.to_excel(self.name, path=path, dfs=dfs)
