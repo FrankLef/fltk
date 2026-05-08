@@ -86,9 +86,9 @@ class CalcRatio:
 
         Args:
             data (pd.DataFrame): Dataframe to process.
-            concept_var (str): Column with the concept used for calculations.
-            value_var (str): Column with values used for calculations.
-            group_vars (Iterable[str]): Columns making up a composite key.
+            concept (str): Column with the concept used for calculations.
+            value (str): Column with values used for calculations.
+            group (tuple[str, ...]): Columns making up a composite key.
         """
         self.raw_vars = vars.Raw(groups=groups, concept=concept, value=value)
 
@@ -177,24 +177,24 @@ class CalcRatio:
     def get_summary(self) -> dict[str, tuple[int, ...]]:
         summary = {
             "raw data": self.raw.shape,
-            "ratios_df": self.ratios.shape,
-            "ratios_long_df": self.ratios_long.shape,
-            "merged_data": self.merged.shape,
+            "ratios": self.ratios.shape,
+            "ratios_long": self.ratios_long.shape,
+            "merged": self.merged.shape,
             "invalid": self.invalid.shape,
-            "valid_data": self.valid.shape,
-            "calc_data": self.calc.shape,
+            "valid": self.valid.shape,
+            "calc": self.calc.shape,
         }
         return summary
 
     def to_excel(self, path: Path) -> None:
         dfs = {
             "data": self.raw,
-            "ratios_df": self.ratios,
-            "ratios_long_df": self.ratios_long,
-            "merged_data": self.merged,
+            "ratios": self.ratios,
+            "ratios_long": self.ratios_long,
+            "merged": self.merged,
             "invalid": self.invalid,
-            "valid_data": self.valid,
-            "calc_data": self.calc,
+            "valid": self.valid,
+            "calc": self.calc,
         }
         name = f"{type(self).__name__} '{self.name}'"
         xl.to_excel(name, path=path, dfs=dfs)

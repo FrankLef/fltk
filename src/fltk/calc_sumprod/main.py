@@ -75,14 +75,14 @@ class CalcSumprod:
         groups: tuple[str, ...],
         newvalue: str,
     ) -> None:
-        """Load the data for processing.
+        """Raw data to process.
 
         Args:
-            data (pd.DataFrame): Dataframe to process.
-            idx (str): Column with the index used for calculations.
+            data (pd.DataFrame): Raw data dataframe.
+            idx (str): Column with the concept used for calculations.
             value (str): Column with values used for calculations.
-            groups (Iterable[str]): Columns making up a composite key.
-            newvalue (str): New column for calculated values.
+            groups (tuple[str, ...]): Columns making up a composite key.
+            newvalue (str): _description_Column with calculated ratio value.
         """
         self.raw_vars = vars.Raw(groups=groups, idx=idx, value=value, newvalue=newvalue)
         self.raw: pd.DataFrame = pd.DataFrame()
@@ -178,10 +178,10 @@ class CalcSumprod:
     def to_excel(self, path: Path) -> None:
         dfs = {
             "raw data": self.raw,
-            "sumprod_df": self.sump,
-            "invalid_data": self.invalid,
-            "valid_data": self.valid,
-            "calc_data": self.calc,
+            "sumprod": self.sump,
+            "invalid": self.invalid,
+            "valid": self.valid,
+            "calc": self.calc,
             "output": self.output,
         }
         name = f"{type(self).__name__} '{self.name}'"
