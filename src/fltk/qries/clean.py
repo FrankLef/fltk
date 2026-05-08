@@ -1,3 +1,5 @@
+from typing import Iterable
+
 from ._qry_repo import QryRepo
 
 
@@ -21,4 +23,9 @@ class QryClean(QryRepo):
             SET {col} = regexp_replace({col}, '{pat}', '{replace}', 'g')
             WHERE {col} IS NOT NULL;
             """
+            self._conn.sql(qry)
+
+    def drop_cols(self, cols: Iterable[str]) -> None:
+        for col in cols:
+            qry: str = f"ALTER TABLE {self._table_nm} DROP COLUMN {col};"
             self._conn.sql(qry)

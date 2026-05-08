@@ -10,19 +10,19 @@ from .update import QryUpdate
 class QryFltk(QryRepo):
     @property
     def clean(self) -> QryRepo:
-        return QryClean(self._conn, self._table_nm)
+        return QryClean(self._conn, table_nm=self._table_nm)
 
     @property
     def constraints(self) -> QryRepo:
-        return QryConstraints(self._conn, self._table_nm)
+        return QryConstraints(self._conn, table_nm=self._table_nm)
 
     @property
     def enums(self) -> QryRepo:
-        return QryEnums(self._conn, self._table_nm)
+        return QryEnums(self._conn, table_nm=self._table_nm)
 
     @property
     def info(self) -> QryRepo:
-        return QryInfo(self._conn, self._table_nm)
+        return QryInfo(self._conn, table_nm=self._table_nm)
 
     @property
     def transform_log(self) -> QryRepo:
