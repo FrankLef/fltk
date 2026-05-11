@@ -6,11 +6,10 @@ from fltk.calc_bridge.main import CalcBridge
 
 
 fixtures_path = Path("C:/Users/Public/MyPy/Packages/fltk/tests/fixtures")
-ratio_path = fixtures_path.joinpath("bridge.xlsx")
+data_path = fixtures_path.joinpath("bridge.xlsx")
+data_sheet: str = "data1"
 out_fn = f"bridge_z1_{dt.now().date().isoformat()}.xlsx"
 out_path = fixtures_path.joinpath(out_fn)
-ratio_sheet: str = "concepts_ratios"
-data_sheet: str = "data1"
 
 
 ratios = (
@@ -23,20 +22,9 @@ ratios = (
 )
 bridge = CalcBridge(name="testBridgeZ1", ratios=ratios)
 
-# ratios_df = pd.read_excel(
-#     ratio_path,
-#     sheet_name=ratio_sheet,
-#     engine="openpyxl",
-#     engine_kwargs={"data_only": True},
-# )
-
-# bridge.load_ratios(
-#     data=ratios_df, ratio_nm="concept_ratio", num_nm="concept_num", den_nm="concept_den"
-# )
-
 
 raw_data = pd.read_excel(
-    ratio_path,
+    data_path,
     sheet_name=data_sheet,
     usecols=(
         "entity",
