@@ -7,7 +7,7 @@ if TYPE_CHECKING:
 
 
 def calculate(inst: CalcRatio) -> pd.DataFrame:
-    data = inst.valid
+    data = inst.merged.copy()
 
     data[inst.ratios_vars.value_ratio] = (
         data[inst.ratios_vars.value_num] / data[inst.ratios_vars.value_den]

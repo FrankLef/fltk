@@ -1,7 +1,7 @@
 from typing import NamedTuple
 
 
-class Raw(NamedTuple):
+class RawVars(NamedTuple):
     groups: tuple[str, ...]
     idx: str
     value: str
@@ -18,7 +18,7 @@ class Raw(NamedTuple):
         return vars
 
 
-class Sumprod(NamedTuple):
+class SumprodVars(NamedTuple):
     idx_to: str
     idx_from: str
     sump_coef: str

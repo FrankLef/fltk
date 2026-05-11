@@ -8,8 +8,9 @@ if TYPE_CHECKING:
     from .main import CalcRatio  # Only imported when checking types
 
 
-def load_ratios(inst: CalcRatio, data: pd.Dataframe) -> None:
-    assert not data.empty, "Ratios dataframe is empty."
+def load_ratios(inst: CalcRatio, data: pd.Dataframe) -> pd.DataFrame:
+    if data.empty:
+        raise ValueError("Ratios dataframe is empty.")
 
     audit.audit_cols(data, vars=inst.ratios_vars.base)
     audit.audit_keys(data, keys=inst.ratios_vars.keys)
@@ -23,15 +24,16 @@ def load_ratios(inst: CalcRatio, data: pd.Dataframe) -> None:
     check_cols: bool = data.columns.isin(cols).all()
     if not check_cols:
         raise ValueError("Some ratio columns are missing.")
-    inst.ratios = data
-    melt_ratios(inst)
+    return data
 
 
-def melt_ratios(inst: CalcRatio) -> None:
-    data = inst.ratios.copy()
+def melt_ratios(
+    data: pd.DataFrame, concept_ratio: str, concept_nm: str, concept_pos: str
+) -> pd.DataFrame:
+    audit.audit_illegal(data, vars=(concept_nm, concept_pos))
     melted_data = data.melt(
-        id_vars=inst.ratios_vars.concept_ratio,
-        var_name=inst.ratios_vars.concept_pos,
-        value_name=inst.ratios_vars.concept_name,
+        id_vars=concept_ratio,
+        var_name=concept_pos,
+        value_name=concept_nm,
     )
-    inst.ratios_long = melted_data
+    return melted_data

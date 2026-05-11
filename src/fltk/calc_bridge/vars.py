@@ -1,7 +1,7 @@
 from typing import NamedTuple
 
 
-class Raw(NamedTuple):
+class RawVars(NamedTuple):
     groups: tuple[str, ...]
     period: str
     ratio_nm: str
@@ -29,12 +29,12 @@ class Raw(NamedTuple):
         return vars
 
 
-class Periods(NamedTuple):
+class PeriodsVars(NamedTuple):
     start: str
     end: str
 
 
-class Ratios(NamedTuple):
+class RatiosVars(NamedTuple):
     ratio_nm: str
     num_nm: str
     den_nm: str
@@ -49,7 +49,7 @@ class Ratios(NamedTuple):
         return vars
 
 
-class Bridge(NamedTuple):
+class BridgeVars(NamedTuple):
     from_sfx: str
     to_sfx: str
     volume_diff: str

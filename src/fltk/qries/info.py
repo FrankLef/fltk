@@ -13,7 +13,7 @@ class QryInfo(QryRepo):
             qry = f"SELECT count(*) FROM {self._table_nm} WHERE {where_txt};"
         nrows: int = int(self._conn.sql(qry).fetchone()[0])  # type: ignore
         return nrows
-    
+
     def assert_empty(self, msg: str | None = None) -> bool:
         qry: str = f"FROM {self._table_nm} LIMIT 1;"
         check: int = len(self._conn.sql(qry).fetchone())  # type: ignore

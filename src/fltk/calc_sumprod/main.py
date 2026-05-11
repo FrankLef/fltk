@@ -38,7 +38,7 @@ class CalcSumprod:
             ValueError: Duplicate names.
         """
         self.name = StrName(name)
-        self.sump_vars = vars.Sumprod(
+        self.sump_vars = vars.SumprodVars(
             idx_to=StrName(idx_to),
             idx_from=StrName(idx_from),
             sump_coef=StrName(sump_coef),
@@ -84,7 +84,7 @@ class CalcSumprod:
             groups (tuple[str, ...]): Columns making up a composite key.
             newvalue (str): _description_Column with calculated ratio value.
         """
-        self.raw_vars = vars.Raw(groups=groups, idx=idx, value=value, newvalue=newvalue)
+        self.raw_vars = vars.RawVars(groups=groups, idx=idx, value=value, newvalue=newvalue)
         self.raw: pd.DataFrame = pd.DataFrame()
 
         data = lrd.load_raw_data(self, data=data)

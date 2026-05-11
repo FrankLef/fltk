@@ -14,9 +14,6 @@ out_path = fixtures_path.joinpath(out_fn)
 ratio_sheet: str = "concepts_ratios"
 data_sheet: str = "data1"
 
-ratio = CalcRatio(name="testRatioZ1")
-
-
 ratios_df = pd.read_excel(
     ratio_path,
     sheet_name=ratio_sheet,
@@ -24,7 +21,9 @@ ratios_df = pd.read_excel(
     engine_kwargs={"data_only": True},
 )
 
-ratio.load_ratios(ratios_df)
+ratio = CalcRatio(name="testRatioZ1", data=ratios_df)
+
+# ratio.load_ratios(ratios_df)
 
 
 raw_data = pd.read_excel(

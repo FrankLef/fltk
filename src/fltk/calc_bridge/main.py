@@ -32,10 +32,10 @@ class CalcBridge:
         err: str = "err",
     ):
         self.name = StrName(name)
-        self.periods_vars = vars.Periods(
+        self.periods_vars = vars.PeriodsVars(
             start=str(StrName(period_start)), end=str(StrName(period_end))
         )
-        self.bridge_vars = vars.Bridge(
+        self.bridge_vars = vars.BridgeVars(
             from_sfx=str(StrName(from_sfx)),
             to_sfx=str(StrName(to_sfx)),
             volume_diff=str(StrName(volume_diff)),
@@ -63,7 +63,7 @@ class CalcBridge:
         return out
 
     def load_ratios(self, data: pd.DataFrame, ratio_nm: str, num_nm: str, den_nm: str):
-        self.ratios_vars = vars.Ratios(ratio_nm=ratio_nm, num_nm=num_nm, den_nm=den_nm)
+        self.ratios_vars = vars.RatiosVars(ratio_nm=ratio_nm, num_nm=num_nm, den_nm=den_nm)
         self.ratios = lr.load_ratios(self, data=data)
 
     def load_raw_data(
@@ -78,7 +78,7 @@ class CalcBridge:
         den_nm: str,
         den_val: str,
     ) -> None:
-        self.raw_vars = vars.Raw(
+        self.raw_vars = vars.RawVars(
             groups=groups,
             period=period,
             ratio_nm=ratio_nm,

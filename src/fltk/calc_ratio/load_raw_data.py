@@ -9,9 +9,6 @@ if TYPE_CHECKING:
 
 
 def load_raw_data(inst: CalcRatio, data: pd.DataFrame) -> pd.DataFrame:
-    if inst.ratios.empty:
-        msg: str = "You must load the ratio definitions before the data."
-        raise ValueError(msg)
     if data.empty:
         raise ValueError("The raw data is empty.")
     audit.audit_illegal(data, vars=inst.ratios_vars)

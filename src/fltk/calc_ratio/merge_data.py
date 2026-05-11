@@ -10,7 +10,7 @@ def merge_data(inst: CalcRatio) -> pd.DataFrame:
     raw_data = inst.raw
     ratios_data = inst.ratios_long
     _data_concept = inst.raw_vars.concept
-    _concept_name = inst.ratios_vars.concept_name
+    _concept_name = inst.ratios_vars.concept_nm
     merged_data = raw_data.merge(
         ratios_data,
         how="inner",
