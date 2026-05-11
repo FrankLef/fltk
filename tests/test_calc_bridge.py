@@ -8,25 +8,26 @@ from fltk.calc_bridge.main import CalcBridge
 
 
 @pytest.fixture
-def bridge() -> CalcBridge:
-    return CalcBridge(name="test_bridge")
+def ratios() -> tuple[str, ...]:
+    ratios = (
+        "Ebitda2TangibleAssetsNoncash",
+        "Ebitda2Sales",
+        "Sales2TangibleAssetsNoncash",
+        "Sales2DirectLabor",
+        "Sales2MaterialCosts",
+        "MaterialCosts2DirectLabor",
+    )
+    return ratios
+
+
+@pytest.fixture
+def bridge(ratios) -> CalcBridge:
+    return CalcBridge(name="test_bridge", ratios=ratios)
 
 
 @pytest.fixture
 def fixtures_path() -> Path:
     return Path(__file__).parent.joinpath("fixtures")
-
-
-@pytest.fixture
-def ratios(fixtures_path) -> pd.DataFrame:
-    fn = fixtures_path.joinpath("bridge.xlsx")
-    out = pd.read_excel(
-        fn,
-        sheet_name="concepts_ratios",
-        engine="openpyxl",
-        engine_kwargs={"data_only": True},
-    )
-    return out
 
 
 @pytest.fixture
@@ -39,13 +40,6 @@ def raw_data(fixtures_path) -> pd.DataFrame:
         engine_kwargs={"data_only": True},
     )
     return out
-
-
-def test_load_ratios(bridge, ratios) -> None:
-    bridge.load_ratios(
-        ratios, ratio_nm="concept_ratio", num_nm="concept_num", den_nm="concept_den"
-    )
-    assert bridge.ratios.shape == (6, 3)
 
 
 def test_load_data(bridge, raw_data) -> None:
@@ -64,10 +58,7 @@ def test_load_data(bridge, raw_data) -> None:
 
 
 @pytest.fixture
-def bridge_init(bridge, ratios, raw_data):
-    bridge.load_ratios(
-        ratios, ratio_nm="concept_ratio", num_nm="concept_num", den_nm="concept_den"
-    )
+def bridge_init(bridge, raw_data):
     bridge.load_raw_data(
         raw_data,
         groups=("entity", "pertype"),

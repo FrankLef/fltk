@@ -34,19 +34,19 @@ class PeriodsVars(NamedTuple):
     end: str
 
 
-class RatiosVars(NamedTuple):
-    ratio_nm: str
-    num_nm: str
-    den_nm: str
+# class RatiosVars(NamedTuple):
+#     ratio_nm: str
+#     num_nm: str
+#     den_nm: str
 
-    @property
-    def keys(self) -> str | tuple[str, ...]:
-        return self.ratio_nm
+#     @property
+#     def keys(self) -> str | tuple[str, ...]:
+#         return self.ratio_nm
 
-    @property
-    def vars(self) -> tuple[str, ...]:
-        vars = (self.ratio_nm, self.num_nm, self.den_nm)
-        return vars
+#     @property
+#     def vars(self) -> tuple[str, ...]:
+#         vars = (self.ratio_nm, self.num_nm, self.den_nm)
+#         return vars
 
 
 class BridgeVars(NamedTuple):

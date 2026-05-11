@@ -9,7 +9,6 @@ from ..utils import to_excel as xl
 
 from . import vars
 from . import load_raw_data as lrd
-from . import load_ratios as lr
 from . import periods as per
 from . import bridge
 from . import calculate as calc
@@ -19,6 +18,7 @@ class CalcBridge:
     def __init__(
         self,
         name: str,
+        ratios: tuple[str, ...],
         period_start: str = "period_start",
         period_end: str = "period_end",
         from_sfx: str = "from",
@@ -32,6 +32,7 @@ class CalcBridge:
         err: str = "err",
     ):
         self.name = StrName(name)
+        self.ratios = tuple([StrName(var) for var in ratios])
         self.periods_vars = vars.PeriodsVars(
             start=str(StrName(period_start)), end=str(StrName(period_end))
         )
@@ -61,10 +62,6 @@ class CalcBridge:
             var + "_" + self.bridge_vars.to_sfx,
         )
         return out
-
-    def load_ratios(self, data: pd.DataFrame, ratio_nm: str, num_nm: str, den_nm: str):
-        self.ratios_vars = vars.RatiosVars(ratio_nm=ratio_nm, num_nm=num_nm, den_nm=den_nm)
-        self.ratios = lr.load_ratios(self, data=data)
 
     def load_raw_data(
         self,
@@ -119,7 +116,7 @@ class CalcBridge:
     def get_summary(self) -> dict[str, tuple[int, ...]]:
         summary = {
             "raw data": self.raw.shape,
-            "ratios": self.ratios.shape,
+            "ratios": len(self.ratios),
             "periods": self.periods.shape,
             "bridge": self.bridge.shape,
         }
@@ -128,7 +125,6 @@ class CalcBridge:
     def to_excel(self, path: Path) -> None:
         dfs = {
             "raw": self.raw,
-            "ratios": self.ratios,
             "periods": self.periods,
             "bridge": self.bridge,
         }

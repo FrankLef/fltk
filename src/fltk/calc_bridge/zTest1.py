@@ -12,19 +12,27 @@ out_path = fixtures_path.joinpath(out_fn)
 ratio_sheet: str = "concepts_ratios"
 data_sheet: str = "data1"
 
-bridge = CalcBridge(name="testBridgeZ1")
 
-
-ratios_df = pd.read_excel(
-    ratio_path,
-    sheet_name=ratio_sheet,
-    engine="openpyxl",
-    engine_kwargs={"data_only": True},
+ratios = (
+    "Ebitda2TangibleAssetsNoncash",
+    "Ebitda2Sales",
+    "Sales2TangibleAssetsNoncash",
+    "Sales2DirectLabor",
+    "Sales2MaterialCosts",
+    "MaterialCosts2DirectLabor",
 )
+bridge = CalcBridge(name="testBridgeZ1", ratios=ratios)
 
-bridge.load_ratios(
-    data=ratios_df, ratio_nm="concept_ratio", num_nm="concept_num", den_nm="concept_den"
-)
+# ratios_df = pd.read_excel(
+#     ratio_path,
+#     sheet_name=ratio_sheet,
+#     engine="openpyxl",
+#     engine_kwargs={"data_only": True},
+# )
+
+# bridge.load_ratios(
+#     data=ratios_df, ratio_nm="concept_ratio", num_nm="concept_num", den_nm="concept_den"
+# )
 
 
 raw_data = pd.read_excel(

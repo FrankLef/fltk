@@ -2,29 +2,26 @@ from __future__ import annotations  # Must be at the top
 from typing import TYPE_CHECKING
 import pandas as pd
 
+from ..utils import audit_vars as audit
+
 if TYPE_CHECKING:
     from .main import CalcBridge  # Only imported when checking types
 
 
 def get_bridge(inst: CalcBridge) -> pd.DataFrame:
-    validate_vars(inst)
-    bridge_df = get_data(inst)
+    audit.audit_illegal(inst.raw, vars=inst.bridge_vars.vars)
+    filtered_data = filter_data_with_ratios(inst)
+    bridge_df = merge_data_with_periods(inst, data=filtered_data)
     return bridge_df
 
 
-def validate_vars(inst: CalcBridge) -> None:
-    """Validate that no bridge variable is used by raw data."""
-    _raw_vars = inst.raw_vars.vars
-    _bridge_vars = inst.bridge_vars.vars
-
-    invalid_vars = [var for var in _raw_vars if var in _bridge_vars]
-    if invalid_vars:
-        msg: str = f"{invalid_vars} are found in raw and bridge."
-        raise KeyError(msg)
+def filter_data_with_ratios(inst: CalcBridge) -> pd.DataFrame:
+    data = inst.raw.copy()
+    filtered_data = data[data[inst.raw_vars.ratio_nm].isin(inst.ratios)]
+    return filtered_data
 
 
-def get_data(inst: CalcBridge) -> pd.DataFrame:
-    _raw = inst.raw
+def merge_data_with_periods(inst: CalcBridge, data: pd.DataFrame) -> pd.DataFrame:
     _periods = inst.periods
     _period = inst.raw_vars.period
     _groups = inst.raw_vars.groups
@@ -32,7 +29,7 @@ def get_data(inst: CalcBridge) -> pd.DataFrame:
     _start = inst.periods_vars.start
     _end = inst.periods_vars.end
 
-    data = _raw[list(inst.raw_vars.vars)]
+    data = data[list(inst.raw_vars.vars)]
     bridge_start = _periods.merge(
         right=data, how="inner", left_on=_start, right_on=_period
     )
@@ -43,7 +40,6 @@ def get_data(inst: CalcBridge) -> pd.DataFrame:
 
     _on = (*_groups, _ratio_nm, _end)
     suffixes = inst.add_suffix("")
-    # suffixes = ("_" + inst.bridge_vars.from_sfx, "_" + inst.bridge_vars.to_sfx)
     bridge_df = bridge_start.merge(
         right=bridge_end, how="inner", on=_on, suffixes=suffixes
     )
