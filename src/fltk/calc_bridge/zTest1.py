@@ -58,4 +58,10 @@ bridge.transform(verbose=True)
 
 print("\n", bridge, sep="")
 
+# print("\n", bridge.bridge.head(), sep="")
+
+wfall = bridge.get_waterfall()
+wfall.info()
+# print("\n", wfall.head(10), sep="")
+
 # bridge.to_excel(out_path)

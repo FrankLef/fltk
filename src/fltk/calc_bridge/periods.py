@@ -9,14 +9,13 @@ if TYPE_CHECKING:
 def get_periods(inst: CalcBridge) -> pd.DataFrame:
     _data = inst.raw
     _period = inst.raw_vars.period
-    _start = inst.periods_vars.start
-    _end = inst.periods_vars.end
+    _periods = inst.periods_vars
 
     the_periods = sorted(_data[_period].unique())
     if len(the_periods) < 2:
         raise ValueError("There must be at least 2 distinct periods.")
     the_starts = the_periods[:-1]
     the_ends = the_periods[1:]
-    periods_df = pd.DataFrame({_start: the_starts, _end: the_ends})
+    periods_df = pd.DataFrame({_periods.start: the_starts, _periods.end: the_ends})
     assert not periods_df.empty, "Periods df is empty!"
     return periods_df

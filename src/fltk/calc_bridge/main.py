@@ -12,6 +12,7 @@ from . import load_raw_data as lrd
 from . import periods as per
 from . import bridge
 from . import calculate as calc
+from . import waterfall as wf
 
 
 class CalcBridge:
@@ -88,6 +89,9 @@ class CalcBridge:
         self.raw = lrd.load_raw_data(self, data=data)
 
     def get_periods(self) -> None:
+        _period = self.raw_vars.period
+        _period_nms = self.add_suffix(_period)
+        self.periods_vars = vars.PeriodsVars(start=_period_nms[0], end=_period_nms[1])
         self.periods = per.get_periods(self)
 
     def get_bridge(self) -> None:
@@ -112,6 +116,10 @@ class CalcBridge:
         if verbose:
             type_nm = type(self).__name__
             rprint(f"{self.name} {type_nm}.transform() completed.")
+
+    def get_waterfall(self) -> pd.DataFrame:
+        waterfall_df = wf.get_waterfall(self)
+        return waterfall_df
 
     def get_summary(self) -> dict[str, tuple[int, ...]]:
         summary = {
