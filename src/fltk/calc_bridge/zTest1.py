@@ -22,21 +22,21 @@ ratios = (
 )
 bridge = CalcBridge(name="testBridgeZ1", ratios=ratios)
 
-
+cols = (
+    "entity",
+    "pertype",
+    "period",
+    "concept_ratio",
+    "concept_num",
+    "concept_den",
+    "ratio",
+    "num",
+    "den",
+)
 raw_data = pd.read_excel(
     data_path,
     sheet_name=data_sheet,
-    usecols=(
-        "entity",
-        "pertype",
-        "period",
-        "concept_ratio",
-        "concept_num",
-        "concept_den",
-        "ratio",
-        "num",
-        "den",
-    ),
+    usecols=cols,
     engine="openpyxl",
     engine_kwargs={"data_only": True},
 )
