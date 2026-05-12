@@ -122,18 +122,27 @@ class CalcBridge:
             rprint(f"{self.name} {type_nm}.transform() completed.")
 
     def get_waterfall(
-        self, diff_nm: str = "diff_nm", diff_val: str = "diff_val"
+        self,
+        diff_nm: str = "diff_nm",
+        diff_val: str = "diff_val",
+        wfall_type="wfall_type",
     ) -> pd.DataFrame:
         """Transform bridge data to waterfall (long, melted) format.
 
         Args:
             diff_nm (str, optional): Name of column with diff name. Defaults to "diff_nm".
             diff_val (str, optional): Name of column with diff value. Defaults to "diff_val".
+            wfall_type (str, optional): Name of column with waterfall type. Defaults to "wfall_type".
 
         Returns:
             pd.DataFrame: Waterfall-formatted dataframe.
         """
-        waterfall_df = wf.get_waterfall(self, diff_nm=diff_nm, diff_val=diff_val)
+        self.wfall_vars = vars.WaterfallVars(
+            diff_nm=str(StrName(diff_nm)),
+            diff_val=str(StrName(diff_val)),
+            wfall_type=str(StrName(wfall_type)),
+        )
+        waterfall_df = wf.get_waterfall(self)
         return waterfall_df
 
     def get_summary(self) -> dict[str, tuple[int, ...]]:

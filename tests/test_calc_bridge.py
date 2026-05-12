@@ -88,4 +88,4 @@ def test_waterfall(bridge_init):
     bridge_init.fit()
     bridge_init.transform()
     wfall = bridge_init.get_waterfall()
-    assert wfall.shape == (18, 7)
+    assert wfall.shape == (18, 8)

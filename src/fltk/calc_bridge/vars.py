@@ -32,9 +32,9 @@ class RawVars(NamedTuple):
 class PeriodsVars(NamedTuple):
     start: str
     end: str
-    
+
     @property
-    def vars(self)-> tuple[str, ...]:
+    def vars(self) -> tuple[str, ...]:
         vars = (self.start, self.end)
         return vars
 
@@ -62,3 +62,9 @@ class BridgeVars(NamedTuple):
             self.err,
         )
         return vars
+
+
+class WaterfallVars(NamedTuple):
+    diff_nm: str
+    diff_val: str
+    wfall_type: str
