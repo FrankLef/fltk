@@ -14,9 +14,9 @@ def get_waterfall(
         raise ValueError("Bridge data is empty.")
     _groups = inst.raw_vars.groups
     _concept_ratio = inst.raw_vars.ratio_nm
-    _period_nms = inst.add_suffix(inst.raw_vars.period)
+    _periods = inst.periods_vars.vars
 
-    keys: list[str] = list(_groups) + [_concept_ratio] + list(_period_nms)
+    keys: list[str] = list(_groups) + [_concept_ratio] + list(_periods)
     wfall_factors = list(get_factors(inst))
 
     data_wide = inst.bridge.copy()
@@ -26,8 +26,8 @@ def get_waterfall(
     data_long = data_wide.melt(
         id_vars=keys, value_vars=wfall_factors, var_name=diff_nm, value_name=diff_val
     )
-    cat_type = CategoricalDtype(categories=wfall_factors, ordered=True)
-    data_long[diff_nm] = data_long[diff_nm].astype(cat_type)
+    cat_dtype = CategoricalDtype(categories=wfall_factors, ordered=True)
+    data_long[diff_nm] = data_long[diff_nm].astype(cat_dtype)
 
     return data_long
 
