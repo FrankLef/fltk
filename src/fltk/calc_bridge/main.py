@@ -89,9 +89,13 @@ class CalcBridge:
         self.raw = lrd.load_raw_data(self, data=data)
 
     def get_periods(self) -> None:
+        """Create periods dataframe used to do the bridge."""
         _period = self.raw_vars.period
         _period_nms = self.add_suffix(_period)
-        self.periods_vars = vars.PeriodsVars(start=_period_nms[0], end=_period_nms[1])
+        self.periods_vars = vars.PeriodsVars(
+            start=_period_nms[0],
+            end=_period_nms[1],
+        )
         self.periods = per.get_periods(self)
 
     def get_bridge(self) -> None:
@@ -117,8 +121,19 @@ class CalcBridge:
             type_nm = type(self).__name__
             rprint(f"{self.name} {type_nm}.transform() completed.")
 
-    def get_waterfall(self) -> pd.DataFrame:
-        waterfall_df = wf.get_waterfall(self)
+    def get_waterfall(
+        self, diff_nm: str = "diff_nm", diff_val: str = "diff_val"
+    ) -> pd.DataFrame:
+        """Transform bridge data to waterfall (long, melted) format.
+
+        Args:
+            diff_nm (str, optional): Name of column with diff name. Defaults to "diff_nm".
+            diff_val (str, optional): Name of column with diff value. Defaults to "diff_val".
+
+        Returns:
+            pd.DataFrame: Waterfall-formatted dataframe.
+        """
+        waterfall_df = wf.get_waterfall(self, diff_nm=diff_nm, diff_val=diff_val)
         return waterfall_df
 
     def get_summary(self) -> dict[str, tuple[int, ...]]:

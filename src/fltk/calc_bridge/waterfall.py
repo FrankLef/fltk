@@ -10,19 +10,6 @@ if TYPE_CHECKING:
 def get_waterfall(
     inst: CalcBridge, diff_nm: str = "diff_nm", diff_val: str = "diff_val"
 ) -> pd.DataFrame:
-    """Tansform bridge data to waterfall (long, melted) format.
-
-    Args:
-        inst (CalcBridge): Bridge object.
-        diff_nm (str, optional): Name of column with diff name. Defaults to "diff_nm".
-        diff_val (str, optional): Name of column with diff value. Defaults to "diff_val".
-
-    Raises:
-        ValueError: Bridge data is empty.
-
-    Returns:
-        pd.DataFrame: Waterfall-formatted dataframe.
-    """
     if inst.bridge.empty:
         raise ValueError("Bridge data is empty.")
     _groups = inst.raw_vars.groups
