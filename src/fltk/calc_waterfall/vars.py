@@ -17,7 +17,7 @@ class RawVars(NamedTuple):
     def keys(self) -> str | tuple[str, ...]:
         keys = (*self.groups, self.ratio_nm, self.period_from, self.period_to)
         return keys
-    
+
     @property
     def factors(self) -> tuple[str, ...]:
         vars = (
@@ -29,13 +29,10 @@ class RawVars(NamedTuple):
             self.total_diff,
         )
         return vars
-    
+
     @property
     def vars(self) -> tuple[str, ...]:
-        vars = (
-            *self.keys,
-            *self.factors
-        )
+        vars = (*self.keys, *self.factors)
         return vars
 
 
@@ -43,7 +40,7 @@ class WaterfallVars(NamedTuple):
     diff_nm: str
     diff_val: str
     wfall_type: str
-    
+
     @property
     def vars(self) -> tuple[str, ...]:
         vars = (self.diff_nm, self.diff_val, self.wfall_type)

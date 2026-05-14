@@ -41,7 +41,7 @@ def test_load_data(wfall, raw_data) -> None:
         volume_diff="vol_diff",
         price_diff="price_diff",
         mix_diff="mix_diff",
-        total_diff="tot_diff"
+        total_diff="tot_diff",
     )
     assert wfall.raw.shape == (27, 21)
 
@@ -59,7 +59,7 @@ def wfall_init(wfall, raw_data):
         volume_diff="vol_diff",
         price_diff="price_diff",
         mix_diff="mix_diff",
-        total_diff="tot_diff"
+        total_diff="tot_diff",
     )
     return wfall
 
@@ -69,7 +69,7 @@ def test_fit(wfall_init):
     assert wfall_init.base.shape == (162, 8)
 
 
-# def test_transform(wfall_init):
-#     wfall_init.fit()
-#     wfall_init.transform()
-#     assert wfall_init.base.shape == (162, 8)
+def test_transform(wfall_init):
+    wfall_init.fit()
+    wfall_init.transform()
+    assert wfall_init.wfall.shape == (162, 8)

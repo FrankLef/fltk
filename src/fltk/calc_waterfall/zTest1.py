@@ -31,7 +31,7 @@ wfall.load_raw_data(
     volume_diff="vol_diff",
     price_diff="price_diff",
     mix_diff="mix_diff",
-    total_diff="tot_diff"
+    total_diff="tot_diff",
 )
 
 wfall.fit(verbose=True)

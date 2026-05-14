@@ -9,7 +9,8 @@ from ..utils import to_excel as xl
 
 from . import vars
 from . import load_raw_data as lrd
-from . import waterfall as wf
+from . import base
+from . import wfall
 
 
 class CalcWaterfall:
@@ -26,7 +27,7 @@ class CalcWaterfall:
             diff_val=str(StrName(diff_val)),
             wfall_type=str(StrName(wfall_type)),
         )
-    
+
     def __repr__(self):
         summary = self.get_summary()
         title = f"{type(self).__name__}: {self.name}"
@@ -34,7 +35,7 @@ class CalcWaterfall:
         for key, value in summary.items():
             out += f"{key:<10}: {value}\n"
         return out
-    
+
     def load_raw_data(
         self,
         data: pd.DataFrame,
@@ -68,21 +69,22 @@ class CalcWaterfall:
         self.transform(verbose=verbose)
 
     def fit(self, verbose: bool = False) -> None:
-        self.base = wf.get_waterfall(self)
+        self.base = base.get_base(self)
         if verbose:
             type_nm = type(self).__name__
             rprint(f"{self.name} {type_nm}.fit() completed.")
 
     def transform(self, verbose: bool = False) -> None:
+        self.wfall = wfall.get_wfall(self)
         if verbose:
             type_nm = type(self).__name__
             rprint(f"{self.name} {type_nm}.transform() completed.")
-            
 
     def get_summary(self) -> dict[str, tuple[int, ...]]:
         summary = {
             "raw data": self.raw.shape,
             "base": self.base.shape,
+            "wfall": self.wfall.shape,
         }
         return summary
 
@@ -90,6 +92,7 @@ class CalcWaterfall:
         dfs = {
             "raw": self.raw,
             "base": self.base,
+            "wfall": self.wfall,
         }
         name = f"{type(self).__name__} '{self.name}'"
         xl.to_excel(name, path=path, dfs=dfs)

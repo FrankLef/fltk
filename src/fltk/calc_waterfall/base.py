@@ -7,18 +7,18 @@ if TYPE_CHECKING:
     from .main import CalcWaterfall  # Only imported when checking types
 
 
-def get_waterfall(inst: CalcWaterfall) -> pd.DataFrame:
+def get_base(inst: CalcWaterfall) -> pd.DataFrame:
     if inst.raw.empty:
         raise ValueError("Raw data is empty.")
     wfall_types = get_wfall_types(inst)
     wfall_factors = list(wfall_types.keys())
-    data_long = melt_waterfall(inst, factors=wfall_factors)
+    data_long = melt_raw(inst, factors=wfall_factors)
     wfall_df = add_wfall_type(inst, data_long=data_long, wfall_types=wfall_types)
 
     return wfall_df
 
 
-def melt_waterfall(inst: CalcWaterfall, factors: list[str]) -> pd.DataFrame:
+def melt_raw(inst: CalcWaterfall, factors: list[str]) -> pd.DataFrame:
     _keys = inst.raw_vars.keys
     _factors = inst.raw_vars.factors
     _vars = inst.raw_vars.vars
@@ -49,7 +49,7 @@ def get_wfall_types(inst: CalcWaterfall) -> dict[str, str]:
     err_set = set(_vars.factors).symmetric_difference(set(wfall_types.keys()))
     err_nb = len(err_set)
     if err_nb:
-        msg: str = f"There are {err_nb} discrepencies in wfall_types."
+        msg: str = f"There are {err_nb} discrepancies in wfall_types."
         raise KeyError(msg)
     return wfall_types
 
@@ -65,6 +65,6 @@ def add_wfall_type(
     types = list(wfall_types.values())
     err_df = data_long[~data_long[_wfall_type].isin(types)]
     if not err_df.empty:
-        msg: str = f"{err_df.shape[0]} rows in waterfall with invalid wfall type."
+        msg: str = f"{err_df.shape[0]} rows with invalid waterfall type."
         raise AssertionError(msg)
     return data_long
