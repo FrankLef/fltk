@@ -11,6 +11,7 @@ if TYPE_CHECKING:
 def load_raw_data(inst: CalcRatio, data: pd.DataFrame) -> pd.DataFrame:
     if data.empty:
         raise ValueError("The raw data is empty.")
+    audit.audit_missing(data, vars=inst.raw_vars.vars)
     audit.audit_illegal(data, vars=inst.ratios_vars)
     audit.audit_keys(data, keys=inst.raw_vars.keys)
     all_vars = list(inst.raw_vars.vars)

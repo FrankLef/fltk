@@ -12,7 +12,7 @@ def load_ratios(inst: CalcRatio, data: pd.Dataframe) -> pd.DataFrame:
     if data.empty:
         raise ValueError("Ratios dataframe is empty.")
 
-    audit.audit_cols(data, vars=inst.ratios_vars.base)
+    audit.audit_missing(data, vars=inst.ratios_vars.base)
     audit.audit_keys(data, keys=inst.ratios_vars.keys)
     check_null: bool = data.isna().values.any()
     if check_null:

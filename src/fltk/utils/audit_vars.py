@@ -1,12 +1,12 @@
 import pandas as pd
 
 
-def audit_cols(data: pd.DataFrame, vars: str | tuple[str, ...]) -> bool:
-    """Validate if some columns don't exist."""
+def audit_missing(data: pd.DataFrame, vars: str | tuple[str, ...]) -> bool:
+    """Validate if some variables are not found in the columns."""
     cols = data.columns.to_list()
-    illegal_vars = [var for var in vars if var not in cols]
-    if illegal_vars:
-        msg: str = f"{illegal_vars} are not found in the column names."
+    missing_vars = [var for var in vars if var not in cols]
+    if missing_vars:
+        msg: str = f"{missing_vars} are not found in the column names."
         raise ValueError(msg)
     return True
 

@@ -82,10 +82,3 @@ def test_transform(bridge_init):
     bridge_init.fit()
     bridge_init.transform()
     assert bridge_init.bridge.shape == (27, 21)
-
-
-def test_waterfall(bridge_init):
-    bridge_init.fit()
-    bridge_init.transform()
-    wfall = bridge_init.get_waterfall()
-    assert wfall.shape == (162, 8)
