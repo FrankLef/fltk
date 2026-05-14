@@ -78,7 +78,6 @@ def test_fit(bridge_init):
     assert bridge_init.bridge.shape == (27, 15)
 
 
-def test_transform(bridge_init):
-    bridge_init.fit()
-    bridge_init.transform()
+def test_fit_transform(bridge_init):
+    bridge_init.fit_transform()
     assert bridge_init.bridge.shape == (27, 21)

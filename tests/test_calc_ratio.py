@@ -73,8 +73,7 @@ def test_fit(init_ratio) -> None:
     assert init_ratio.merged.shape == (30, 8)
 
 
-def test_transform(init_ratio) -> None:
-    init_ratio.fit()
-    init_ratio.transform(is_cleaned=True)
+def test_fit_transform(init_ratio) -> None:
+    init_ratio.fit_transform(is_cleaned=True)
     assert init_ratio.merged.shape == (30, 8)
     assert init_ratio.calc.shape == (18, 9)

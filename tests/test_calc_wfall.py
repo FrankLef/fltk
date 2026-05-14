@@ -69,7 +69,6 @@ def test_fit(wfall_init):
     assert wfall_init.base.shape == (162, 8)
 
 
-def test_transform(wfall_init):
-    wfall_init.fit()
-    wfall_init.transform()
+def test_fit_transform(wfall_init):
+    wfall_init.fit_transform()
     assert wfall_init.wfall.shape == (162, 8)
