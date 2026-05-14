@@ -5,7 +5,6 @@ from rich import print as rprint
 
 from ..calc.abc import Calc
 from ..utils.value_cls import StrName
-from ..utils import to_excel as xl
 
 from . import vars
 from . import load_mat_xl as lmx
@@ -159,18 +158,7 @@ class CalcSumprod(Calc):
     def add_calc(self) -> pd.DataFrame:
         return ac.add_calc(self)
 
-    def get_summary(self) -> dict[str, tuple[int, ...]]:
-        summary = {
-            "raw data": self.raw.shape,
-            "sumprod": self.sump.shape,
-            "invalid": self.invalid.shape,
-            "valid": self.valid.shape,
-            "calculated": self.calc.shape,
-            "output": self.output.shape,
-        }
-        return summary
-
-    def to_excel(self, path: Path) -> None:
+    def get_dfs(self) -> dict[str, pd.DataFrame]:
         dfs = {
             "raw data": self.raw,
             "sumprod": self.sump,
@@ -179,5 +167,4 @@ class CalcSumprod(Calc):
             "calc": self.calc,
             "output": self.output,
         }
-        name = f"{type(self).__name__} '{self.name}'"
-        xl.to_excel(name, path=path, dfs=dfs)
+        return dfs

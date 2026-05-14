@@ -1,11 +1,9 @@
 from __future__ import annotations  # Must be at the top
 import pandas as pd
 from rich import print as rprint
-from pathlib import Path
 
 from ..calc.abc import Calc
 from ..utils.value_cls import StrName
-from ..utils import to_excel as xl
 
 from . import vars
 from . import load_ratios as lr
@@ -131,17 +129,7 @@ class CalcRatio(Calc):
         df.replace([float("inf"), float("-inf")], value=None, inplace=True)
         df.dropna(subset=cols, inplace=True)
 
-    def get_summary(self) -> dict[str, tuple[int, ...]]:
-        summary = {
-            "raw data": self.raw.shape,
-            "ratios": self.ratios.shape,
-            "ratios long": self.ratios_long.shape,
-            "merged": self.merged.shape,
-            "calc": self.calc.shape,
-        }
-        return summary
-
-    def to_excel(self, path: Path) -> None:
+    def get_dfs(self) -> dict[str, pd.DataFrame]:
         dfs = {
             "data": self.raw,
             "ratios": self.ratios,
@@ -149,5 +137,4 @@ class CalcRatio(Calc):
             "merged": self.merged,
             "calc": self.calc,
         }
-        name = f"{type(self).__name__} '{self.name}'"
-        xl.to_excel(name, path=path, dfs=dfs)
+        return dfs

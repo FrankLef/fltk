@@ -1,12 +1,10 @@
 from __future__ import annotations  # Must be at the top
 import pandas as pd
 
-from pathlib import Path
 from rich import print as rprint
 
 from ..calc.abc import Calc
 from ..utils.value_cls import StrName
-from ..utils import to_excel as xl
 
 from . import vars
 from . import load_raw_data as lrd
@@ -73,19 +71,10 @@ class CalcWaterfall(Calc):
             type_nm = type(self).__name__
             rprint(f"{self.name} {type_nm}.transform() completed.")
 
-    def get_summary(self) -> dict[str, tuple[int, ...]]:
-        summary = {
-            "raw data": self.raw.shape,
-            "base": self.base.shape,
-            "wfall": self.wfall.shape,
-        }
-        return summary
-
-    def to_excel(self, path: Path) -> None:
+    def get_dfs(self) -> dict[str, pd.DataFrame]:
         dfs = {
             "raw": self.raw,
             "base": self.base,
             "wfall": self.wfall,
         }
-        name = f"{type(self).__name__} '{self.name}'"
-        xl.to_excel(name, path=path, dfs=dfs)
+        return dfs
