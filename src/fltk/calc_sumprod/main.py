@@ -25,7 +25,7 @@ class CalcSumprod(Calc):
         sump_coef: str = "sump_coef",
         sump_value: str = "sump_value",
     ):
-        """Create object to calculate the sum of products.
+        """_summary_
 
         Args:
             name (str): Name to identify the object. Does not affect the process itself.
@@ -33,9 +33,6 @@ class CalcSumprod(Calc):
             idx_from (str, optional): Name of the column with the source index used. It is recommended to keep the default value. Defaults to "idx_from".
             sump_coef (str, optional): Column of coefficients to use. It is recommended to keep the default value. Defaults to "sump_coef".
             sump_value (str, optional): Column of values to use. It is recommended to keep the default value. Defaults to "sump_value".
-
-        Raises:
-            ValueError: Duplicate names.
         """
         super().__init__(StrName(name))
         self.sump_vars = vars.SumprodVars(
