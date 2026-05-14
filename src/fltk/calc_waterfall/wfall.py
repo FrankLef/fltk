@@ -1,5 +1,5 @@
 from __future__ import annotations  # Must be at the top
-from typing import TYPE_CHECKING, Final
+from typing import TYPE_CHECKING
 import pandas as pd
 
 if TYPE_CHECKING:
@@ -19,18 +19,20 @@ def get_wfall(inst: CalcWaterfall) -> pd.DataFrame:
 def set_initial(
     inst: CalcWaterfall, data: pd.DataFrame, group: pd.DataFrame
 ) -> pd.DataFrame:
-    VAL_INITIAL: Final[str] = "initial"
     _raw = inst.raw_vars
     _period = _raw.period_to
     _num_from = _raw.num_from_val
     _wfall = inst.wfall_vars
+    _initial = _wfall.initial
     _diff_nm = _wfall.diff_nm
     _wtype = _wfall.wfall_type
+    
     period_sel = group[_period] == group[_period].min()
     num_sel = group[_diff_nm] == _num_from
     sel = period_sel & num_sel
     group_sel = group[sel]
-    data.loc[group_sel.index, _wtype] = VAL_INITIAL
+    data.loc[group_sel.index, _wtype] = _initial
+    
     return data
 
 

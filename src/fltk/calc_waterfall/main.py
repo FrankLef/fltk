@@ -19,12 +19,14 @@ class CalcWaterfall(Calc):
         diff_nm: str = "diff_nm",
         diff_val: str = "diff_val",
         wfall_type="wfall_type",
+        initial="initial"
     ):
         super().__init__(StrName(name))
         self.wfall_vars = vars.WaterfallVars(
             diff_nm=str(StrName(diff_nm)),
             diff_val=str(StrName(diff_val)),
             wfall_type=str(StrName(wfall_type)),
+            initial=str(StrName(initial)),
         )
 
     def load_raw_data(
