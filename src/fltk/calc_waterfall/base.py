@@ -13,9 +13,8 @@ def get_base(inst: CalcWaterfall) -> pd.DataFrame:
     wfall_types = get_wfall_types(inst)
     wfall_factors = list(wfall_types.keys())
     data_long = melt_raw(inst, factors=wfall_factors)
-    wfall_df = add_wfall_type(inst, data_long=data_long, wfall_types=wfall_types)
-
-    return wfall_df
+    base_df = add_wfall_type(inst, data_long=data_long, wfall_types=wfall_types)
+    return base_df
 
 
 def melt_raw(inst: CalcWaterfall, factors: list[str]) -> pd.DataFrame:
@@ -33,6 +32,7 @@ def melt_raw(inst: CalcWaterfall, factors: list[str]) -> pd.DataFrame:
     )
     cat_dtype = CategoricalDtype(categories=_factors, ordered=True)
     data_long[_diff_nm] = data_long[_diff_nm].astype(cat_dtype)
+    data_long = data_long.sort_values(by=list(_keys))
     return data_long
 
 
