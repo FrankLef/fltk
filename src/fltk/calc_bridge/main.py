@@ -4,6 +4,7 @@ import pandas as pd
 from pathlib import Path
 from rich import print as rprint
 
+from ..calc.abc import Calc
 from ..utils.value_cls import StrName
 from ..utils import to_excel as xl
 
@@ -14,7 +15,7 @@ from . import bridge
 from . import calculate as calc
 
 
-class CalcBridge:
+class CalcBridge(Calc):
     def __init__(
         self,
         name: str,
@@ -31,7 +32,7 @@ class CalcBridge:
         check_diff: str = "check_diff",
         err: str = "err",
     ):
-        self.name = StrName(name)
+        super().__init__(StrName(name))
         self.ratios = tuple([StrName(var) for var in ratios])
         self.periods_vars = vars.PeriodsVars(
             start=str(StrName(period_start)), end=str(StrName(period_end))
@@ -47,14 +48,6 @@ class CalcBridge:
             check_diff=str(StrName(check_diff)),
             err=str(StrName(err)),
         )
-
-    def __repr__(self):
-        summary = self.get_summary()
-        title = f"{type(self).__name__}: {self.name}"
-        out = title + "\n" + ("-" * len(title)) + "\n"
-        for key, value in summary.items():
-            out += f"{key:<10}: {value}\n"
-        return out
 
     def add_suffix(self, var: str) -> tuple[str, str]:
         out = (

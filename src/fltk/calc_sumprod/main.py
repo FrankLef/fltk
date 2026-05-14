@@ -3,6 +3,7 @@ import pandas as pd
 from pathlib import Path
 from rich import print as rprint
 
+from ..calc.abc import Calc
 from ..utils.value_cls import StrName
 from ..utils import to_excel as xl
 
@@ -16,7 +17,7 @@ from . import calculate as calc
 from . import add_calc as ac
 
 
-class CalcSumprod:
+class CalcSumprod(Calc):
     def __init__(
         self,
         name: str,
@@ -37,7 +38,7 @@ class CalcSumprod:
         Raises:
             ValueError: Duplicate names.
         """
-        self.name = StrName(name)
+        super().__init__(StrName(name))
         self.sump_vars = vars.SumprodVars(
             idx_to=StrName(idx_to),
             idx_from=StrName(idx_from),
@@ -45,14 +46,6 @@ class CalcSumprod:
             sump_value=StrName(sump_value),
         )
         self.sump = pd.DataFrame()
-
-    def __repr__(self):
-        summary = self.get_summary()
-        title = f"{type(self).__name__}: {self.name}"
-        out = title + "\n" + ("-" * len(title)) + "\n"
-        for key, value in summary.items():
-            out += f"{key:<10}: {value}\n"
-        return out
 
     def _init_sump_vars(self) -> None:
         self._sump_vars: list[str] = []

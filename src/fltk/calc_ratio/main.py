@@ -3,6 +3,7 @@ import pandas as pd
 from rich import print as rprint
 from pathlib import Path
 
+from ..calc.abc import Calc
 from ..utils.value_cls import StrName
 from ..utils import to_excel as xl
 
@@ -11,12 +12,10 @@ from . import load_ratios as lr
 from . import load_raw_data as lrd
 from . import merge_data as md
 
-# from . import invalid_data as gid
-# from . import valid_data as gvd
 from . import calculate as calc
 
 
-class CalcRatio:
+class CalcRatio(Calc):
     def __init__(
         self,
         name: str,
@@ -43,7 +42,7 @@ class CalcRatio:
             concept_nm (str, optional): Concept name used by the long format. Defaults to "concept_name".
             concept_pos (str, optional): Concept position, 'num' or 'den' used by the long format. Defaults to "concept_pos".
         """
-        self.name = StrName(name)
+        (super().__init__(StrName(name)),)
         self.ratios_vars = vars.RatioVars(
             concept_ratio=StrName(concept_ratio),
             concept_num=StrName(concept_num),
@@ -61,14 +60,6 @@ class CalcRatio:
             concept_nm=self.ratios_vars.concept_nm,
             concept_pos=self.ratios_vars.concept_pos,
         )
-
-    def __repr__(self):
-        summary = self.get_summary()
-        title = f"{type(self).__name__}: {self.name}"
-        out = title + "\n" + ("-" * len(title)) + "\n"
-        for key, value in summary.items():
-            out += f"{key:<10}: {value}\n"
-        return out
 
     def load_raw_data(
         self,

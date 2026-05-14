@@ -4,6 +4,7 @@ import pandas as pd
 from pathlib import Path
 from rich import print as rprint
 
+from ..calc.abc import Calc
 from ..utils.value_cls import StrName
 from ..utils import to_excel as xl
 
@@ -13,7 +14,7 @@ from . import base
 from . import wfall
 
 
-class CalcWaterfall:
+class CalcWaterfall(Calc):
     def __init__(
         self,
         name: str,
@@ -21,20 +22,12 @@ class CalcWaterfall:
         diff_val: str = "diff_val",
         wfall_type="wfall_type",
     ):
-        self.name = StrName(name)
+        super().__init__(StrName(name))
         self.wfall_vars = vars.WaterfallVars(
             diff_nm=str(StrName(diff_nm)),
             diff_val=str(StrName(diff_val)),
             wfall_type=str(StrName(wfall_type)),
         )
-
-    def __repr__(self):
-        summary = self.get_summary()
-        title = f"{type(self).__name__}: {self.name}"
-        out = title + "\n" + ("-" * len(title)) + "\n"
-        for key, value in summary.items():
-            out += f"{key:<10}: {value}\n"
-        return out
 
     def load_raw_data(
         self,
