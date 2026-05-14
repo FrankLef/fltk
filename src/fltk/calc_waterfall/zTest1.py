@@ -5,7 +5,7 @@ from datetime import datetime as dt
 from fltk.calc_waterfall.main import CalcWaterfall
 
 
-fixtures_path = Path("C:/Users/Public/MyPy/Packages/fltk/tests/fixtures")
+fixtures_path = Path(__file__).parents[3].joinpath("tests", "fixtures")
 data_path = fixtures_path.joinpath("waterfall.xlsx")
 data_sheet: str = "data1"
 out_fn = f"wfall_z1_{dt.now().date().isoformat()}.xlsx"

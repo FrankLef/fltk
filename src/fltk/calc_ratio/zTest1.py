@@ -2,12 +2,10 @@ import pandas as pd
 from pathlib import Path
 from datetime import datetime as dt
 
-# from rich.prompt import Confirm
-# from rich.console import Console
 from fltk.calc_ratio.main import CalcRatio
 
 
-fixtures_path = Path("C:/Users/Public/MyPy/Packages/fltk/tests/fixtures")
+fixtures_path = Path(__file__).parents[3].joinpath("tests", "fixtures")
 ratio_path = fixtures_path.joinpath("ratio.xlsx")
 out_fn = f"ratio_z1_{dt.now().date().isoformat()}.xlsx"
 out_path = fixtures_path.joinpath(out_fn)
