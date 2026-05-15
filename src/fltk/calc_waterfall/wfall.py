@@ -66,6 +66,7 @@ def set_wfall_amt(inst: CalcWaterfall, data: pd.DataFrame) -> pd.DataFrame:
     data.loc[sel, _wfall_amt] = None
     return data
 
+
 def reset_initial(
     inst: CalcWaterfall, data: pd.DataFrame, initial: str
 ) -> pd.DataFrame:
