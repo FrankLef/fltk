@@ -9,8 +9,9 @@ if TYPE_CHECKING:
 def get_wfall(inst: CalcWaterfall) -> pd.DataFrame:
     _wfall = inst.wfall_vars
     _wtype = _wfall.wfall_type
-    wfall = inst.base.copy()
     _keys = list(inst.raw_vars.keys)
+
+    wfall = inst.base.copy()
 
     for _, group in wfall.groupby(_keys):
         wfall = set_initial(inst, data=wfall, group=group)
@@ -65,13 +66,23 @@ def set_wfall_amt(inst: CalcWaterfall, data: pd.DataFrame) -> pd.DataFrame:
     data.loc[sel, _wfall_amt] = None
     return data
 
-
 def reset_initial(
     inst: CalcWaterfall, data: pd.DataFrame, initial: str
 ) -> pd.DataFrame:
-    """Reset initial rows to 'absolute' or 'relative'."""
-    _wfall = inst.wfall_vars
-    _wtype = _wfall.wfall_type
+    """Reset initial rows to 'absolute' or 'relative'.
+
+    The first column in a waterfall can be shown as absolute or relative. This
+    function reset initial to reflect that choice.
+
+    Args:
+        inst (CalcWaterfall): CalcWaterfall instance.
+        data (pd.DataFrame): Waterfall data.
+        initial (str): 'absolute' or 'relative'.
+
+    Returns:
+        pd.DataFrame: Waterfall data.
+    """
+    _wtype = inst.wfall_vars.wfall_type
     sel = data[_wtype] == inst.INITIAL
     data.loc[sel, _wtype] = initial
     return data

@@ -37,11 +37,11 @@ class RawVars(NamedTuple):
 
 
 class WaterfallVars(NamedTuple):
+    initial: str
     diff_nm: str
     diff_val: str
     wfall_type: str
     wfall_amt: str
-    initial: str
 
     @property
     def vars(self) -> tuple[str, ...]:
