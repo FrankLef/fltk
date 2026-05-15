@@ -129,7 +129,8 @@ class CalcRatio(Calc):
         df.replace([float("inf"), float("-inf")], value=None, inplace=True)
         df.dropna(subset=cols, inplace=True)
 
-    def get_dfs(self) -> dict[str, pd.DataFrame]:
+    @property
+    def dfs(self):
         dfs = {
             "data": self.raw,
             "ratios": self.ratios,

@@ -27,19 +27,18 @@ class Calc(ABC):
         """Fit process."""
         pass
 
+    @property
     @abstractmethod
-    def get_dfs(self) -> dict[str, pd.DataFrame]:
-        """Get dictionnary of dataframes."""
+    def dfs(self) -> dict[str, pd.DataFrame]:
+        """Dictionnary of dataframes."""
         pass
 
     def get_summary(self) -> dict[str, tuple[int, ...]]:
         """Create summary of dataframes."""
-        dfs = self.get_dfs()
-        summary = {key: df.shape for key, df in dfs.items()}
+        summary = {key: df.shape for key, df in self.dfs.items()}
         return summary
 
     def to_excel(self, path: Path) -> None:
         """Export dataframes to excel. Usually for debug."""
-        dfs = self.get_dfs()
         name = f"{type(self).__name__} '{self.name}'"
-        xl.to_excel(name, path=path, dfs=dfs)
+        xl.to_excel(name, path=path, dfs=self.dfs)

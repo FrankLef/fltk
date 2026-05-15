@@ -73,7 +73,8 @@ class CalcWaterfall(Calc):
             type_nm = type(self).__name__
             rprint(f"{self.name} {type_nm}.transform() completed.")
 
-    def get_dfs(self) -> dict[str, pd.DataFrame]:
+    @property
+    def dfs(self):
         dfs = {
             "raw": self.raw,
             "base": self.base,

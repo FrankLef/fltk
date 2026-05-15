@@ -155,7 +155,8 @@ class CalcSumprod(Calc):
     def add_calc(self) -> pd.DataFrame:
         return ac.add_calc(self)
 
-    def get_dfs(self) -> dict[str, pd.DataFrame]:
+    @property
+    def dfs(self):
         dfs = {
             "raw data": self.raw,
             "sumprod": self.sump,
