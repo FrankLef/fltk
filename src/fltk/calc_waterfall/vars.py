@@ -40,9 +40,10 @@ class WaterfallVars(NamedTuple):
     diff_nm: str
     diff_val: str
     wfall_type: str
+    wfall_amt: str
     initial: str
 
     @property
     def vars(self) -> tuple[str, ...]:
-        vars = (self.diff_nm, self.diff_val, self.wfall_type)
+        vars = (self.diff_nm, self.diff_val, self.wfall_type, self.wfall_amt)
         return vars

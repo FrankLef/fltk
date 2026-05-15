@@ -9,7 +9,7 @@ from fltk.calc_waterfall.main import CalcWaterfall
 
 @pytest.fixture
 def wfall() -> CalcWaterfall:
-    return CalcWaterfall(name="test_wfall")
+    return CalcWaterfall(name="test_wfall", initial="relative")
 
 
 @pytest.fixture
@@ -71,4 +71,4 @@ def test_fit(wfall_init):
 
 def test_fit_transform(wfall_init):
     wfall_init.fit_transform()
-    assert wfall_init.wfall.shape == (135, 8)
+    assert wfall_init.wfall.shape == (135, 9)
