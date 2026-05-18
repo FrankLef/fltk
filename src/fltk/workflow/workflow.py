@@ -1,4 +1,4 @@
-from typing import NamedTuple, Final
+from typing import NamedTuple, Any
 from pathlib import Path
 import re
 import json
@@ -22,19 +22,35 @@ class DirSpecs(NamedTuple):
 class WorkFlow:
     """The workflow to run the modules."""
 
-    def __init__(self, root: Path, config: Path):
-        self.root_path = self.check_root_path(root)
-        self.config_path = self.load_config(config)
+    def __init__(self, root: Path, wf_path: Path, config: str = "config.json"):
+        self.root_path = self.check_path(root)
+        self.wf_path = self.check_path(wf_path)
+        self.config_path = self.check_path(wf_path.joinpath(config), is_dir=False)
+        self.load_config()
 
-    def check_root_path(self, root_path: Path) -> Path:
+    def check_path(self, path: Path, is_dir: bool = True) -> Path:
         """Validate the root_path."""
+        if is_dir:
+            if not path.is_dir():
+                raise NotADirectoryError(f"Invalid root directory:\n{path}")
+        else:
+            if not path.is_file():
+                raise NotADirectoryError(f"Invalid file name:\n{path}")
 
-        if not root_path.is_dir():
-            raise NotADirectoryError(f"Invalid root directory:\n{root_path}")
+        return path
 
-        return root_path
+    def check_name(self, name: str) -> str:
+        val = str(name)
+        val = val.replace(" ", "")
+        if not val:
+            raise ValueError("Empty name not allowed.")
+        check = re.search(r"\W", string=val, flags=re.IGNORECASE)
+        if check:
+            raise ValueError(f"'{val}' not an allowed name.")
+        return val
 
-    def load_config(self, path: Path) -> Path:
+    def load_config(self) -> Path:
+        path = self.config_path
         try:
             with open(path, "r", encoding="utf-8") as file:
                 config = json.load(file)
@@ -44,10 +60,17 @@ class WorkFlow:
             print("Error: The file is not a valid JSON.")
 
         prefix = config["prefix"]
-        self.prefix: str = self.check_prefix(prefix)
+        self.prefix: str = self.check_name(prefix)
+
+        success_wav = self.wf_path.joinpath(config["success_wav"])
+        self.success_wav = self.check_path(success_wav, is_dir=False)
 
         dirs = config["dirs"]
+        self.load_dirs(dirs)
 
+        return path
+
+    def load_dirs(self, dirs: list[dict[str, Any]]) -> None:
         specs_dict = {}
         for dir in dirs:
             specs = DirSpecs(**dir)
@@ -58,7 +81,6 @@ class WorkFlow:
         sorted_dirs_dict = dict(sorted_dirs)
         self.dirs: dict[str, DirSpecs] = sorted_dirs_dict
         self.names: tuple[str, ...] = tuple(self.dirs.keys())
-        return path
 
     def get_config_default_file(self, path: Path) -> None:
         """Get a copy of the default config file. Use it as a template!
@@ -70,16 +92,6 @@ class WorkFlow:
         shutil.copy2(src=input_path, dst=path)
         msg: str = f"Default workflow config file copied to:\n{path}"
         rprint(msg)
-
-    def check_prefix(self, prefix: str) -> str:
-        val = str(prefix)
-        val = val.replace(" ", "")
-        if not val:
-            raise ValueError("Empty prefix not allowed.")
-        check = re.search(r"\W", string=val, flags=re.IGNORECASE)
-        if check:
-            raise ValueError(f"'{val}' not an allowed prefix.")
-        return val
 
     def execute(self, jobs_args: str, pat: str | None, ptype: str | None) -> None:
         """This execute the different steps of the program."""
@@ -234,11 +246,7 @@ class WorkFlow:
         return msg
 
     def ring_success(self) -> None:
-        # WAV_FILE:Final[str]= "achievement-bell-600.wav"
-        WAV_FILE: Final[str] = "kids-cartoon-close-bells-2256.wav"
-        # NOTE: Create git error, file exceeds 500 k
-        # WAV_FILE: Final[str] = "bike-magical-bell-591.wav"
-        sound_file: Path = Path(__file__).parent.joinpath(WAV_FILE)
+        sound_file = self.success_wav
         winsound.PlaySound(str(sound_file), flags=winsound.SND_FILENAME)
         # winsound.MessageBeep(winsound.MB_ICONASTERISK)
         # winsound.Beep(440, 500)
