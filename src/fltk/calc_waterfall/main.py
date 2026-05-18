@@ -1,6 +1,6 @@
 from __future__ import annotations  # Must be at the top
 import pandas as pd
-from typing import Literal, Final
+from typing import Literal
 
 from rich import print as rprint
 
@@ -33,7 +33,6 @@ class CalcWaterfall(Calc):
             wfall_amt=str(StrName(wfall_amt)),
             is_initial=str(StrName(is_initial)),
         )
-        self.INITIAL: Final[str] = "initial"
 
     def load_raw_data(
         self,
