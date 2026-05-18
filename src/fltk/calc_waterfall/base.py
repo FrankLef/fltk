@@ -14,6 +14,9 @@ def get_base(inst: CalcWaterfall) -> pd.DataFrame:
     wfall_factors = list(wfall_types.keys())
     data_long = melt_raw(inst, factors=wfall_factors)
     base_df = add_wfall_type(inst, data_long=data_long, wfall_types=wfall_types)
+
+    base_df[inst.wfall_vars.is_initial] = False
+
     return base_df
 
 

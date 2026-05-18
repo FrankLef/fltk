@@ -22,14 +22,16 @@ class CalcWaterfall(Calc):
         diff_val: str = "diff_val",
         wfall_type="wfall_type",
         wfall_amt: str = "wfall_amt",
+        is_initial: str = "is_initial",
     ):
         super().__init__(StrName(name))
         self.wfall_vars = vars.WaterfallVars(
+            initial=str(StrName(initial)),
             diff_nm=str(StrName(diff_nm)),
             diff_val=str(StrName(diff_val)),
             wfall_type=str(StrName(wfall_type)),
             wfall_amt=str(StrName(wfall_amt)),
-            initial=str(StrName(initial)),
+            is_initial=str(StrName(is_initial)),
         )
         self.INITIAL: Final[str] = "initial"
 

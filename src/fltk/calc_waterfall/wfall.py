@@ -10,42 +10,86 @@ def get_wfall(inst: CalcWaterfall) -> pd.DataFrame:
     _wfall = inst.wfall_vars
     _raw = inst.raw_vars
     _wtype = _wfall.wfall_type
-    _keys = list(inst.raw_vars.keys)
-    _order = list(_raw.groups) + [_raw.ratio_nm, _wfall.diff_nm]
+    _initial = _wfall.initial
+    _is_initial = _wfall.is_initial
+    _keys = list(_raw.groups) + [_raw.ratio_nm]
+    _order = list(_raw.groups) + [
+        _raw.ratio_nm,
+        _raw.period_from,
+        _raw.period_to,
+        _wfall.diff_nm,
+    ]
 
     wfall = inst.base.copy()
 
+    # NOTE: groupby() works reliably when you collect indexes. I wasted many hours trying to figure out what was going on.
+    initial_ndx = []
     for _, group in wfall.groupby(_keys):
-        wfall = set_initial(inst, data=wfall, group=group)
+        group = set_initial(inst, group=group)
+        initial_ndx.extend(group.index)
+    wfall.loc[initial_ndx, _is_initial] = True
+
     err_df = wfall[wfall[_wtype].isna()]
     err_nb = err_df.shape[0]
     if err_nb:
         msg: str = f"{err_nb} rows with empty whaterfall type."
         raise AssertionError(msg)
+
+    # NOTE: drop() does not work with groups. Must collect the index then use drop().
+    drop_ndx = []
+    for _, group in wfall.groupby(_keys):
+        group = rm_num_from(inst, group=group)
+        drop_ndx.extend(group.index)
+    wfall.drop(drop_ndx, inplace=True)
+
     wfall = rm_total_diff(inst, data=wfall)
     wfall = set_wfall_amt(inst, data=wfall)
-    wfall = reset_initial(inst, data=wfall, initial=_wfall.initial)
+    wfall = reset_initial(inst, data=wfall, initial=_initial)
     wfall.sort_values(by=_order, inplace=True)
     return wfall
 
 
-def set_initial(
-    inst: CalcWaterfall, data: pd.DataFrame, group: pd.DataFrame
-) -> pd.DataFrame:
+def set_initial(inst: CalcWaterfall, group: pd.DataFrame) -> pd.DataFrame:
+    """Set initial 'num_from_val'."""
     _raw = inst.raw_vars
     _period = _raw.period_to
     _num_from = _raw.num_from_val
     _wfall = inst.wfall_vars
     _diff_nm = _wfall.diff_nm
-    _wtype = _wfall.wfall_type
 
     period_sel = group[_period] == group[_period].min()
     num_sel = group[_diff_nm] == _num_from
     sel = period_sel & num_sel
-    group_sel = group[sel]
-    data.loc[group_sel.index, _wtype] = inst.INITIAL
+    group_sel = group.loc[sel]
+    return group_sel
 
-    return data
+
+"""Remove all othe num_from_val not identified as 'initial'."""
+
+
+def rm_num_from(inst: CalcWaterfall, group: pd.DataFrame) -> pd.DataFrame:
+    """Remove all othe num_from_val not identified as 'initial'.
+
+    This only return indexes without droping rows. drop() does not work with groups.
+
+    Args:
+        inst (CalcWaterfall): _description_
+        group (pd.DataFrame): _description_
+
+    Returns:
+        pd.DataFrame: _description_
+    """
+    _raw = inst.raw_vars
+    _num_from = _raw.num_from_val
+    _wfall = inst.wfall_vars
+    _diff_nm = _wfall.diff_nm
+    _is_initial = _wfall.is_initial
+
+    initial_sel = ~group[_is_initial]
+    num_sel = group[_diff_nm] == _num_from
+    sel = initial_sel & num_sel
+    group_sel = group.loc[sel]
+    return group_sel
 
 
 def rm_total_diff(inst: CalcWaterfall, data: pd.DataFrame) -> pd.DataFrame:
@@ -58,7 +102,7 @@ def rm_total_diff(inst: CalcWaterfall, data: pd.DataFrame) -> pd.DataFrame:
 
 
 def set_wfall_amt(inst: CalcWaterfall, data: pd.DataFrame) -> pd.DataFrame:
-    """Total amount must be set to None (or zero)"""
+    """Total amount must be set to None (or zero)."""
     TOTAL: Final[str] = "total"
     _wfall = inst.wfall_vars
     _wfall_amt = _wfall.wfall_amt
@@ -86,7 +130,9 @@ def reset_initial(
     Returns:
         pd.DataFrame: Waterfall data.
     """
-    _wtype = inst.wfall_vars.wfall_type
-    sel = data[_wtype] == inst.INITIAL
+    _wfall = inst.wfall_vars
+    _is_initial = _wfall.is_initial
+    _wtype = _wfall.wfall_type
+    sel = data[_is_initial]
     data.loc[sel, _wtype] = initial
     return data
