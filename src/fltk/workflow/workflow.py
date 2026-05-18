@@ -112,8 +112,9 @@ class WorkFlow:
         jobs_sequence = [jobs_names[pos] for pos in jobs_pos]
         self._jobs_sequence = jobs_sequence
 
-    def get_files(self, root_path: Path, specs: DirSpecs, pat: str | None) -> list[str]:
+    def get_files(self, specs: DirSpecs, pat: str | None) -> list[str]:
         """Get the list of files in the folder, given a name pattern."""
+        root_path = self.root_path
         prefix = self.prefix
         the_files = gf.get_files(
             root_path=root_path, specs=specs, prefix=prefix, pat=pat
@@ -122,16 +123,12 @@ class WorkFlow:
 
     def run_jobs(self) -> None:
         """Run each job required by the user."""
-        root_path = self.root_path
         pat = self._pat
-
         jobs_sequence = self._jobs_sequence
         for job in jobs_sequence:
             specs: DirSpecs = self.dirs[job]
             utils.print_run(dir=specs.dir, pat=pat, emo=specs.emo)
-            the_files: list[str] = self.get_files(
-                root_path=root_path, specs=specs, pat=pat
-            )
+            the_files: list[str] = self.get_files(specs=specs, pat=pat)
             self.run_modul(job_dir=specs.dir, files=the_files)
 
     def run_modul(self, job_dir: str, files: list[str]) -> None:
