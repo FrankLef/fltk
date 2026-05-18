@@ -8,8 +8,10 @@ if TYPE_CHECKING:
 
 def get_wfall(inst: CalcWaterfall) -> pd.DataFrame:
     _wfall = inst.wfall_vars
+    _raw = inst.raw_vars
     _wtype = _wfall.wfall_type
     _keys = list(inst.raw_vars.keys)
+    _order = list(_raw.groups) + [_raw.ratio_nm, _wfall.diff_nm]
 
     wfall = inst.base.copy()
 
@@ -23,6 +25,7 @@ def get_wfall(inst: CalcWaterfall) -> pd.DataFrame:
     wfall = rm_total_diff(inst, data=wfall)
     wfall = set_wfall_amt(inst, data=wfall)
     wfall = reset_initial(inst, data=wfall, initial=_wfall.initial)
+    wfall.sort_values(by=_order, inplace=True)
     return wfall
 
 

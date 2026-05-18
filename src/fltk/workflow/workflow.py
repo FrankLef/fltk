@@ -2,6 +2,7 @@ from typing import NamedTuple, Final
 from pathlib import Path
 import re
 import json
+import shutil
 from rich import print as rprint
 from importlib import import_module
 import winsound
@@ -13,7 +14,6 @@ class DirSpecs(NamedTuple):
     priority: int
     name: str
     label: str
-    prefix: str
     dir: str
     emo: str
     song: str
@@ -22,93 +22,74 @@ class DirSpecs(NamedTuple):
 class WorkFlow:
     """The workflow to run the modules."""
 
-    def __init__(self, root_path: Path | None = None, dirs_file: Path | None = None):
-        self._all_specs: dict[str, DirSpecs] = {}
-        self._root_path = self.check_root_path(root_path)
-        self._dirs_file = self.check_dirs_file(dirs_file)
+    def __init__(self, root: Path, config: Path):
+        self.root_path = self.check_root_path(root)
+        self.config_path = self.load_config(config)
 
-    @property
-    def root_path(self) -> Path:
-        """The root_path path is where all workflow paths are located."""
-        return self._root_path
-
-    @property
-    def dirs_file(self) -> Path:
-        """The full path to the workflow.json file."""
-        return self._dirs_file
-
-    @property
-    def names(self):
-        """The name (key) of all the workflow directories."""
-        return self._all_specs.keys()
-
-    def add(self, specs: DirSpecs):
-        """Add a directory specifications to the overall dictionnary."""
-        self._all_specs[specs.name] = specs
-
-    def get(self, name: str):
-        """Get a directory specifications from the overall dictionnary."""
-        return self._all_specs[name]
-
-    def check_root_path(self, root_path: Path | None = None) -> Path:
+    def check_root_path(self, root_path: Path) -> Path:
         """Validate the root_path."""
-        if not root_path:
-            a_path: Path = Path(__file__).parents[1]
-        else:
-            a_path = root_path
 
-        if not a_path.is_dir():
-            raise NotADirectoryError(f"Invalid root directory:\n{a_path}")
+        if not root_path.is_dir():
+            raise NotADirectoryError(f"Invalid root directory:\n{root_path}")
 
-        return a_path
+        return root_path
 
-    def check_dirs_file(self, dirs_file: Path | None = None) -> Path:
-        """Validate the path to the workflow.json file."""
-        DIRS_FILE: Final[str] = "workflow.json"  # the default dirs file
+    def load_config(self, path: Path) -> Path:
+        try:
+            with open(path, "r", encoding="utf-8") as file:
+                config = json.load(file)
+        except FileNotFoundError:
+            print("Error: The file was not found.")
+        except json.JSONDecodeError:
+            print("Error: The file is not a valid JSON.")
 
-        if not dirs_file:
-            a_file: Path = Path(__file__).parent.joinpath(DIRS_FILE)
-        else:
-            a_file = dirs_file
+        prefix = config["prefix"]
+        self.prefix: str = self.check_prefix(prefix)
 
-        if not a_file.is_file():
-            raise FileNotFoundError(f"Invalid dirs file:\n{a_file}")
+        dirs = config["dirs"]
 
-        return a_file
+        specs_dict = {}
+        for dir in dirs:
+            specs = DirSpecs(**dir)
+            specs_dict[specs.name] = specs
+
+        # NOTE: Must sort the dictionnary by priority.
+        sorted_dirs = sorted(specs_dict.items(), key=lambda item: item[1].priority)
+        sorted_dirs_dict = dict(sorted_dirs)
+        self.dirs: dict[str, DirSpecs] = sorted_dirs_dict
+        self.names: tuple[str, ...] = tuple(self.dirs.keys())
+        return path
+
+    def get_config_default_file(self, path: Path) -> None:
+        """Get a copy of the default config file. Use it as a template!
+
+        Args:
+            path (Path): File name, including path, given to the config file.
+        """
+        input_path: Path = Path(__file__).parent.joinpath("wf_config.json")
+        shutil.copy2(src=input_path, dst=path)
+        msg: str = f"Default workflow config file copied to:\n{path}"
+        rprint(msg)
+
+    def check_prefix(self, prefix: str) -> str:
+        val = str(prefix)
+        val = val.replace(" ", "")
+        if not val:
+            raise ValueError("Empty prefix not allowed.")
+        check = re.search(r"\W", string=val, flags=re.IGNORECASE)
+        if check:
+            raise ValueError(f"'{val}' not an allowed prefix.")
+        return val
 
     def execute(self, jobs_args: str, pat: str | None, ptype: str | None) -> None:
         """This execute the different steps of the program."""
-        self.load()
+        # self.load()
         self._pat = pat
         self._ptype = ptype
         self.parse_jobs(jobs_args)
         self.sequence_jobs()
         self.run_jobs()
         self.ring_success()
-
-    def load(self):
-        """Load all directory specifications from the json file."""
-        dirs_file = self._dirs_file
-        try:
-            with open(dirs_file, mode="r", encoding="utf-8") as file:
-                data = json.load(file)
-        except FileNotFoundError:
-            self.ring_error()
-            msg = f"File not found. This was checked when initializing. Weird.\n {dirs_file}"
-            print(msg)
-        except json.JSONDecodeError:
-            self.ring_error()
-            print(f"Invalid JSON format in\n'{dirs_file}'.")
-        for dir in data:
-            specs = DirSpecs(**dir)  # type: ignore
-            self.add(specs)
-
-        # NOTE: Must sort the dictionnary by priority.
-        sorted_specs = sorted(
-            self._all_specs.items(), key=lambda item: item[1].priority
-        )
-        sorted_dict_specs = dict(sorted_specs)
-        self._all_specs = sorted_dict_specs
 
     def parse_jobs(self, jobs_args: str) -> None:
         """Parse the jobs from the CLI."""
@@ -128,7 +109,7 @@ class WorkFlow:
         self._jobs_todo = jobs_todo
 
     def sequence_jobs(self) -> None:
-        """Sequence the jobs according to the establieshed priorities."""
+        """Sequence the jobs according to the established priorities."""
         jobs_todo = self._jobs_todo
         jobs_names = list(self.names)
         try:
@@ -144,18 +125,17 @@ class WorkFlow:
         jobs_sequence = [jobs_names[pos] for pos in jobs_pos]
         self._jobs_sequence = jobs_sequence
 
-    def get_full_pattern(self, specs: DirSpecs, pat: str | None) -> str:
+    def get_full_pattern(self, pat: str | None) -> str:
         """Create the regex pattern used to filter the files."""
-        prefix = specs.prefix
-        if pat is None:
-            full_pat = "^" + prefix + r".+_.*" + "[.]py$"
+        if pat:
+            full_pat = rf"^{self.prefix}.+_{pat}[.]py$"
         else:
-            full_pat = "^" + prefix + r".+_" + pat + "[.]py$"
+            full_pat = rf"^{self.prefix}.+_.*[.]py$"
         return full_pat
 
     def get_files(self, root_path: Path, specs: DirSpecs, pat: str | None) -> list[str]:
         """Get the list of files in the folder, given a name pattern."""
-        full_pattern: str = self.get_full_pattern(specs=specs, pat=pat)
+        full_pattern: str = self.get_full_pattern(pat=pat)
 
         wd = root_path.joinpath(specs.dir)
         if wd.exists():
@@ -182,12 +162,12 @@ class WorkFlow:
 
     def run_jobs(self) -> None:
         """Run each job required by the user."""
-        root_path = self._root_path
+        root_path = self.root_path
         pat = self._pat
 
         jobs_sequence = self._jobs_sequence
         for job in jobs_sequence:
-            specs = self.get(job)
+            specs: DirSpecs = self.dirs[job]
             self.print_run(dir=specs.dir, pat=pat, emo=specs.emo)
             the_files: list[str] = self.get_files(
                 root_path=root_path, specs=specs, pat=pat

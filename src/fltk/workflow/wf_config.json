@@ -1,0 +1,59 @@
+{
+    "prefix" : "run",
+    "dirs" : [{
+        "priority": 1,
+        "name":"ex",
+        "label":"Extract",
+        "dir":"s1_extr",
+        "emo":"mushroom",
+        "song":"C"
+    },
+    {
+        "priority": 2,
+        "name":"tr",
+        "label":"Transform",
+        "dir":"s2_transf",
+        "emo":"sunflower",
+        "song":"D"
+    },
+    {
+        "priority": 3,
+        "name":"lo",
+        "label":"Load",
+        "dir":"s3_load",
+        "emo":"leaves",
+        "song":"E"
+    },
+    {
+        "priority": 4,
+        "name":"ra",
+        "label":"Raw",
+        "dir":"s4_raw",
+        "emo":"rainbow",
+        "song":"F"
+    },
+    {
+        "priority": 5,
+        "name":"pp",
+        "label":"Pre Processing",
+        "dir":"s5_pproc",
+        "emo":"tulip",
+        "song":"G"
+    },
+    {
+        "priority": 6,
+        "name":"ed",
+        "label":"EDA",
+        "dir":"s6_eda",
+        "emo":"seedling",
+        "song":"A"
+    },
+    {
+        "priority": 7,
+        "name":"fi",
+        "label":"Final",
+        "dir":"s7_final",
+        "emo":"hibiscus",
+        "song":"B"
+    }]
+}
