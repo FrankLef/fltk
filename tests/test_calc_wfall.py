@@ -66,9 +66,9 @@ def wfall_init(wfall, raw_data):
 
 def test_fit(wfall_init):
     wfall_init.fit()
-    assert wfall_init.base.shape == (162, 8)
+    assert wfall_init.base.shape == (162, 9)
 
 
 def test_fit_transform(wfall_init):
     wfall_init.fit_transform()
-    assert wfall_init.wfall.shape == (135, 9)
+    assert wfall_init.wfall.shape == (117, 10)
