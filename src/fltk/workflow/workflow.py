@@ -6,6 +6,7 @@ from importlib import import_module
 from .dirs_specs import DirSpecs
 from . import config as cf
 from . import utils
+from . import get_files as gf
 
 
 class WorkFlow:
@@ -18,7 +19,6 @@ class WorkFlow:
         self.load_config()
 
     def check_path(self, path: Path, is_dir: bool = True) -> Path:
-        """Validate the root_path."""
         if is_dir:
             if not path.is_dir():
                 raise NotADirectoryError(f"Invalid root directory:\n{path}")
@@ -112,39 +112,12 @@ class WorkFlow:
         jobs_sequence = [jobs_names[pos] for pos in jobs_pos]
         self._jobs_sequence = jobs_sequence
 
-    def get_full_pattern(self, pat: str | None) -> str:
-        """Create the regex pattern used to filter the files."""
-        if pat:
-            full_pat = rf"^{self.prefix}.+_{pat}[.]py$"
-        else:
-            full_pat = rf"^{self.prefix}.+_.*[.]py$"
-        return full_pat
-
     def get_files(self, root_path: Path, specs: DirSpecs, pat: str | None) -> list[str]:
         """Get the list of files in the folder, given a name pattern."""
-        full_pattern: str = self.get_full_pattern(pat=pat)
-
-        wd = root_path.joinpath(specs.dir)
-        if wd.exists():
-            files = [item for item in wd.iterdir() if item.is_file()]
-        else:
-            utils.ring_error()
-            raise NotADirectoryError(f"Invalid path\n{wd}")
-        the_files = sorted(
-            [
-                fn.stem
-                for fn in files
-                if re.match(full_pattern, fn.name, flags=re.IGNORECASE)
-            ]
+        prefix = self.prefix
+        the_files = gf.get_files(
+            root_path=root_path, specs=specs, prefix=prefix, pat=pat
         )
-        if not len(the_files):
-            utils.ring_error()
-            msg: str = f"""
-            No module found:
-            path: {wd}
-            pattern: {full_pattern}
-            """
-            raise ValueError(msg)
         return the_files
 
     def run_jobs(self) -> None:
