@@ -48,8 +48,8 @@ class WorkFlow:
         except json.JSONDecodeError:
             print("Error: The file is not a valid JSON.")
 
-        prefix = config["prefix"]
-        self.prefix = self.check_name(prefix)
+        run_prefix = config["run_prefix"]
+        self.run_prefix = self.check_name(run_prefix)
 
         success_wav = self.wf_path.joinpath(config["success_wav"])
         self.success_wav = self.check_path(success_wav, is_dir=False)
@@ -115,9 +115,9 @@ class WorkFlow:
     def get_files(self, specs: DirSpecs, pat: str | None) -> list[str]:
         """Get the list of files in the folder, given a name pattern."""
         root_path = self.root_path
-        prefix = self.prefix
+        run_prefix = self.run_prefix
         the_files = gf.get_files(
-            root_path=root_path, specs=specs, prefix=prefix, pat=pat
+            root_path=root_path, specs=specs, run_prefix=run_prefix, pat=pat
         )
         return the_files
 

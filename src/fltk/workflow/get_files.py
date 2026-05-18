@@ -6,9 +6,11 @@ from . import utils
 from .dirs_specs import DirSpecs
 
 
-def get_files(root_path: Path, specs: DirSpecs, prefix: str, pat: str | None) -> list[str]:
+def get_files(
+    root_path: Path, specs: DirSpecs, run_prefix: str, pat: str | None
+) -> list[str]:
     """Get the list of files in the folder, given a name pattern."""
-    full_pattern: str = get_full_pattern(prefix, pat=pat)
+    full_pattern: str = get_full_pattern(run_prefix, pat=pat)
 
     wd = root_path.joinpath(specs.dir)
     if wd.exists():
@@ -33,10 +35,11 @@ def get_files(root_path: Path, specs: DirSpecs, prefix: str, pat: str | None) ->
         raise ValueError(msg)
     return the_files
 
-def get_full_pattern(prefix: str, pat: str | None) -> str:
-        """Create the regex pattern used to filter the files."""
-        if pat:
-            full_pat = rf"^{prefix}.+_{pat}[.]py$"
-        else:
-            full_pat = rf"^{prefix}.+_.*[.]py$"
-        return full_pat
+
+def get_full_pattern(run_prefix: str, pat: str | None) -> str:
+    """Create the regex pattern used to filter the files."""
+    if pat:
+        full_pat = rf"^{run_prefix}.+_{pat}[.]py$"
+    else:
+        full_pat = rf"^{run_prefix}.+_.*[.]py$"
+    return full_pat
