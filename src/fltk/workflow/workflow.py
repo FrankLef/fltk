@@ -1,4 +1,4 @@
-from typing import NamedTuple, Any
+from typing import NamedTuple, Any, Final
 from pathlib import Path
 import re
 import json
@@ -13,7 +13,6 @@ class DirSpecs(NamedTuple):
 
     priority: int
     name: str
-    label: str
     dir: str
     emo: str
     song: str
@@ -88,7 +87,8 @@ class WorkFlow:
         Args:
             path (Path): File name, including path, given to the config file.
         """
-        input_path: Path = Path(__file__).parent.joinpath("wf_config.json")
+        FN: Final[str] = "config_wf.json"
+        input_path: Path = Path(__file__).parent.joinpath(FN)
         shutil.copy2(src=input_path, dst=path)
         msg: str = f"Default workflow config file copied to:\n{path}"
         rprint(msg)
