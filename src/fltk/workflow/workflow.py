@@ -1,21 +1,11 @@
-from typing import NamedTuple, Any, Final
 from pathlib import Path
 import re
 import json
-import shutil
-from rich import print as rprint
 from importlib import import_module
-import winsound
 
-
-class DirSpecs(NamedTuple):
-    """The directory specifications."""
-
-    priority: int
-    name: str
-    dir: str
-    emo: str
-    song: str
+from .dirs_specs import DirSpecs
+from . import config as cf
+from . import utils
 
 
 class WorkFlow:
@@ -59,27 +49,17 @@ class WorkFlow:
             print("Error: The file is not a valid JSON.")
 
         prefix = config["prefix"]
-        self.prefix: str = self.check_name(prefix)
+        self.prefix = self.check_name(prefix)
 
         success_wav = self.wf_path.joinpath(config["success_wav"])
         self.success_wav = self.check_path(success_wav, is_dir=False)
 
         dirs = config["dirs"]
-        self.load_dirs(dirs)
+        sorted_dirs = cf.load_dirs(dirs=dirs)
+        self.dirs: dict[str, DirSpecs] = sorted_dirs
+        self.names: tuple[str, ...] = tuple(sorted_dirs.keys())
 
         return path
-
-    def load_dirs(self, dirs: list[dict[str, Any]]) -> None:
-        specs_dict = {}
-        for dir in dirs:
-            specs = DirSpecs(**dir)
-            specs_dict[specs.name] = specs
-
-        # NOTE: Must sort the dictionnary by priority.
-        sorted_dirs = sorted(specs_dict.items(), key=lambda item: item[1].priority)
-        sorted_dirs_dict = dict(sorted_dirs)
-        self.dirs: dict[str, DirSpecs] = sorted_dirs_dict
-        self.names: tuple[str, ...] = tuple(self.dirs.keys())
 
     def get_config_default_file(self, path: Path) -> None:
         """Get a copy of the default config file. Use it as a template!
@@ -87,35 +67,30 @@ class WorkFlow:
         Args:
             path (Path): File name, including path, given to the config file.
         """
-        FN: Final[str] = "config_wf.json"
-        input_path: Path = Path(__file__).parent.joinpath(FN)
-        shutil.copy2(src=input_path, dst=path)
-        msg: str = f"Default workflow config file copied to:\n{path}"
-        rprint(msg)
+        cf.get_config_default_file(path=path)
 
     def execute(self, jobs_args: str, pat: str | None, ptype: str | None) -> None:
-        """This execute the different steps of the program."""
-        # self.load()
+        """This execute the workflow."""
         self._pat = pat
         self._ptype = ptype
         self.parse_jobs(jobs_args)
         self.sequence_jobs()
         self.run_jobs()
-        self.ring_success()
+        utils.ring_success(self.success_wav)
 
     def parse_jobs(self, jobs_args: str) -> None:
         """Parse the jobs from the CLI."""
         # remove all whitspace, tab, newline, etc
         jobs = re.sub(r"\s+", "", jobs_args)
         if not jobs:
-            self.ring_error()
+            utils.ring_error()
             msg: str = f"The job arguments '{jobs_args}' is invalid."
             raise ValueError(msg)
         jobs_clean = jobs.lower().split(sep=",")
         jobs_clean = [x[:2] for x in jobs_clean]
         jobs_todo = set(jobs_clean)
         if not len(jobs_todo):
-            self.ring_error()
+            utils.ring_error()
             msg = f"No jobs obtained from '{jobs_args}'."
             raise AssertionError(msg)
         self._jobs_todo = jobs_todo
@@ -128,11 +103,11 @@ class WorkFlow:
             # NOTE: We can use index because the dictionary is sorted by priority in the load function above.
             jobs_pos = sorted([jobs_names.index(x) for x in jobs_todo])
         except ValueError:
-            self.ring_error()
+            utils.ring_error()
             msg: str = "A job is not in the list of available jobs."
             raise ValueError(msg)
         if not jobs_pos:
-            self.ring_error()
+            utils.ring_error()
             raise ValueError("No job found in the list of available jobs.")
         jobs_sequence = [jobs_names[pos] for pos in jobs_pos]
         self._jobs_sequence = jobs_sequence
@@ -153,7 +128,7 @@ class WorkFlow:
         if wd.exists():
             files = [item for item in wd.iterdir() if item.is_file()]
         else:
-            self.ring_error()
+            utils.ring_error()
             raise NotADirectoryError(f"Invalid path\n{wd}")
         the_files = sorted(
             [
@@ -163,7 +138,7 @@ class WorkFlow:
             ]
         )
         if not len(the_files):
-            self.ring_error()
+            utils.ring_error()
             msg: str = f"""
             No module found:
             path: {wd}
@@ -180,7 +155,7 @@ class WorkFlow:
         jobs_sequence = self._jobs_sequence
         for job in jobs_sequence:
             specs: DirSpecs = self.dirs[job]
-            self.print_run(dir=specs.dir, pat=pat, emo=specs.emo)
+            utils.print_run(dir=specs.dir, pat=pat, emo=specs.emo)
             the_files: list[str] = self.get_files(
                 root_path=root_path, specs=specs, pat=pat
             )
@@ -190,7 +165,7 @@ class WorkFlow:
         """Process the modules in the workflow directory with given pattern."""
         for a_file in files:
             modul = import_module(name="." + a_file, package=job_dir)
-            self.print_process(modul_nm=modul.__name__, modul_doc=modul.__doc__)
+            utils.print_process(modul_nm=modul.__name__, modul_doc=modul.__doc__)
             try:
                 if self._ptype is None:
                     modul.main()
@@ -200,57 +175,13 @@ class WorkFlow:
                     except TypeError as e:
                         err_msg = "unexpected keyword argument 'ptype'"
                         if err_msg not in str(e):
-                            self.ring_error()
+                            utils.ring_error()
                             raise
 
             except NotImplementedError as e:
                 if str(e).lower().startswith("skip"):
-                    self.print_skip(modul.__name__)
+                    utils.print_skip(modul.__name__)
                 else:
-                    self.ring_error()
+                    utils.ring_error()
                     raise
-            self.print_complete(modul.__name__)
-
-    def print_run(self, dir: str, pat: str | None, emo: str) -> str:
-        """Print the run message."""
-        text: str = f"\n:{emo}: Running the modules in [orchid]{dir}[/orchid]"
-        if pat:
-            text = text + f" with pattern [orchid]{pat}[/orchid]"
-        msg = f"[cyan]{text}[/cyan]"
-        rprint(msg)
-        return msg
-
-    def print_process(self, modul_nm: str, modul_doc: str | None) -> str:
-        """Print the process message."""
-        text = f"[cyan]Processing [orchid]{modul_nm}[/orchid][/cyan]"
-        # msg = f"[cyan]\u21BB  {text}[/cyan]"
-        msg = f":arrows_counterclockwise: {text}"
-
-        rprint(msg)
-        if modul_doc is not None:
-            doc_msg = f"\u2139  {modul_doc}"
-            rprint(doc_msg)
-        return msg
-
-    def print_skip(self, modul_nm: str) -> str:
-        """Print the skip message."""
-        msg = f"\u26a0[yellow]  Skip [orchid]{modul_nm}[/orchid][/yellow]"
-        rprint(msg)
-        return msg
-
-    def print_complete(self, modul_nm: str) -> str:
-        """Print the complete message."""
-        text = f"Completed [orchid]{modul_nm}[/orchid]\n"
-        msg = f"[green]\u2705 {text}[/green]"
-        rprint(msg)
-        return msg
-
-    def ring_success(self) -> None:
-        sound_file = self.success_wav
-        winsound.PlaySound(str(sound_file), flags=winsound.SND_FILENAME)
-        # winsound.MessageBeep(winsound.MB_ICONASTERISK)
-        # winsound.Beep(440, 500)
-
-    def ring_error(self) -> None:
-        winsound.MessageBeep(winsound.MB_ICONHAND)
-        # winsound.Beep(440, 500)
+            utils.print_complete(modul.__name__)
