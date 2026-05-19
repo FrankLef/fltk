@@ -57,7 +57,7 @@ def data_vars() -> dict[str, Any]:
     return out
 
 
-def test_err_name() -> CalcSumprod:
+def test_err_name() -> None:
     with pytest.raises(ValueError):
         CalcSumprod(name=" ", idx_to="idx")
     with pytest.raises(ValueError):
