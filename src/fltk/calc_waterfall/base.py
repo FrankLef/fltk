@@ -65,9 +65,17 @@ def add_wfall_type(
     data_long[_wfall_type] = data_long[_diff_nm].astype(str)
     data_long[_wfall_type] = data_long[_wfall_type].replace(wfall_types)
 
+    err_df = data_long[data_long[_wfall_type].isna()]
+    err_nb = err_df.shape[0]
+    if err_nb:
+        msg: str = f"{err_nb} rows with empty waterfall type."
+        raise AssertionError(msg)
+
     types = list(wfall_types.values())
     err_df = data_long[~data_long[_wfall_type].isin(types)]
-    if not err_df.empty:
-        msg: str = f"{err_df.shape[0]} rows with invalid waterfall type."
+    err_nb = err_df.shape[0]
+    if err_nb:
+        msg = f"{err_nb} rows with invalid waterfall type."
         raise AssertionError(msg)
+
     return data_long

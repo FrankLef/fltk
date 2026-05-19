@@ -29,19 +29,7 @@ def get_wfall(inst: CalcWaterfall) -> pd.DataFrame:
         initial_ndx.extend(group.index)
     wfall.loc[initial_ndx, _is_initial] = True
 
-    err_df = wfall[wfall[_wtype].isna()]
-    err_nb = err_df.shape[0]
-    if err_nb:
-        msg: str = f"{err_nb} rows with empty whaterfall type."
-        raise AssertionError(msg)
-
-    # NOTE: drop() does not work with groups. Must collect the index then use drop().
-    drop_ndx = []
-    for _, group in wfall.groupby(_keys):
-        group = rm_num_from(inst, group=group)
-        drop_ndx.extend(group.index)
-    wfall.drop(drop_ndx, inplace=True)
-
+    wfall = rm_num_from(inst, data=wfall)
     wfall = rm_total_diff(inst, data=wfall)
     wfall = set_wfall_amt(inst, data=wfall)
     wfall = reset_initial(inst, data=wfall, initial=_initial)
@@ -64,32 +52,19 @@ def set_initial(inst: CalcWaterfall, group: pd.DataFrame) -> pd.DataFrame:
     return group_sel
 
 
-"""Remove all othe num_from_val not identified as 'initial'."""
-
-
-def rm_num_from(inst: CalcWaterfall, group: pd.DataFrame) -> pd.DataFrame:
-    """Remove all othe num_from_val not identified as 'initial'.
-
-    This only return indexes without droping rows. drop() does not work with groups.
-
-    Args:
-        inst (CalcWaterfall): _description_
-        group (pd.DataFrame): _description_
-
-    Returns:
-        pd.DataFrame: _description_
-    """
+def rm_num_from(inst: CalcWaterfall, data: pd.DataFrame) -> pd.DataFrame:
+    """Remove all othe num_from_val not identified as 'initial'."""
     _raw = inst.raw_vars
     _num_from = _raw.num_from_val
     _wfall = inst.wfall_vars
     _diff_nm = _wfall.diff_nm
     _is_initial = _wfall.is_initial
 
-    initial_sel = ~group[_is_initial]
-    num_sel = group[_diff_nm] == _num_from
-    sel = initial_sel & num_sel
-    group_sel = group.loc[sel]
-    return group_sel
+    initial_sel = ~data[_is_initial]
+    num_sel = data[_diff_nm] == _num_from
+    data_sel = data.loc[initial_sel & num_sel]
+    data.drop(index=data_sel.index, inplace=True)
+    return data
 
 
 def rm_total_diff(inst: CalcWaterfall, data: pd.DataFrame) -> pd.DataFrame:
