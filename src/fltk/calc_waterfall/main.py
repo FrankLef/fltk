@@ -33,6 +33,16 @@ class CalcWaterfall(Calc):
             wfall_amt=str(StrName(wfall_amt)),
             is_initial=str(StrName(is_initial)),
         )
+        self.check_initial()
+
+    def check_initial(self) -> str:
+        initial = self.wfall_vars.initial
+        values = ("absolute", "relative")
+        is_err = initial not in values
+        if is_err:
+            msg: str = f"Initial parameter is '{initial}'. It must be in {values}."
+            raise ValueError(msg)
+        return initial
 
     def load_raw_data(
         self,

@@ -11,7 +11,7 @@ data_sheet: str = "data1"
 out_fn = f"wfall_z1_{dt.now().date().isoformat()}.xlsx"
 out_path = fixtures_path.joinpath(out_fn)
 
-wfall = CalcWaterfall(name="testWaterfallZ1", initial="absolue")
+wfall = CalcWaterfall(name="testWaterfallZ1", initial="absolute")
 
 raw_data = pd.read_excel(
     data_path,
