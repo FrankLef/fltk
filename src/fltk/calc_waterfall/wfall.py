@@ -9,7 +9,6 @@ if TYPE_CHECKING:
 def get_wfall(inst: CalcWaterfall) -> pd.DataFrame:
     _wfall = inst.wfall_vars
     _raw = inst.raw_vars
-    _wtype = _wfall.wfall_type
     _initial = _wfall.initial
     _is_initial = _wfall.is_initial
     _keys = list(_raw.groups) + [_raw.ratio_nm]
