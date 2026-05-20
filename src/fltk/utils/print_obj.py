@@ -14,34 +14,36 @@ class PrintObj:
         FILE = auto()
 
     def __init__(self, path: Path):
-        self._path = path
+        self.path = path
 
-    @property
-    def path(self):
-        return self._path
-
-    def run(self, name: str, obj: Any, ptype: PType | str) -> None:
-        if not name:
-            raise ValueError("The name is empty.")
-
-        if not obj:
-            msg: str = f"Object of type '{type(obj)}' is empty."
-            raise ValueError(msg)
+    def run(self, objs: dict[str, Any], ptype: PType | str) -> None:
+        if not objs:
+            raise ValueError("The dictionnary of objects is empty.")
 
         ptype = ptype.lower()
         if ptype not in self.PType:
             raise TypeError(f"'{ptype}' is an invalid PType value.")
 
-        path = self._path
+        if ptype == self.PType.FILE:
+            self.start_msg()
 
+        for name, obj in objs.items():
+            self.execute(obj, name=name, ptype=ptype)
+
+    def start_msg(self) -> None:
+        console = Console()
+        msg: str = (
+            f"\n[dark_orange]Exporting file to:[/dark_orange]\n[cyan]{self.path}[/cyan]"
+        )
+        console.print(msg)
+
+    def execute(self, obj: Any, name: str, ptype: PType | str):
         if ptype != self.PType.NONE:
             if ptype == self.PType.SHOW:
                 obj.show()
             elif ptype == self.PType.FILE:
                 fn = name + ".html"
-                start_msg(path=path.joinpath(fn))
-                # rprint(f"'{fn}'")
-                path_fn = path.joinpath(fn)
+                path_fn = self.path.joinpath(fn)
                 if isinstance(obj, go.Figure):
                     obj.write_html(path_fn)
                 elif isinstance(obj, GT):
@@ -49,12 +51,7 @@ class PrintObj:
                 else:
                     msg = f"Cannot handle object of type '{type(obj)}'"
                     raise TypeError(msg)
+                rprint(f"'{name}'")
             else:
                 msg = f"The ptype {ptype} is not recognised."
                 raise ValueError(msg)
-            
-def start_msg(path: Path) -> str:
-    console = Console()
-    msg: str = f"\n[dark_orange]Exporting file to:[/dark_orange]\n[cyan]{path}[/cyan]"
-    console.print(msg)
-    return msg

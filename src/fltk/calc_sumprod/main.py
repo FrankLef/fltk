@@ -1,4 +1,3 @@
-from __future__ import annotations  # Must be at the top
 import pandas as pd
 from pathlib import Path
 from rich import print as rprint
