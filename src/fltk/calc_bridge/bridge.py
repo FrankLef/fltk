@@ -18,6 +18,8 @@ def get_bridge(inst: CalcBridge) -> pd.DataFrame:
 def filter_data_with_ratios(inst: CalcBridge) -> pd.DataFrame:
     data = inst.raw.copy()
     filtered_data = data[data[inst.raw_vars.ratio_nm].isin(inst.ratios)]
+    if filtered_data.empty:
+        raise ValueError("No data returned for any of the ratios.")
     return filtered_data
 
 
@@ -43,4 +45,6 @@ def merge_data_with_periods(inst: CalcBridge, data: pd.DataFrame) -> pd.DataFram
     bridge_df = bridge_start.merge(
         right=bridge_end, how="inner", on=_on, suffixes=suffixes
     )
+    if bridge_df.empty:
+        raise ValueError("No data returned for the given periods.")
     return bridge_df

@@ -20,13 +20,14 @@ class RawVars(NamedTuple):
 
     @property
     def factors(self) -> tuple[str, ...]:
+        # NOTE: The order is VERY important in a wtaerfall!
         vars = (
             self.num_from_val,
-            self.num_to_val,
             self.volume_diff,
             self.price_diff,
             self.mix_diff,
             self.total_diff,
+            self.num_to_val,
         )
         return vars
 
