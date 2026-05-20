@@ -26,20 +26,17 @@ class CalcWaterfall(Calc):
     ):
         super().__init__(StrName(name))
         self.wfall_vars = vars.WaterfallVars(
-            initial=str(StrName(initial)),
+            initial=self.assert_initial(initial),
             diff_nm=str(StrName(diff_nm)),
             diff_val=str(StrName(diff_val)),
             wfall_type=str(StrName(wfall_type)),
             wfall_amt=str(StrName(wfall_amt)),
             is_initial=str(StrName(is_initial)),
         )
-        self.check_initial()
 
-    def check_initial(self) -> str:
-        initial = self.wfall_vars.initial
+    def assert_initial(self, initial: str) -> str:
         values = ("absolute", "relative")
-        is_err = initial not in values
-        if is_err:
+        if initial not in values:
             msg: str = f"Initial parameter is '{initial}'. It must be in {values}."
             raise ValueError(msg)
         return initial
