@@ -69,10 +69,9 @@ class WorkFlow:
         """
         cf.get_config_default_file(path=path)
 
-    def execute(self, jobs_args: str, pat: str | None, ptype: str | None) -> None:
+    def execute(self, jobs_args: str, pat: str | None) -> None:
         """This execute the workflow."""
         self._pat = pat
-        self._ptype = ptype
         self.parse_jobs(jobs_args)
         self.sequence_jobs()
         self.run_jobs()
@@ -137,17 +136,7 @@ class WorkFlow:
             modul = import_module(name="." + a_file, package=job_dir)
             utils.print_process(modul_nm=modul.__name__, modul_doc=modul.__doc__)
             try:
-                if self._ptype is None:
-                    modul.main()
-                else:
-                    try:
-                        modul.main(ptype=self._ptype)
-                    except TypeError as e:
-                        err_msg = "unexpected keyword argument 'ptype'"
-                        if err_msg not in str(e):
-                            utils.ring_error()
-                            raise
-
+                modul.main()
             except NotImplementedError as e:
                 if str(e).lower().startswith("skip"):
                     utils.print_skip(modul.__name__)

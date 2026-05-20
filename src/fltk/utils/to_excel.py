@@ -34,6 +34,6 @@ def to_excel(name: str, path: Path, dfs: dict[str, pd.DataFrame]) -> None:
 
 def start_msg(name: str, path: Path) -> str:
     console = Console()
-    msg: str = f"\n[bright_white]Exporting {name} to excel:[/bright_white]\n[cyan]{path}[/cyan]"
+    msg: str = f"\n[dark_orange]Exporting {name} to excel:[/dark_orange]\n[cyan]{path}[/cyan]"
     console.print(msg)
     return msg

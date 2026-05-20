@@ -3,6 +3,8 @@ from typing import Any
 from enum import StrEnum, auto
 from great_tables import GT
 import plotly.graph_objects as go
+from rich.console import Console
+from rich import print as rprint
 
 
 class PrintObj:
@@ -37,7 +39,8 @@ class PrintObj:
                 obj.show()
             elif ptype == self.PType.FILE:
                 fn = name + ".html"
-                print(f"Printing file '{fn}'")
+                start_msg(path=path.joinpath(fn))
+                # rprint(f"'{fn}'")
                 path_fn = path.joinpath(fn)
                 if isinstance(obj, go.Figure):
                     obj.write_html(path_fn)
@@ -49,3 +52,9 @@ class PrintObj:
             else:
                 msg = f"The ptype {ptype} is not recognised."
                 raise ValueError(msg)
+            
+def start_msg(path: Path) -> str:
+    console = Console()
+    msg: str = f"\n[dark_orange]Exporting file to:[/dark_orange]\n[cyan]{path}[/cyan]"
+    console.print(msg)
+    return msg
