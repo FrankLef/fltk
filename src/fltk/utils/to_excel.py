@@ -1,7 +1,6 @@
 from pathlib import Path
 import pandas as pd
 from rich.console import Console
-from rich import print as rprint
 
 
 def to_excel(name: str, path: Path, dfs: dict[str, pd.DataFrame]) -> None:
@@ -17,7 +16,7 @@ def to_excel(name: str, path: Path, dfs: dict[str, pd.DataFrame]) -> None:
     items_iter = iter(dfs.items())
 
     sheet_nm, df = next(items_iter)
-    rprint(f"'{sheet_nm}'")
+    Console().print(f"[green]{sheet_nm}[/green]")
     df.to_excel(path, sheet_name=sheet_nm, index=False, engine="openpyxl")
 
     with pd.ExcelWriter(
@@ -26,7 +25,7 @@ def to_excel(name: str, path: Path, dfs: dict[str, pd.DataFrame]) -> None:
         while True:
             try:
                 sheet_nm, df = next(items_iter)
-                rprint(f"'{sheet_nm}'")
+                Console().print(f"[green]{sheet_nm}[/green]")
                 df.to_excel(writer, sheet_name=sheet_nm, index=False)
             except StopIteration:
                 break

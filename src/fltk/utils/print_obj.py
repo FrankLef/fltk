@@ -4,12 +4,11 @@ from enum import StrEnum, auto
 from great_tables import GT
 import plotly.graph_objects as go
 from rich.console import Console
-from rich import print as rprint
 
 
 class PrintObj:
     class PType(StrEnum):
-        NONE = auto()  # auto() gives lowered-case member name
+        NONE = auto()
         SHOW = auto()
         FILE = auto()
 
@@ -51,7 +50,6 @@ class PrintObj:
                 else:
                     msg = f"Cannot handle object of type '{type(obj)}'"
                     raise TypeError(msg)
-                rprint(f"'{name}'")
+                Console().print(f"[green]{fn}[/green]")
             else:
-                msg = f"The ptype {ptype} is not recognised."
-                raise ValueError(msg)
+                raise ValueError(f"'{ptype}' is an invalid ptype.")

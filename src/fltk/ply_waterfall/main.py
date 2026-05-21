@@ -1,5 +1,2 @@
-
-
-
 class PlyWaterfall:
     x: str
