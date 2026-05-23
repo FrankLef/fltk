@@ -29,3 +29,8 @@ class QryClean(QryRepo):
         for col in cols:
             qry: str = f"ALTER TABLE {self._table_nm} DROP COLUMN {col};"
             self._conn.sql(qry)
+
+    def ren_cols(self, cols: dict[str, str]) -> None:
+        for old_nm, new_nm in cols.items():
+            qry = f"ALTER TABLE {self._table_nm} RENAME {old_nm} TO {new_nm};"
+            self._conn.sql(qry)
