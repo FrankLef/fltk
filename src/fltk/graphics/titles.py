@@ -12,7 +12,11 @@ class ITitles(ABC):
 
     @staticmethod
     def write_html(
-        text: str, color="navy", size: float = 12, shape: str = "DejaVu Sans"
+        # 'Open Sans' is default plotly font
+        text: str,
+        color="navy",
+        size: float = 12,
+        shape: str = "Open Sans",
     ) -> str:
         """Write a text in HTML."""
         out = f"<span style='color: {color}; font-size: {size}px; font-family: {shape}'>{text}</span>"
