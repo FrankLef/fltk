@@ -10,11 +10,14 @@ if TYPE_CHECKING:
 
 
 def load_raw_data(inst: CalcSumprod, data: pd.DataFrame) -> pd.DataFrame:
+    _vars = inst.raw_vars
     if inst.sump.empty:
         msg: str = "You must load the matrix before the data."
         raise ValueError(msg)
-    validate_data_names(inst, data=data, newvalue_var=inst.raw_vars.newvalue)
-    audit.audit_keys(data, keys=inst.raw_vars.keys)
+    if data.empty:
+        raise ValueError("The raw data is empty.")
+    validate_data_names(inst, data=data, newvalue_var=_vars.newvalue)
+    audit.audit_keys(data, keys=_vars.keys)
     return data
 
 

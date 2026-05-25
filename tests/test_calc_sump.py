@@ -1,4 +1,4 @@
-"""Test the calc_comb class."""
+"""Test the calc_sumprod class."""
 
 import pytest
 from pathlib import Path

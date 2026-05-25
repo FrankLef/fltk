@@ -43,5 +43,5 @@ def test_html(a_title):
     """Write a text in html using the geom of the title object."""
     main_title = "The main title."
     text = a_title.write_html(text=main_title)
-    target = "<span style='color: navy; font-size: 12px; font-family: DejaVu Sans'>The main title.</span>"
+    target = "<span style='color: navy; font-size: 12px; font-family: Open Sans'>The main title.</span>"
     assert text == target

@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 
 def load_raw_data(inst: CalcBridge, data: pd.DataFrame) -> pd.DataFrame:
     if data.empty:
-        raise ValueError("The data is empty.")
+        raise ValueError("The raw data is empty.")
     audit.audit_missing(data, vars=inst.raw_vars.vars)
     audit.audit_keys(data, keys=inst.raw_vars.keys)
     return data

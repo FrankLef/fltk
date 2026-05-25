@@ -1,4 +1,4 @@
-"""Test the calc_bridge class."""
+"""Test the calc_waterfall class."""
 
 import pytest
 from pathlib import Path
