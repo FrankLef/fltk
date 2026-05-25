@@ -12,16 +12,13 @@ def get_ewm(inst: CalcEwm) -> pd.DataFrame:
 
     data = inst.base.copy()
 
-    print("inside get_ewm:", _raw.values_ewm)
-
-    for value_nm, ewm_nm in _raw.values_ewm.items():
-        # print("inside get_ewm")
-        # print("value_nm:", value_nm, ";", "ewm_nm:", ewm_nm)
+    for value in _raw.values:
+        ewm_nm = value + "_" + _ewm.suffix
         # transform() returns a series aligned with the original DataFrame index. i.e. keep all original columns, just add the new ewm columns.
-        data[ewm_nm] = data.groupby(list(_raw.groups))[value_nm].transform(
+        data[ewm_nm] = data.groupby(list(_raw.groups))[value].transform(
             lambda x: x.ewm(span=_ewm.span).mean()
         )
 
-    data.sort_values(list(_raw.keys), ascending=True, inplace=True)
+    data_ordered = data.loc[inst.raw.index]
 
-    return data
+    return data_ordered

@@ -5,7 +5,6 @@ class RawVars(NamedTuple):
     groups: tuple[str, ...]
     period: str
     values: tuple[str, ...]
-    values_ewm: dict[str, str]
 
     @property
     def keys(self) -> str | tuple[str, ...]:

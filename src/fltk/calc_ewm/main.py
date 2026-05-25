@@ -36,13 +36,8 @@ class CalcEwm(Calc):
             groups=groups,
             period=str(StrName(period)),
             values=values,
-            values_ewm=self.get_values_ewm(values),
         )
         self.raw = lrd.load_raw_data(self, data=data)
-
-    def get_values_ewm(self, values: tuple[str, ...]) -> dict[str, str]:
-        values_ewm = {var: var + "_" + self.ewm_vars.suffix for var in values}
-        return values_ewm
 
     def fit_transform(self, verbose: bool = False) -> None:
         self.fit(verbose=verbose)

@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 
 def get_base(inst: CalcEwm) -> pd.DataFrame:
     _raw = inst.raw_vars
-    _ewm = inst.ewm_vars
+
     data = inst.raw.copy()
 
     data.sort_values(_raw.period, ascending=True, inplace=True)
