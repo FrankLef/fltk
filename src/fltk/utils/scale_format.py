@@ -1,13 +1,13 @@
 """Multiplies a value by scale and formats it as a string."""
 
 
-def scale_format(val: float, scale: float, fmt_str: str) -> str:
+def scale_format(value: float, scale: float, fmt_str: str) -> str:
     """Multiplies a value by scale and formats it as a string.
 
     Very useful function used primarily in pandas when formating columns. See example below.
 
     Args:
-        val (float): Value to format.
+        value (float): Value to format.
         scale (float): Scale used to multiply val.
         fmt_str (str): Format string used to format the scaled value.
 
@@ -18,6 +18,6 @@ def scale_format(val: float, scale: float, fmt_str: str) -> str:
     Returns:
         str: Scaled and formatted value.
     """
-    scaled_val = val * scale
+    scaled_val = value * scale
     formatted_val = fmt_str.format(scaled_val)
     return formatted_val
