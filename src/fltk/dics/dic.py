@@ -37,6 +37,13 @@ class IDic(ABC):
         return self._name
 
     @property
+    def groups(self) -> tuple[str]:
+        the_groups = [line.group for line in self._lines]  # type: ignore[attr-defined]
+        # use dict, not set, to keep original order of groups
+        groups = tuple(dict.fromkeys(the_groups))
+        return groups
+
+    @property
     def lines(self):
         return self._lines
 
