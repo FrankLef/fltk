@@ -16,7 +16,7 @@ def dic():
 
 @pytest.fixture
 def path():
-    return Path(__file__).parent.joinpath("fixtures")
+    return Path(__file__).parent
 
 
 @pytest.fixture
