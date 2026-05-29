@@ -1,15 +1,16 @@
 """Dic abstract class."""
 
 from abc import ABC
-import re
+
 from pathlib import Path
 
 from typing import NamedTuple, Iterable, Any
 from enum import StrEnum, auto
 
-from . import dic_lines as dic_ln
-from . import dic_namedtuple as dic_nt
-from . import dic_role_rule as dic_rr
+from . import get_lines_names as gl
+
+from . import dic_namedtuple as nt
+
 from . import dic_tags
 from . import dic_load
 
@@ -32,6 +33,15 @@ class IDic(ABC):
         self._name: str = name
         self._lines: dic_lines = []
 
+    def __repr__(self) -> str:
+        info: dict[str, Any] = {
+            "name": self.name,
+            "ngroups": str(self.ngroups),
+            "nlines": str(self.nlines),
+        }
+        msg: str = "\n".join([key + ": " + val for key, val in info.items()])
+        return msg
+
     @property
     def name(self):
         return self._name
@@ -42,6 +52,10 @@ class IDic(ABC):
         # use dict, not set, to keep original order of groups
         groups = tuple(dict.fromkeys(the_groups))
         return groups
+
+    @property
+    def ngroups(self):
+        return len(self.groups)
 
     @property
     def lines(self):
@@ -67,67 +81,33 @@ class IDic(ABC):
         the_lines: dic_lines = [line for line in lines if not line.skipped]  # type: ignore[attr-defined]
         return the_lines
 
+    def get_lines(
+        self, group: str | None = None, role: str | None = None, rule: str | None = None
+    ) -> dic_lines:
+        the_lines = gl.get_lines(self._lines, group=group, role=role, rule=rule)
+        return the_lines
+
+    def get_names(
+        self, group: str | None = None, role: str | None = None, rule: str | None = None
+    ) -> tuple[str, ...]:
+        the_names = gl.get_names(self._lines, group=group, role=role, rule=rule)
+        return the_names
+
+    def get_lines_by_names(self, group: str, names: Iterable[str] | None) -> dic_lines:
+        the_lines = gl.get_lines_by_names(self._lines, group=group, names=names)
+        return the_lines
+
     def get_namedtuple(self, group: str) -> Any:
-        dic_named_tuple = dic_nt.get_namedtuple(self, group)
+        dic_named_tuple = nt.get_namedtuple(self._lines, group)
+
         return dic_named_tuple
 
-    def get_lines_by_group(self, group: str | None = None) -> dic_lines:
-        the_lines = dic_ln.get_lines_by_group(inst=self, group=group)
-        return the_lines
-
-    def get_lines_by_names(
-        self, names: Iterable[str], group: str | None = None, keep_list: bool = False
-    ) -> dic_output:
-        the_lines = dic_ln.get_lines_by_names(
-            inst=self, names=names, group=group, keep_list=keep_list
-        )
-        return the_lines
-
-    def get_names_by_role(
-        self, role: str, group: str | None = None, keep_list: bool = False
-    ) -> dic_names:
-        names = dic_rr.get_names_by_role(
-            inst=self, role=role, group=group, keep_list=keep_list
-        )
-        return names
-
-    def get_names_by_rule(
-        self, rule: str, group: str | None = None, keep_list: bool = False
-    ) -> dic_names:
-        names = dic_rr.get_names_by_rule(
-            inst=self, rule=rule, group=group, keep_list=keep_list
-        )
-        return names
-
-    def get_lines_by_role(
-        self, role: str, group: str | None = None, keep_list: bool = False
-    ) -> dic_output:
-        lines = dic_rr.get_lines_by_role(
-            inst=self, role=role, group=group, keep_list=keep_list
-        )
-        return lines
-
-    def get_lines_by_rule(
-        self, rule: str, group: str | None = None, keep_list: bool = False
-    ) -> dic_output:
-        lines = dic_rr.get_lines_by_rule(
-            inst=self, rule=rule, group=group, keep_list=keep_list
-        )
-        return lines
-
     def get_attributes(
-        self, names: Iterable[str] | None, group: str, attr_nm: str
+        self, group: str, names: Iterable[str] | None, attr_nm: str
     ) -> dict[Any, Any]:
-        if names is not None:
-            lines = self.get_lines_by_names(names=names, group=group, keep_list=True)
-        else:
-            lines = self.get_lines_by_group(group=group)
-        attrs = {line.name: getattr(line, attr_nm) for line in lines}  # type: ignore[union-attr]
+        the_lines = self.get_lines_by_names(group=group, names=names)
+        attrs = {line.name: getattr(line, attr_nm) for line in the_lines}  # type: ignore[attr-defined]
         return attrs
-
-    def match_tag(self, tag: str, text: str) -> bool:
-        a_match = re.search(pattern=rf"\b{text}\b", string=tag)
-        return a_match is not None
 
     def get_tags(
         self, tag_text: str | None, sep: str = chr(126)
