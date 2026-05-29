@@ -2,7 +2,7 @@ from __future__ import annotations  # Must be at the top
 from typing import TYPE_CHECKING, NamedTuple, Any
 
 if TYPE_CHECKING:
-    from .dic import IDic  # Only imported when checking types
+    from .main import IDic  # Only imported when checking types
 
 type dic_lines = list[NamedTuple]
 type dic_output = NamedTuple | list[NamedTuple]

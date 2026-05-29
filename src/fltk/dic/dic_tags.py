@@ -2,7 +2,7 @@ from __future__ import annotations  # Must be at the top
 from typing import TYPE_CHECKING, Iterable, Any
 
 if TYPE_CHECKING:
-    from .dic import IDic  # Only imported when checking types
+    from .main import IDic  # Only imported when checking types
 
 
 def get_tags(tag_text: str | None, sep: str = chr(126)) -> dict[str, Any] | None:

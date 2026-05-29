@@ -2,7 +2,7 @@
 
 import pytest
 from pathlib import Path
-import fltk.dics.dic as dc
+import fltk.dic.main as dc
 
 
 class DicTest(dc.IDic):

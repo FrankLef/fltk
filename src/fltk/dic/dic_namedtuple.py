@@ -4,7 +4,7 @@ from __future__ import annotations  # Must be at the top
 from typing import TYPE_CHECKING, NamedTuple, Any, Final
 
 if TYPE_CHECKING:
-    from .dic import IDic  # Only imported when checking types
+    from .main import IDic  # Only imported when checking types
 
 
 def get_namedtuple(inst: IDic, group: str) -> Any:

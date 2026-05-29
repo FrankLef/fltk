@@ -7,7 +7,7 @@ import pandas as pd
 from enum import StrEnum, auto
 
 if TYPE_CHECKING:
-    from .dic import IDic  # Only imported when checking types
+    from .main import IDic  # Only imported when checking types
 
 
 class AttrName(StrEnum):
