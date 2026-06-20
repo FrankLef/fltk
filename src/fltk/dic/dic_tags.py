@@ -26,10 +26,14 @@ def get_tags_default(
     na: str = "_na",
     sep: str = chr(126),
 ) -> dict[str, Any] | None:
-    tag = inst.get_attributes(names=names, group=group, attr_nm=attr_nm)
-    tag_text: str = list(tag.values())[0]
-    if tag_text != na:
-        attr_dict = get_tags(tag_text, sep=sep)
-    else:
-        attr_dict = default
+    attr_dict: dict[str, Any] = {}
+    tags = inst.get_attributes(names=names, group=group, attr_nm=attr_nm)
+    for name, tag_text in tags.items():
+        # tag_text: str = list(tag.values())[0]
+        if tag_text != na:
+            tag = get_tags(tag_text, sep=sep)
+            # attr_dict = get_tags(tag_text, sep=sep)
+            attr_dict[name] = tag
+        else:
+            attr_dict[name] = default
     return attr_dict

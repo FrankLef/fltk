@@ -1,5 +1,5 @@
 import pandas as pd
-
+from typing import Final
 from rich import print as rprint
 
 from ..abc import Mung
@@ -13,6 +13,13 @@ from . import ewm
 
 class MungEwm(Mung):
     def __init__(self, name: str, suffix: str = "ewm", span: int = 4):
+        """Add EWM to data.
+
+        Args:
+            name (str): Name of object.
+            suffix (str, optional): Suffix for the new columns.. Defaults to "ewm".
+            span (int, optional): Span used by df.ewm(). Defaults to 4.
+        """
         super().__init__(StrName(name))
         self.ewm_vars = vars.EwmVars(
             suffix=str(StrName(suffix)),
@@ -20,8 +27,9 @@ class MungEwm(Mung):
         )
 
     def assert_span(self, span: int) -> int:
-        if span < 2:
-            msg: str = f"EWM span is {span}. It must be >= 2."
+        TOL: Final[int] = 2
+        if span < TOL:
+            msg: str = f"EWM span is {span}. It must be >= {TOL}."
             raise ValueError(msg)
         return span
 

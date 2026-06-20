@@ -4,7 +4,8 @@ from typing import Self
 
 
 class PlyWaterfall:
-    def __init__(self) -> None:
+    def __init__(self, name: str) -> None:
+        self.name = name
         self.fig: go.Figure = go.Figure()
 
     def add_base(
