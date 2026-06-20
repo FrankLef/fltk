@@ -4,7 +4,7 @@ import pytest
 from pathlib import Path
 import pandas as pd
 
-from fltk.calc_waterfall.main import CalcWaterfall
+from fltk.mung.waterfall.main import CalcWaterfall
 
 
 @pytest.fixture

@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 import pandas as pd
 from pandas.api.types import is_datetime64_any_dtype
 
-from ..utils import audit_vars as audit
+from ...utils import audit_vars as audit
 
 if TYPE_CHECKING:
     from .main import CalcEwm  # Only imported when checking types

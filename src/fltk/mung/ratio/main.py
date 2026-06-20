@@ -1,8 +1,8 @@
 import pandas as pd
 from rich import print as rprint
 
-from ..calc.abc import Calc
-from ..utils.value_cls import StrName
+from ..abc import Calc
+from ...utils.value_cls import StrName
 
 from . import vars
 from . import load_ratios as lr

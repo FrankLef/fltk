@@ -2,7 +2,7 @@ import pandas as pd
 from pathlib import Path
 from datetime import datetime as dt
 
-from fltk.calc_sumprod.main import CalcSumprod
+from fltk.mung.calc_sumprod.main import CalcSumprod
 
 
 fixtures_path = Path(__file__).parents[3].joinpath("tests", "fixtures")

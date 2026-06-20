@@ -2,7 +2,7 @@ import pandas as pd
 from pathlib import Path
 from datetime import datetime as dt
 
-from fltk.calc_waterfall.main import CalcWaterfall
+from fltk.mung.calc_waterfall.main import CalcWaterfall
 
 
 fixtures_path = Path(__file__).parents[3].joinpath("tests", "fixtures")

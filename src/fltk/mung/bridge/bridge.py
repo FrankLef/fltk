@@ -2,7 +2,7 @@ from __future__ import annotations  # Must be at the top
 from typing import TYPE_CHECKING
 import pandas as pd
 
-from ..utils import audit_vars as audit
+from ...utils import audit_vars as audit
 
 if TYPE_CHECKING:
     from .main import CalcBridge  # Only imported when checking types

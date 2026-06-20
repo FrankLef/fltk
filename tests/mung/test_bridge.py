@@ -4,7 +4,7 @@ import pytest
 from pathlib import Path
 import pandas as pd
 
-from fltk.calc_bridge.main import CalcBridge
+from fltk.mung.bridge.main import CalcBridge
 
 
 @pytest.fixture

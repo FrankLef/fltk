@@ -4,7 +4,7 @@ import pytest
 from pathlib import Path
 import pandas as pd
 from typing import Any
-from fltk.calc_sumprod.main import CalcSumprod
+from fltk.mung.sumprod.main import CalcSumprod
 
 
 @pytest.fixture

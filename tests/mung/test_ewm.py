@@ -4,7 +4,7 @@ import pytest
 from pathlib import Path
 import pandas as pd
 
-from fltk.calc_ewm.main import CalcEwm
+from fltk.mung.ewm.main import CalcEwm
 
 
 @pytest.fixture

@@ -2,7 +2,7 @@ import pandas as pd
 from pathlib import Path
 from datetime import datetime as dt
 
-from fltk.calc_bridge.main import CalcBridge
+from fltk.mung.calc_bridge.main import CalcBridge
 
 
 fixtures_path = Path(__file__).parents[3].joinpath("tests", "fixtures")

@@ -2,7 +2,7 @@ import pandas as pd
 from pathlib import Path
 from datetime import datetime as dt
 
-from fltk.calc_ewm.main import CalcEwm
+from fltk.mung.calc_ewm.main import CalcEwm
 
 
 fixtures_path = Path(__file__).parents[3].joinpath("tests", "fixtures")

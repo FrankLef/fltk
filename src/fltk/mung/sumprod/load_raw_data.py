@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 import pandas as pd
 from rich.prompt import Confirm
 
-from ..utils import audit_vars as audit
+from ...utils import audit_vars as audit
 
 if TYPE_CHECKING:
     from .main import CalcSumprod  # Only imported when checking types

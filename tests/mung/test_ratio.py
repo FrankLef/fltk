@@ -4,7 +4,7 @@ import pytest
 from pathlib import Path
 import pandas as pd
 
-from fltk.calc_ratio.main import CalcRatio
+from fltk.mung.ratio.main import CalcRatio
 
 
 @pytest.fixture
