@@ -4,17 +4,17 @@ import pandas as pd
 import copy
 
 if TYPE_CHECKING:
-    from .main import CalcSumprod  # Only imported when checking types
+    from .main import MungSumprod  # Only imported when checking types
 
 
-def get_invalid_data(inst: CalcSumprod) -> pd.DataFrame:
+def get_invalid_data(inst: MungSumprod) -> pd.DataFrame:
     groups_df = get_groups(inst)
     invalid_data = find_invalid_items(inst, groups_df=groups_df)
     cleaned_invalid_data = clean_invalid_data(inst, invalid_data=invalid_data)
     return cleaned_invalid_data
 
 
-def get_groups(inst: CalcSumprod) -> pd.DataFrame:
+def get_groups(inst: MungSumprod) -> pd.DataFrame:
     groups_df = inst.raw[list(inst.raw_vars.groups)]
     groups_df.drop_duplicates(inplace=True)
     if groups_df.empty:
@@ -23,7 +23,7 @@ def get_groups(inst: CalcSumprod) -> pd.DataFrame:
     return groups_df
 
 
-def find_invalid_items(inst: CalcSumprod, groups_df: pd.DataFrame) -> pd.DataFrame:
+def find_invalid_items(inst: MungSumprod, groups_df: pd.DataFrame) -> pd.DataFrame:
     MERGE: Final[str] = "_merge"
     raw_data = inst.raw
     idx_from = inst.sump_vars.idx_from
@@ -56,7 +56,7 @@ def find_invalid_items(inst: CalcSumprod, groups_df: pd.DataFrame) -> pd.DataFra
 
 
 def get_invalid_rows(
-    inst: CalcSumprod, idx_df: pd.Dataframe, data: pd.DataFrame
+    inst: MungSumprod, idx_df: pd.Dataframe, data: pd.DataFrame
 ) -> pd.DataFrame:
     left_df = idx_df
     right_df = data
@@ -92,7 +92,7 @@ def create_invalid_df(
     return final_df
 
 
-def clean_invalid_data(inst: CalcSumprod, invalid_data: pd.DataFrame) -> pd.DataFrame:
+def clean_invalid_data(inst: MungSumprod, invalid_data: pd.DataFrame) -> pd.DataFrame:
     MERGE: Final[str] = "_merge"
     left_df = invalid_data
     invalid_data.drop(columns=MERGE, inplace=True)

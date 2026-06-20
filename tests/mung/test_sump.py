@@ -4,12 +4,12 @@ import pytest
 from pathlib import Path
 import pandas as pd
 from typing import Any
-from fltk.mung.sumprod.main import CalcSumprod
+from fltk.mung.sumprod.main import MungSumprod
 
 
 @pytest.fixture
-def sumprod() -> CalcSumprod:
-    return CalcSumprod(name="test_sumprod", idx_to="idx")
+def sumprod() -> MungSumprod:
+    return MungSumprod(name="test_sumprod", idx_to="idx")
 
 
 @pytest.fixture
@@ -59,9 +59,9 @@ def data_vars() -> dict[str, Any]:
 
 def test_err_name() -> None:
     with pytest.raises(ValueError):
-        CalcSumprod(name=" ", idx_to="idx")
+        MungSumprod(name=" ", idx_to="idx")
     with pytest.raises(ValueError):
-        CalcSumprod(name="?", idx_to="idx")
+        MungSumprod(name="?", idx_to="idx")
 
 
 def test_load_mat_xl(sumprod, qrtr_mat_xl: dict[str, Path]) -> None:
@@ -81,7 +81,7 @@ def test_load_data(sumprod, raw_data, data_vars) -> None:
 
 
 @pytest.fixture
-def init_sumprod(sumprod, qrtr_mat_xl, raw_data, data_vars) -> CalcSumprod:
+def init_sumprod(sumprod, qrtr_mat_xl, raw_data, data_vars) -> MungSumprod:
     sumprod.load_mat_from_xl(path=qrtr_mat_xl["path"], sheet_nm=qrtr_mat_xl["sheet"])
     sumprod.load_raw_data(
         raw_data,
@@ -99,7 +99,7 @@ def test_init_sumprod(init_sumprod) -> None:
 
 
 @pytest.fixture
-def fit_sumprod(init_sumprod) -> CalcSumprod:
+def fit_sumprod(init_sumprod) -> MungSumprod:
     init_sumprod.fit(is_fillna=False)
     return init_sumprod
 
@@ -109,7 +109,7 @@ def test_fit_sumprod(fit_sumprod) -> None:
 
 
 @pytest.fixture
-def transform_sumprod(fit_sumprod) -> CalcSumprod:
+def transform_sumprod(fit_sumprod) -> MungSumprod:
     fit_sumprod.transform(is_merged=True)
     return fit_sumprod
 

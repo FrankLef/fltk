@@ -3,10 +3,10 @@ from typing import TYPE_CHECKING
 import pandas as pd
 
 if TYPE_CHECKING:
-    from .main import CalcBridge  # Only imported when checking types
+    from .main import MungBridge  # Only imported when checking types
 
 
-def get_periods(inst: CalcBridge) -> pd.DataFrame:
+def get_periods(inst: MungBridge) -> pd.DataFrame:
     _data = inst.raw
     _period = inst.raw_vars.period
     _periods = inst.periods_vars

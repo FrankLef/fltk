@@ -5,10 +5,10 @@ import pandas as pd
 from ...utils import audit_vars as audit
 
 if TYPE_CHECKING:
-    from .main import CalcRatio  # Only imported when checking types
+    from .main import MungRatio  # Only imported when checking types
 
 
-def load_ratios(inst: CalcRatio, data: pd.Dataframe) -> pd.DataFrame:
+def load_ratios(inst: MungRatio, data: pd.Dataframe) -> pd.DataFrame:
     if data.empty:
         raise ValueError("Ratios dataframe is empty.")
 

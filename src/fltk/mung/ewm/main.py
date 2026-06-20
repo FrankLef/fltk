@@ -2,7 +2,7 @@ import pandas as pd
 
 from rich import print as rprint
 
-from ..abc import Calc
+from ..abc import Mung
 from ...utils.value_cls import StrName
 
 from . import vars
@@ -11,7 +11,7 @@ from . import base
 from . import ewm
 
 
-class CalcEwm(Calc):
+class MungEwm(Mung):
     def __init__(self, name: str, suffix: str = "ewm", span: int = 4):
         super().__init__(StrName(name))
         self.ewm_vars = vars.EwmVars(

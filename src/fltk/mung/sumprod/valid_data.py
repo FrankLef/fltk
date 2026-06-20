@@ -3,10 +3,10 @@ from typing import TYPE_CHECKING
 import pandas as pd
 
 if TYPE_CHECKING:
-    from .main import CalcSumprod  # Only imported when checking types
+    from .main import MungSumprod  # Only imported when checking types
 
 
-def get_valid_data(inst: CalcSumprod) -> pd.DataFrame:
+def get_valid_data(inst: MungSumprod) -> pd.DataFrame:
     keys = list(inst.raw_vars.keys)
     data = inst.raw
     invalid_dfs: tuple[pd.DataFrame, ...] = (inst.invalid,)
@@ -35,7 +35,7 @@ def clean_data(
     return clean_data_df
 
 
-def fill_na(inst: CalcSumprod, value: float = 0) -> pd.DataFrame:
+def fill_na(inst: MungSumprod, value: float = 0) -> pd.DataFrame:
     valid_data = inst.raw
     # NOTE: Error msg from pandas, use this command instead of next one
     valid_data.fillna({inst.raw_vars.value: value}, inplace=True)

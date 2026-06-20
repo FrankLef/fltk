@@ -3,10 +3,10 @@ from typing import TYPE_CHECKING
 import pandas as pd
 
 if TYPE_CHECKING:
-    from .main import CalcRatio  # Only imported when checking types
+    from .main import MungRatio  # Only imported when checking types
 
 
-def calculate(inst: CalcRatio) -> pd.DataFrame:
+def calculate(inst: MungRatio) -> pd.DataFrame:
     data = inst.merged.copy()
 
     data[inst.ratios_vars.value_ratio] = (

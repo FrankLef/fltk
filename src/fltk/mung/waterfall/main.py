@@ -3,7 +3,7 @@ from typing import Literal
 
 from rich import print as rprint
 
-from ..abc import Calc
+from ..abc import Mung
 from ...utils.value_cls import StrName
 
 from . import vars
@@ -12,7 +12,7 @@ from . import base
 from . import wfall
 
 
-class CalcWaterfall(Calc):
+class MungWaterfall(Mung):
     def __init__(
         self,
         name: str,

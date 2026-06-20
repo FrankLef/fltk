@@ -5,7 +5,7 @@ import pandas as pd
 from ..utils import to_excel as xl
 
 
-class Calc(ABC):
+class Mung(ABC):
     def __init__(self, name: str) -> None:
         self.name = name
 

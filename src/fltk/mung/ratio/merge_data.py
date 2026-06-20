@@ -3,10 +3,10 @@ from typing import TYPE_CHECKING
 import pandas as pd
 
 if TYPE_CHECKING:
-    from .main import CalcRatio  # Only imported when checking types
+    from .main import MungRatio  # Only imported when checking types
 
 
-def merge_data(inst: CalcRatio) -> pd.DataFrame:
+def merge_data(inst: MungRatio) -> pd.DataFrame:
     raw_data = inst.raw
     ratios_data = inst.ratios_long
     _data_concept = inst.raw_vars.concept
@@ -31,7 +31,7 @@ def merge_data(inst: CalcRatio) -> pd.DataFrame:
     return final_data
 
 
-def pivot_data(inst: CalcRatio, merged_data: pd.DataFrame) -> pd.DataFrame:
+def pivot_data(inst: MungRatio, merged_data: pd.DataFrame) -> pd.DataFrame:
     keys: list[str] = list(inst.raw_vars.groups) + [inst.ratios_vars.concept_ratio]
     _concept_pos = inst.ratios_vars.concept_pos
     _data_value = inst.raw_vars.value
@@ -42,7 +42,7 @@ def pivot_data(inst: CalcRatio, merged_data: pd.DataFrame) -> pd.DataFrame:
     return pivoted_data
 
 
-def validate_data_keys(inst: CalcRatio, data: pd.DataFrame) -> None:
+def validate_data_keys(inst: MungRatio, data: pd.DataFrame) -> None:
     keys: list[str] = list(inst.raw_vars.groups) + [inst.ratios_vars.concept_ratio]
     unique_counts = data[keys].value_counts()
     ndistinct = len(unique_counts)
@@ -51,7 +51,7 @@ def validate_data_keys(inst: CalcRatio, data: pd.DataFrame) -> None:
         raise ValueError(msg)
 
 
-def augment_data(inst: CalcRatio, data: pd.DataFrame) -> pd.DataFrame:
+def augment_data(inst: MungRatio, data: pd.DataFrame) -> pd.DataFrame:
     cols = {
         inst.ratios_vars.concept_num: inst.ratios_vars.value_num,
         inst.ratios_vars.concept_den: inst.ratios_vars.value_den,
@@ -67,7 +67,7 @@ def augment_data(inst: CalcRatio, data: pd.DataFrame) -> pd.DataFrame:
     return augmented_data
 
 
-def move_cols(inst: CalcRatio, data: pd.DataFrame) -> pd.DataFrame:
+def move_cols(inst: MungRatio, data: pd.DataFrame) -> pd.DataFrame:
     cols: list[str] = [inst.ratios_vars.value_num, inst.ratios_vars.value_den]
     new_cols = [col for col in data.columns if col not in cols] + cols
     return data[new_cols]

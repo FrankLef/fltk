@@ -3,10 +3,10 @@ from typing import TYPE_CHECKING
 import pandas as pd
 
 if TYPE_CHECKING:
-    from .main import CalcEwm  # Only imported when checking types
+    from .main import MungEwm  # Only imported when checking types
 
 
-def get_ewm(inst: CalcEwm) -> pd.DataFrame:
+def get_ewm(inst: MungEwm) -> pd.DataFrame:
     _ewm = inst.ewm_vars
     _raw = inst.raw_vars
 

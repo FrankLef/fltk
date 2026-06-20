@@ -4,11 +4,11 @@ import pandas as pd
 from pathlib import Path
 
 if TYPE_CHECKING:
-    from .main import CalcSumprod  # Only imported when checking types
+    from .main import MungSumprod  # Only imported when checking types
 
 
 def load_mat_from_xl(
-    inst: CalcSumprod, path: Path, sheet_nm: str | None = None
+    inst: MungSumprod, path: Path, sheet_nm: str | None = None
 ) -> pd.DataFrame:
     df = pd.read_excel(path, sheet_name=sheet_nm)
     top_name = df.columns[0]

@@ -2,10 +2,10 @@ import pandas as pd
 from pathlib import Path
 from datetime import datetime as dt
 
-from fltk.mung.calc_ratio.main import CalcRatio
+from fltk.mung.ratio.main import MungRatio
 
 
-fixtures_path = Path(__file__).parents[3].joinpath("tests", "fixtures")
+fixtures_path = Path(__file__).parents[4].joinpath("tests", "mung", "fixtures")
 ratio_path = fixtures_path.joinpath("ratio.xlsx")
 out_fn = f"ratio_z1_{dt.now().date().isoformat()}.xlsx"
 out_path = fixtures_path.joinpath(out_fn)
@@ -19,7 +19,7 @@ ratios_df = pd.read_excel(
     engine_kwargs={"data_only": True},
 )
 
-ratio = CalcRatio(name="testRatioZ1", data=ratios_df)
+ratio = MungRatio(name="testRatioZ1", data=ratios_df)
 
 # ratio.load_ratios(ratios_df)
 

@@ -6,10 +6,10 @@ from rich.prompt import Confirm
 from ...utils import audit_vars as audit
 
 if TYPE_CHECKING:
-    from .main import CalcSumprod  # Only imported when checking types
+    from .main import MungSumprod  # Only imported when checking types
 
 
-def load_raw_data(inst: CalcSumprod, data: pd.DataFrame) -> pd.DataFrame:
+def load_raw_data(inst: MungSumprod, data: pd.DataFrame) -> pd.DataFrame:
     _vars = inst.raw_vars
     if inst.sump.empty:
         msg: str = "You must load the matrix before the data."
@@ -22,7 +22,7 @@ def load_raw_data(inst: CalcSumprod, data: pd.DataFrame) -> pd.DataFrame:
 
 
 def validate_data_names(
-    inst: CalcSumprod, data: pd.DataFrame, newvalue_var: str
+    inst: MungSumprod, data: pd.DataFrame, newvalue_var: str
 ) -> None:
     cols = data.columns.to_list()
     if newvalue_var in cols:

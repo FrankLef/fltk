@@ -2,16 +2,16 @@ import pandas as pd
 from pathlib import Path
 from datetime import datetime as dt
 
-from fltk.mung.calc_ewm.main import CalcEwm
+from fltk.mung.ewm.main import MungEwm
 
 
-fixtures_path = Path(__file__).parents[3].joinpath("tests", "fixtures")
+fixtures_path = Path(__file__).parents[4].joinpath("tests", "mung", "fixtures")
 data_path = fixtures_path.joinpath("ewm.xlsx")
 data_sheet: str = "data1"
 out_fn = f"ewm_z1_{dt.now().date().isoformat()}.xlsx"
 out_path = fixtures_path.joinpath(out_fn)
 
-ewm = CalcEwm(name="testEwmZ1")
+ewm = MungEwm(name="testEwmZ1")
 
 raw_data = pd.read_excel(
     data_path,

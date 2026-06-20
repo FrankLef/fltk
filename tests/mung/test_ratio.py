@@ -4,7 +4,7 @@ import pytest
 from pathlib import Path
 import pandas as pd
 
-from fltk.mung.ratio.main import CalcRatio
+from fltk.mung.ratio.main import MungRatio
 
 
 @pytest.fixture
@@ -25,8 +25,8 @@ def ratios_xl(fixtures_path) -> pd.DataFrame:
 
 
 @pytest.fixture
-def ratio(ratios_xl) -> CalcRatio:
-    return CalcRatio(name="test_ratio", data=ratios_xl)
+def ratio(ratios_xl) -> MungRatio:
+    return MungRatio(name="test_ratio", data=ratios_xl)
 
 
 def test_init_ratio(ratio) -> None:
@@ -52,7 +52,7 @@ def raw_data(data_xl) -> pd.DataFrame:
 
 
 @pytest.fixture
-def init_ratio(ratio, raw_data) -> CalcRatio:
+def init_ratio(ratio, raw_data) -> MungRatio:
     ratio.load_raw_data(
         raw_data,
         concept="concept",

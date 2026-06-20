@@ -4,17 +4,17 @@ import pytest
 from pathlib import Path
 import pandas as pd
 
-from fltk.mung.waterfall.main import CalcWaterfall
+from fltk.mung.waterfall.main import MungWaterfall
 
 
 @pytest.fixture
-def wfall() -> CalcWaterfall:
-    return CalcWaterfall(name="test_wfall", initial="relative")
+def wfall() -> MungWaterfall:
+    return MungWaterfall(name="test_wfall", initial="relative")
 
 
 def test_initial_err() -> None:
     with pytest.raises(ValueError):
-        CalcWaterfall(name="test_wfall", initial="relativ")
+        MungWaterfall(name="test_wfall", initial="relativ")
 
 
 @pytest.fixture

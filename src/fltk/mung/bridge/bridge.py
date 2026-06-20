@@ -5,17 +5,17 @@ import pandas as pd
 from ...utils import audit_vars as audit
 
 if TYPE_CHECKING:
-    from .main import CalcBridge  # Only imported when checking types
+    from .main import MungBridge  # Only imported when checking types
 
 
-def get_bridge(inst: CalcBridge) -> pd.DataFrame:
+def get_bridge(inst: MungBridge) -> pd.DataFrame:
     audit.audit_illegal(inst.raw, vars=inst.bridge_vars.vars)
     filtered_data = filter_data_with_ratios(inst)
     bridge_df = merge_data_with_periods(inst, data=filtered_data)
     return bridge_df
 
 
-def filter_data_with_ratios(inst: CalcBridge) -> pd.DataFrame:
+def filter_data_with_ratios(inst: MungBridge) -> pd.DataFrame:
     data = inst.raw.copy()
     filtered_data = data[data[inst.raw_vars.ratio_nm].isin(inst.ratios)]
     if filtered_data.empty:
@@ -23,7 +23,7 @@ def filter_data_with_ratios(inst: CalcBridge) -> pd.DataFrame:
     return filtered_data
 
 
-def merge_data_with_periods(inst: CalcBridge, data: pd.DataFrame) -> pd.DataFrame:
+def merge_data_with_periods(inst: MungBridge, data: pd.DataFrame) -> pd.DataFrame:
     _periods = inst.periods
     _period = inst.raw_vars.period
     _groups = inst.raw_vars.groups

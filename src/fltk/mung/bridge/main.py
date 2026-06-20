@@ -2,7 +2,7 @@ import pandas as pd
 
 from rich import print as rprint
 
-from ..abc import Calc
+from ..abc import Mung
 from ...utils.value_cls import StrName
 
 from . import vars
@@ -12,7 +12,7 @@ from . import bridge
 from . import calculate as calc
 
 
-class CalcBridge(Calc):
+class MungBridge(Mung):
     def __init__(
         self,
         name: str,

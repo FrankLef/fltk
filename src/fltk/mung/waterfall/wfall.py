@@ -3,10 +3,10 @@ from typing import TYPE_CHECKING, Final
 import pandas as pd
 
 if TYPE_CHECKING:
-    from .main import CalcWaterfall  # Only imported when checking types
+    from .main import MungWaterfall  # Only imported when checking types
 
 
-def get_wfall(inst: CalcWaterfall) -> pd.DataFrame:
+def get_wfall(inst: MungWaterfall) -> pd.DataFrame:
     _wfall = inst.wfall_vars
     _raw = inst.raw_vars
     _initial = _wfall.initial
@@ -36,7 +36,7 @@ def get_wfall(inst: CalcWaterfall) -> pd.DataFrame:
     return wfall
 
 
-def set_initial(inst: CalcWaterfall, group: pd.DataFrame) -> pd.DataFrame:
+def set_initial(inst: MungWaterfall, group: pd.DataFrame) -> pd.DataFrame:
     """Set initial 'num_from_val'."""
     _raw = inst.raw_vars
     _period = _raw.period_to
@@ -51,7 +51,7 @@ def set_initial(inst: CalcWaterfall, group: pd.DataFrame) -> pd.DataFrame:
     return group_sel
 
 
-def rm_num_from(inst: CalcWaterfall, data: pd.DataFrame) -> pd.DataFrame:
+def rm_num_from(inst: MungWaterfall, data: pd.DataFrame) -> pd.DataFrame:
     """Remove all othe num_from_val not identified as 'initial'."""
     _raw = inst.raw_vars
     _num_from = _raw.num_from_val
@@ -66,7 +66,7 @@ def rm_num_from(inst: CalcWaterfall, data: pd.DataFrame) -> pd.DataFrame:
     return data
 
 
-def rm_total_diff(inst: CalcWaterfall, data: pd.DataFrame) -> pd.DataFrame:
+def rm_total_diff(inst: MungWaterfall, data: pd.DataFrame) -> pd.DataFrame:
     """Remove rows with 'total_diff' from the data."""
     _diff_nm = inst.wfall_vars.diff_nm
     _total_diff = inst.raw_vars.total_diff
@@ -75,7 +75,7 @@ def rm_total_diff(inst: CalcWaterfall, data: pd.DataFrame) -> pd.DataFrame:
     return data
 
 
-def set_wfall_amt(inst: CalcWaterfall, data: pd.DataFrame) -> pd.DataFrame:
+def set_wfall_amt(inst: MungWaterfall, data: pd.DataFrame) -> pd.DataFrame:
     """Total amount must be set to None (or zero)."""
     TOTAL: Final[str] = "total"
     _wfall = inst.wfall_vars
@@ -89,7 +89,7 @@ def set_wfall_amt(inst: CalcWaterfall, data: pd.DataFrame) -> pd.DataFrame:
 
 
 def reset_initial(
-    inst: CalcWaterfall, data: pd.DataFrame, initial: str
+    inst: MungWaterfall, data: pd.DataFrame, initial: str
 ) -> pd.DataFrame:
     """Reset initial rows to 'absolute' or 'relative'.
 
@@ -97,7 +97,7 @@ def reset_initial(
     function reset initial to reflect that choice.
 
     Args:
-        inst (CalcWaterfall): CalcWaterfall instance.
+        inst (MungWaterfall): MungWaterfall instance.
         data (pd.DataFrame): Waterfall data.
         initial (str): 'absolute' or 'relative'.
 

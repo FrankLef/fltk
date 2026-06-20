@@ -2,9 +2,9 @@ import pandas as pd
 from pathlib import Path
 from datetime import datetime as dt
 
-from fltk.mung.calc_sumprod.main import CalcSumprod
+from fltk.mung.sumprod.main import MungSumprod
 
-fixtures_path = Path(__file__).parents[3].joinpath("tests", "fixtures")
+fixtures_path = Path(__file__).parents[4].joinpath("tests", "mung", "fixtures")
 sumprod_path = fixtures_path.joinpath("sumprod.xlsx")
 out_fn = f"sumprod_z2_{dt.now().date().isoformat()}.xlsx"
 out_path = fixtures_path.joinpath(out_fn)
@@ -12,7 +12,7 @@ idx_sheet: str = "concepts_adds"
 data_sheet = "data2"
 newvalue_var = "adds_amt"
 
-sumprod = CalcSumprod(
+sumprod = MungSumprod(
     name="testSumprodZ2",
     idx_to="concept_add",
     idx_from="concept_from",

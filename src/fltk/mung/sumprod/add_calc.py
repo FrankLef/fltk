@@ -3,10 +3,10 @@ from typing import TYPE_CHECKING
 import pandas as pd
 
 if TYPE_CHECKING:
-    from .main import CalcSumprod  # Only imported when checking types
+    from .main import MungSumprod  # Only imported when checking types
 
 
-def add_calc(inst: CalcSumprod) -> pd.DataFrame:
+def add_calc(inst: MungSumprod) -> pd.DataFrame:
     newvalue = inst.raw_vars.newvalue
 
     left_on = list(inst.raw_vars.groups)

@@ -4,10 +4,10 @@ import pandas as pd
 from pandas.api.types import CategoricalDtype
 
 if TYPE_CHECKING:
-    from .main import CalcWaterfall  # Only imported when checking types
+    from .main import MungWaterfall  # Only imported when checking types
 
 
-def get_base(inst: CalcWaterfall) -> pd.DataFrame:
+def get_base(inst: MungWaterfall) -> pd.DataFrame:
     if inst.raw.empty:
         raise ValueError("Raw data is empty.")
     wfall_types = get_wfall_types(inst)
@@ -20,7 +20,7 @@ def get_base(inst: CalcWaterfall) -> pd.DataFrame:
     return base_df
 
 
-def melt_raw(inst: CalcWaterfall, factors: list[str]) -> pd.DataFrame:
+def melt_raw(inst: MungWaterfall, factors: list[str]) -> pd.DataFrame:
     _keys = inst.raw_vars.keys
     _factors = inst.raw_vars.factors
     _vars = inst.raw_vars.vars
@@ -39,7 +39,7 @@ def melt_raw(inst: CalcWaterfall, factors: list[str]) -> pd.DataFrame:
     return data_long
 
 
-def get_wfall_types(inst: CalcWaterfall) -> dict[str, str]:
+def get_wfall_types(inst: MungWaterfall) -> dict[str, str]:
     _vars = inst.raw_vars
     wfall_types: dict[str, str] = {
         _vars.num_from_val: "absolute",
@@ -58,7 +58,7 @@ def get_wfall_types(inst: CalcWaterfall) -> dict[str, str]:
 
 
 def add_wfall_type(
-    inst: CalcWaterfall, data_long: pd.DataFrame, wfall_types: dict[str, str]
+    inst: MungWaterfall, data_long: pd.DataFrame, wfall_types: dict[str, str]
 ) -> pd.DataFrame:
     _diff_nm = inst.wfall_vars.diff_nm
     _wfall_type = inst.wfall_vars.wfall_type

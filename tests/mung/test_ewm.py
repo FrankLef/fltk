@@ -4,12 +4,12 @@ import pytest
 from pathlib import Path
 import pandas as pd
 
-from fltk.mung.ewm.main import CalcEwm
+from fltk.mung.ewm.main import MungEwm
 
 
 @pytest.fixture
-def ewm() -> CalcEwm:
-    return CalcEwm(name="test_ewm")
+def ewm() -> MungEwm:
+    return MungEwm(name="test_ewm")
 
 
 @pytest.fixture

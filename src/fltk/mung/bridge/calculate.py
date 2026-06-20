@@ -3,10 +3,10 @@ from typing import TYPE_CHECKING
 import pandas as pd
 
 if TYPE_CHECKING:
-    from .main import CalcBridge  # Only imported when checking types
+    from .main import MungBridge  # Only imported when checking types
 
 
-def calculate(inst: CalcBridge) -> pd.DataFrame:
+def calculate(inst: MungBridge) -> pd.DataFrame:
     _bridge = inst.bridge
     _volume = inst.bridge_vars.volume_diff
     _price = inst.bridge_vars.price_diff

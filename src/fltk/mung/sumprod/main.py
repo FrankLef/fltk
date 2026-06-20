@@ -2,7 +2,7 @@ import pandas as pd
 from pathlib import Path
 from rich import print as rprint
 
-from ..abc import Calc
+from ..abc import Mung
 from ...utils.value_cls import StrName
 
 from . import vars
@@ -15,7 +15,7 @@ from . import calculate as calc
 from . import add_calc as ac
 
 
-class CalcSumprod(Calc):
+class MungSumprod(Mung):
     def __init__(
         self,
         name: str,
@@ -119,7 +119,7 @@ class CalcSumprod(Calc):
             self.get_invalid_data()
             self.get_valid_data()
         if verbose:
-            rprint(f"{self.name} CalcSumprod.fit() completed.")
+            rprint(f"{self.name} MungSumprod.fit() completed.")
 
     def transform(self, is_merged: bool, verbose: bool = False) -> None:
         """Do the calculations.
@@ -134,7 +134,7 @@ class CalcSumprod(Calc):
         else:
             self.output = self.calc
         if verbose:
-            rprint(f"{self.name} CalcSumprod.transform() completed.")
+            rprint(f"{self.name} MungSumprod.transform() completed.")
 
     def get_valid_data(self) -> None:
         try:

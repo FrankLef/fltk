@@ -3,10 +3,10 @@ from typing import TYPE_CHECKING
 import pandas as pd
 
 if TYPE_CHECKING:
-    from .main import CalcSumprod  # Only imported when checking types
+    from .main import MungSumprod  # Only imported when checking types
 
 
-def calculate(inst: CalcSumprod) -> pd.DataFrame:
+def calculate(inst: MungSumprod) -> pd.DataFrame:
     df = pd.merge(
         left=inst.valid,
         right=inst.sump,

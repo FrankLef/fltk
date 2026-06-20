@@ -4,7 +4,7 @@ import pytest
 from pathlib import Path
 import pandas as pd
 
-from fltk.mung.bridge.main import CalcBridge
+from fltk.mung.bridge.main import MungBridge
 
 
 @pytest.fixture
@@ -21,8 +21,8 @@ def ratios() -> tuple[str, ...]:
 
 
 @pytest.fixture
-def bridge(ratios) -> CalcBridge:
-    return CalcBridge(name="test_bridge", ratios=ratios)
+def bridge(ratios) -> MungBridge:
+    return MungBridge(name="test_bridge", ratios=ratios)
 
 
 @pytest.fixture

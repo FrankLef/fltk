@@ -2,16 +2,16 @@ import pandas as pd
 from pathlib import Path
 from datetime import datetime as dt
 
-from fltk.mung.calc_waterfall.main import CalcWaterfall
+from fltk.mung.waterfall.main import MungWaterfall
 
 
-fixtures_path = Path(__file__).parents[3].joinpath("tests", "fixtures")
+fixtures_path = Path(__file__).parents[4].joinpath("tests", "mung", "fixtures")
 data_path = fixtures_path.joinpath("waterfall.xlsx")
 data_sheet: str = "data1"
 out_fn = f"wfall_z1_{dt.now().date().isoformat()}.xlsx"
 out_path = fixtures_path.joinpath(out_fn)
 
-wfall = CalcWaterfall(name="testWaterfallZ1", initial="absolute")
+wfall = MungWaterfall(name="testWaterfallZ1", initial="absolute")
 
 raw_data = pd.read_excel(
     data_path,

@@ -6,10 +6,10 @@ from pandas.api.types import is_datetime64_any_dtype
 from ...utils import audit_vars as audit
 
 if TYPE_CHECKING:
-    from .main import CalcEwm  # Only imported when checking types
+    from .main import MungEwm  # Only imported when checking types
 
 
-def load_raw_data(inst: CalcEwm, data: pd.DataFrame) -> pd.DataFrame:
+def load_raw_data(inst: MungEwm, data: pd.DataFrame) -> pd.DataFrame:
     _vars = inst.raw_vars
     if data.empty:
         raise ValueError("The raw data is empty.")

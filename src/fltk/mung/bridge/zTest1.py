@@ -2,10 +2,10 @@ import pandas as pd
 from pathlib import Path
 from datetime import datetime as dt
 
-from fltk.mung.calc_bridge.main import CalcBridge
+from fltk.mung.bridge.main import MungBridge
 
 
-fixtures_path = Path(__file__).parents[3].joinpath("tests", "fixtures")
+fixtures_path = Path(__file__).parents[4].joinpath("tests", "mung", "fixtures")
 data_path = fixtures_path.joinpath("bridge.xlsx")
 data_sheet: str = "data1"
 out_fn = f"bridge_z1_{dt.now().date().isoformat()}.xlsx"
@@ -20,7 +20,7 @@ ratios = (
     "Sales2MaterialCosts",
     "MaterialCosts2DirectLabor",
 )
-bridge = CalcBridge(name="testBridgeZ1", ratios=ratios)
+bridge = MungBridge(name="testBridgeZ1", ratios=ratios)
 
 cols = (
     "entity",
