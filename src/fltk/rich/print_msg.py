@@ -1,26 +1,4 @@
-from rich import print as rprint
-
-from rich.progress import (
-    BarColumn,
-    MofNCompleteColumn,
-    Progress,
-    TextColumn,
-    TimeElapsedColumn,
-    TimeRemainingColumn,
-)
-
-# Define custom progress bar
-# ssource: https://timothygebhard.de/posts/richer-progress-bars-for-rich/
-progress_bar = Progress(
-    TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
-    BarColumn(),
-    MofNCompleteColumn(),
-    TextColumn("•"),
-    TimeElapsedColumn(),
-    TextColumn("•"),
-    TimeRemainingColumn(),
-    transient=True,
-)
+from rich.console import Console
 
 
 def create_msg(text: str, type: str | None = None) -> str:
@@ -61,7 +39,9 @@ def create_msg(text: str, type: str | None = None) -> str:
         case "fail":
             fmt = ("[red]", "\u2716 ", "[/red]")
         case "process":
-            fmt = ("[gold1]", "\u2022", "[/gold1]")
+            fmt = ("[dark_orange]", "", "[/dark_orange]")
+        case "item":
+            fmt = ("[green]", "", "[/green]")
         case _:
             raise ValueError(f"'{a_type}' is an invalid rich msg type.")
 
@@ -80,7 +60,8 @@ def print_msg(text: str, type: str | None = None) -> str:
         str: Formatted string to use by `rich`.
     """
     msg = create_msg(text, type=type)
-    rprint(msg)
+    console = Console()
+    console.print(msg)
     return msg
 
 
@@ -92,5 +73,6 @@ def print_modul(
     msg = create_msg(msg, type=modul_type)
     if verbose & (modul.__doc__ is not None):
         msg = msg + "\n" + create_msg(modul.__doc__, type=doc_type)
-    rprint(msg)
+    console = Console()
+    console.print(msg)
     return msg
