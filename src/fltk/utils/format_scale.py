@@ -45,8 +45,8 @@ def format_scale_with_dic(
     SCALE: Final[str] = "scale"
     MASK: Final[str] = "mask"
 
-    a_scale = float(default_fmt[SCALE])
-    a_mask = default_fmt[MASK]
+    a_scale: float = float(default_fmt[SCALE])
+    a_mask: str = default_fmt[MASK]
     data[fmt_col] = data[val_col].apply(format_scale, scale=a_scale, mask=a_mask)
 
     groups_attrs = dic.get_tags_default(
