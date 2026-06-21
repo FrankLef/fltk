@@ -1,26 +1,9 @@
 import matplotlib.pyplot as plt
 from pypalettes import load_palette
-
-# "Noto Sans Display"
-
-pal_nms = (
-    "Tableau_10",
-    "Tableau_20",
-    "Classic_Cyclic",
-    "Classic_10",
-    "Classic_20",
-    "Rainbow",
-    "Traffic",
-    "Vivid",
-    "ink",
-    "appletv",
-    "excel_Atlas",
-    "Viridis",
-    "jetColors",
-)
+# from typing import Iterable
 
 
-def show_palettes(pal_nms):
+def show_palettes(pal_nms) -> plt.Figure:
     pal_len = len(pal_nms)
 
     # Set up the figure and axes for subplots
@@ -44,13 +27,3 @@ def show_palettes(pal_nms):
         ax.axis("off")  # Hide axes to show only the color strip
 
     return fig
-
-
-def main():
-    fig = show_palettes(pal_nms)  # noqa: F841
-    plt.tight_layout()
-    plt.show()
-
-
-if __name__ == "__main__":
-    main()
