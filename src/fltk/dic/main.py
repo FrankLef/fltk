@@ -109,25 +109,45 @@ class IDic(ABC):
         attrs = {line.name: getattr(line, attr_nm) for line in the_lines}  # type: ignore[attr-defined]
         return attrs
 
-    def get_tags(
-        self, tag_text: str | None, sep: str = chr(126)
-    ) -> dict[str, Any] | None:
-        tags = dic_tags.get_tags(tag_text=tag_text, sep=sep)
+    def split_tag(self, tag_text: str | None, sep: str = "~") -> dict[str, Any] | None:
+        """Split a tag into items of a dictionnary.
+
+        Args:
+            tag_text (str | None): The tag text.
+            sep (str, optional): Separator of items in the tag text. Defaults to "~".
+
+        Returns:
+            dict[str, Any] | None: Dictionnary of tag items.
+        """
+        tags = dic_tags.split_tag(tag_text=tag_text, sep=sep)
         return tags
 
-    def get_tags_default(
+    def get_tags(
         self,
-        names: Iterable[str] | None,
         group: str,
+        names: Iterable[str] | None,
         attr_nm: str,
         default: dict[str, Any],
         na: str = "_na",
-        sep: str = chr(126),
+        sep: str = "~",
     ) -> dict[str, Any] | None:
-        attr_dict = dic_tags.get_tags_default(
+        """Get a dictionnary of tags for each given name in a group.
+
+        Args:
+            group (str): Name of the group.
+            names (Iterable[str] | None): Names within the group.
+            attr_nm (str): Attribute name.
+            default (dict[str, Any]): Default tag when `na` is the tag text.
+            na (str, optional): NA value will return tag default. Defaults to "_na".
+            sep (str, optional): Separator of items within the tag text. Cannot be a punctuation. Defaults to "~".
+
+        Returns:
+            dict[str, Any] | None: Dictionnary of tags.
+        """
+        attr_dict = dic_tags.get_tags(
             inst=self,
-            names=names,
             group=group,
+            names=names,
             attr_nm=attr_nm,
             default=default,
             na=na,

@@ -151,8 +151,8 @@ def test_get_lines_err_role(loaded_dic):
         ],
     ],
 )
-def test_get_tags(loaded_dic, tag_text, expected):
-    tags = loaded_dic.get_tags(tag_text)
+def test_split_tag(loaded_dic, tag_text, expected):
+    tags = loaded_dic.split_tag(tag_text)
     assert tags == expected
 
 

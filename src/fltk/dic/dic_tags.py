@@ -5,7 +5,7 @@ if TYPE_CHECKING:
     from .main import IDic  # Only imported when checking types
 
 
-def get_tags(tag_text: str | None, sep: str = chr(126)) -> dict[str, Any] | None:
+def split_tag(tag_text: str | None, sep: str = "~") -> dict[str, Any] | None:
     if tag_text is not None:
         # NOTE: Must use a special separator not a comma because commas are found in sub text. e.g. mask="{:,.2f}"
         try:
@@ -17,23 +17,24 @@ def get_tags(tag_text: str | None, sep: str = chr(126)) -> dict[str, Any] | None
     return tags
 
 
-def get_tags_default(
+def get_tags(
     inst: IDic,
-    names: Iterable[str] | None,
     group: str,
+    names: Iterable[str] | None,
     attr_nm: str,
     default: dict[str, Any],
     na: str = "_na",
-    sep: str = chr(126),
-) -> dict[str, Any] | None:
+    sep: str = "~",
+) -> dict[str, Any]:
     attr_dict: dict[str, Any] = {}
     tags = inst.get_attributes(names=names, group=group, attr_nm=attr_nm)
     for name, tag_text in tags.items():
-        # tag_text: str = list(tag.values())[0]
         if tag_text != na:
-            tag = get_tags(tag_text, sep=sep)
-            # attr_dict = get_tags(tag_text, sep=sep)
+            tag = split_tag(tag_text, sep=sep)
             attr_dict[name] = tag
         else:
             attr_dict[name] = default
+    if not attr_dict:
+        msg: str = f"No tag found for attribute {attr_nm}. Weird."
+        raise AssertionError(msg)
     return attr_dict

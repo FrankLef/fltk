@@ -4,8 +4,15 @@ from fltk.graphics.show_colrs import show_palettes
 
 
 pal_nms = (
-    "Viridis",
     "jetColors",
+    "viridis",
+    "magma",
+    "plasma",
+    "inferno",
+    "cividis",
+    "mako",
+    "rocket",
+    "turbo"
 )
 
 
