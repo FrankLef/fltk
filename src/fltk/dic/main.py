@@ -34,7 +34,7 @@ class IDic(ABC):
         self._lines: dic_lines = []
 
     def __repr__(self) -> str:
-        info: dict[str, Any] = {
+        info: dict[str, str] = {
             "name": self.name,
             "ngroups": str(self.ngroups),
             "nlines": str(self.nlines),
