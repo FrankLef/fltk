@@ -22,6 +22,7 @@ print("\ndicz:\n", dicz, "\n", sep="")
 a_group = dicz.group("entities")
 print("\na_group:\n", a_group, sep="")
 
+print("group values type:", type(a_group.values))
 
 a_line = dicz.group("entities").line("CieA")
 print("\na_line:\n", a_line, sep="")

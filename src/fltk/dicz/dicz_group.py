@@ -1,5 +1,5 @@
-from collections.abc import KeysView
-from typing import NamedTuple
+from collections.abc import KeysView, ValuesView
+from typing import Any, NamedTuple
 
 from .dicz_line import DiczLine
 from .dicz_enum import DiczVar as vars
@@ -28,20 +28,23 @@ class DiczGroup:
     def nitems(self) -> int:
         nitems = sum([x.nitems for x in self.coll.values()])
         return nitems
-    
+
     @property
     def empty(self) -> bool:
         return not self.nlines
-    
+
     @property
     def keys(self) -> KeysView:
         return self.coll.keys()
-    
+
     @property
-    def names_tupl(self)->NamedTuple:
+    def values(self) -> ValuesView:
+        return self.coll.values()
+
+    @property
+    def names_tupl(self) -> NamedTuple:
         names_tupl = nmstupl(group_nm=self.key, line_keys=self.keys)
         return names_tupl
-        
 
     def append(self, item: DiczLine):
         self.coll[item.key] = item
@@ -53,18 +56,18 @@ class DiczGroup:
             raise KeyError(f"'{key}' is an invalid line key.")
         return a_line
 
-    def filter_role(self, role: str)-> DiczGroup:
-        a_group = self.filter_lines(item_nm=vars.ROLE, pattern=role)
-        return a_group
-    
-    def filter_rule(self, rule: str)-> DiczGroup:
-        a_group = self.filter_lines(item_nm=vars.RULE, pattern=rule)
-        return a_group
-    
-    def filter_lines(self, item_nm: str, pattern: str)->DiczGroup:
+    def filter(self, item_nm: str, pattern: str) -> Any:
         dicz_group = DiczGroup(key=self.key)
-        for line_val in self.coll.values():
-            a_item = line_val.coll[item_nm]
-            if a_item.is_matched(pattern=pattern):
+        for line_val in self.values:
+            is_matched = line_val.is_matched(item_nm=item_nm, pattern=pattern)
+            if is_matched:
                 dicz_group.append(line_val)
         return dicz_group
+
+    def filter_role(self, role: str) -> Any:
+        a_group = self.filter(item_nm=vars.ROLE, pattern=role)
+        return a_group
+
+    def filter_rule(self, rule: str) -> Any:
+        a_group = self.filter(item_nm=vars.RULE, pattern=rule)
+        return a_group

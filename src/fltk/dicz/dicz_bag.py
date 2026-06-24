@@ -1,4 +1,4 @@
-from collections.abc import KeysView
+from collections.abc import KeysView, ValuesView
 from .dicz_group import DiczGroup
 
 
@@ -28,14 +28,18 @@ class DiczBag:
     def nitems(self) -> int:
         nitems = sum([x.nitems for x in self.coll.values()])
         return nitems
-    
+
     @property
     def empty(self) -> bool:
         return not self.ngroups
-    
+
     @property
     def keys(self) -> KeysView:
         return self.coll.keys()
+
+    @property
+    def values(self) -> ValuesView:
+        return self.coll.values()
 
     def append(self, item: DiczGroup):
         self.coll[item.key] = item

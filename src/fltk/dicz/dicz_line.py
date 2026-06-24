@@ -1,4 +1,4 @@
-from collections.abc import KeysView
+from collections.abc import KeysView, ValuesView
 from .dicz_item import DiczItem
 
 
@@ -18,14 +18,18 @@ class DiczLine:
     @property
     def nitems(self) -> int:
         return len(self.coll)
-    
+
     @property
     def empty(self) -> bool:
         return not self.nitems
-    
+
     @property
     def keys(self) -> KeysView:
         return self.coll.keys()
+
+    @property
+    def values(self) -> ValuesView:
+        return self.coll.values()
 
     def append(self, item: DiczItem):
         self.coll[item.key] = item
@@ -36,3 +40,8 @@ class DiczLine:
         except KeyError:
             raise KeyError(f"'{key}' is an invalid item key.")
         return a_item
+
+    def is_matched(self, item_nm: str, pattern: str) -> bool:
+        a_item = self.item(item_nm)
+        is_matched = a_item.is_matched(pattern)
+        return is_matched
