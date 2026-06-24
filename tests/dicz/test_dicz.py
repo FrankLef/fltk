@@ -3,6 +3,8 @@
 import pytest
 from pathlib import Path
 import pandas as pd
+from typing import NamedTuple
+
 from fltk.dicz.main import Dicz
 
 
@@ -59,3 +61,28 @@ def test_err_key(dicz1):
 def test_filter_role(dicz1):
     a_group_role = dicz1.group("entities").filter_role("core")
     assert a_group_role.nlines ==  3
+
+class EntitiesNms(NamedTuple):
+    group: str
+    CieA: str
+    CieB: str
+    CieC: str
+    CieE: str
+    CieF: str
+
+@pytest.fixture
+def entities_nms():
+    entities_nms=EntitiesNms(
+        group="entities",
+        CieA="CieA",
+        CieB="CieB",
+        CieC="CieC",
+        CieE="CieE",
+        CieF="CieF"
+    )
+    return entities_nms
+    
+def test_names_tupl(dicz1, entities_nms):
+    a_group = dicz1.group("entities")
+    names_tupl = a_group.names_tupl
+    assert names_tupl==entities_nms

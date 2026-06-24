@@ -1,3 +1,4 @@
+from collections.abc import KeysView
 from .dicz_item import DiczItem
 
 
@@ -21,6 +22,10 @@ class DiczLine:
     @property
     def empty(self) -> bool:
         return not self.nitems
+    
+    @property
+    def keys(self) -> KeysView:
+        return self.coll.keys()
 
     def append(self, item: DiczItem):
         self.coll[item.key] = item

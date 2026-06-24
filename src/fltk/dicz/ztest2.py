@@ -22,21 +22,6 @@ print("\ndicz:\n", dicz, "\n", sep="")
 a_group = dicz.group("entities")
 print("\na_group:\n", a_group, sep="")
 
+print("\nkeys:\n", a_group.keys)
 
-a_line = dicz.group("entities").line("CieA")
-print("\na_line:\n", a_line, sep="")
-
-a_item = dicz.group("entities").line("CieA").item("role")
-print("\na_item:\n", a_item.value, sep="")
-
-a_group_role = dicz.group("entities").filter_role("core")
-print("\na_group_role:\n", a_group_role, sep="")
-
-a_group_role_cieA = dicz.group("entities").filter_role("core").line("CieA")
-print("\na_group_role_cieA:\n", a_group_role_cieA, sep="")
-
-# groupA = dicz.groups("entities").lines("CieA")
-# print("groupA:\n", groupA)
-
-
-# print(dicz.data)
+print("\nnames_tupl:\n", a_group.names_tupl)

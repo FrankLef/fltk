@@ -1,5 +1,9 @@
+from collections.abc import KeysView
+from typing import NamedTuple
+
 from .dicz_line import DiczLine
 from .dicz_enum import DiczVar as vars
+from .get_namestupl import main as nmstupl
 
 
 class DiczGroup:
@@ -28,6 +32,16 @@ class DiczGroup:
     @property
     def empty(self) -> bool:
         return not self.nlines
+    
+    @property
+    def keys(self) -> KeysView:
+        return self.coll.keys()
+    
+    @property
+    def names_tupl(self)->NamedTuple:
+        names_tupl = nmstupl(group_nm=self.key, line_keys=self.keys)
+        return names_tupl
+        
 
     def append(self, item: DiczLine):
         self.coll[item.key] = item
