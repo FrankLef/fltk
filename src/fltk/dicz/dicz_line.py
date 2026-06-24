@@ -17,6 +17,10 @@ class DiczLine:
     @property
     def nitems(self) -> int:
         return len(self.coll)
+    
+    @property
+    def empty(self) -> bool:
+        return not self.nitems
 
     def append(self, item: DiczItem):
         self.coll[item.key] = item

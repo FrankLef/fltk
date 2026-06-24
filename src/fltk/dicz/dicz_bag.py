@@ -8,6 +8,8 @@ class DiczBag:
     def __repr__(self) -> str:
         info: dict[str, str] = {
             "ngroups": str(self.ngroups),
+            "nlines": str(self.nlines),
+            "nitems": str(self.nitems),
         }
         msg: str = "\n".join([key + ": " + val for key, val in info.items()])
         return msg
@@ -25,6 +27,10 @@ class DiczBag:
     def nitems(self) -> int:
         nitems = sum([x.nitems for x in self.coll.values()])
         return nitems
+    
+    @property
+    def empty(self) -> bool:
+        return not self.ngroups
 
     def append(self, item: DiczGroup):
         self.coll[item.key] = item

@@ -11,8 +11,9 @@ def main(data: pd.DataFrame) -> GroupDict:
     if data.empty:
         raise ValueError("The data is empty.")
     audit_columns(data)
-    out = get_dictionnaries(data)
-    return out
+    filtered_data = rm_skipped(data)
+    the_dicts = get_dictionnaries(filtered_data)
+    return the_dicts
 
 
 def audit_columns(data: pd.DataFrame) -> None:
@@ -28,6 +29,11 @@ def audit_columns(data: pd.DataFrame) -> None:
     if missing_nms:
         msg = f"{len(missing_nms)} required columns missing\n{missing_nms}"
         raise KeyError(msg)
+
+
+def rm_skipped(data: pd.DataFrame) -> pd.DataFrame:
+    filtered_data = data[~data[vars.SKIPPED]]
+    return filtered_data
 
 
 def get_dictionnaries(data) -> GroupDict:
