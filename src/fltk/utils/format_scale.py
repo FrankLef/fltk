@@ -2,7 +2,7 @@
 
 import pandas as pd
 from typing import Any, Final
-from ..dic.main import IDic
+# from ..dic.main import IDic
 
 
 def format_scale(value: float, scale: float, mask: str, na: str = "-") -> str:
@@ -31,40 +31,69 @@ def format_scale(value: float, scale: float, mask: str, na: str = "-") -> str:
     return formatted_val
 
 
-def format_scale_with_dic(
+def format_scale_many(
     data: pd.DataFrame,
-    dic: IDic,
-    group: str,
     group_col: str,
-    group_nms: dict[str, Any],
     val_col: str,
     fmt_col: str,
-    attr_nm: str,
-    default_fmt: dict[str, Any] = {"scale": 1, "mask": "{:,.2f}"},
+    tags: dict[str, Any],
+    default: dict[str, Any],
 ) -> pd.DataFrame:
     SCALE: Final[str] = "scale"
     MASK: Final[str] = "mask"
 
-    a_scale: float = float(default_fmt[SCALE])
-    a_mask: str = default_fmt[MASK]
+    a_scale: float = float(default[SCALE])
+    a_mask: str = default[MASK]
     data[fmt_col] = data[val_col].apply(format_scale, scale=a_scale, mask=a_mask)
 
-    groups_attrs = dic.get_tags(
-        group=group,
-        names=group_nms,
-        attr_nm=attr_nm,
-        default=default_fmt,
-    )
-
-    # NOTE: Must use empty dict in (groups_attrs or {}) to avoid error message
-    for group_nm, tag in (groups_attrs or {}).items():
+    for group_nm, tag in tags.items():
         a_scale = float(tag[SCALE])
         a_mask = tag[MASK]
         # NOTE: Must use index like this to be able to use a loop in pandas!
-        for index, row in data.iterrows():
+        for ndx, row in data.iterrows():
             if row[group_col] == group_nm:
                 formatted_value = format_scale(
-                    data.at[index, val_col], scale=a_scale, mask=a_mask
+                    data.at[ndx, val_col], scale=a_scale, mask=a_mask
                 )
-                data.at[index, fmt_col] = formatted_value
+                data.at[ndx, fmt_col] = formatted_value
+
     return data
+
+
+# def format_scale_with_dic(
+#     data: pd.DataFrame,
+#     dic: IDic,
+#     group: str,
+#     group_col: str,
+#     group_nms: dict[str, Any],
+#     val_col: str,
+#     fmt_col: str,
+#     attr_nm: str,
+#     default_fmt: dict[str, Any] = {"scale": 1, "mask": "{:,.2f}"},
+# ) -> pd.DataFrame:
+#     SCALE: Final[str] = "scale"
+#     MASK: Final[str] = "mask"
+
+#     a_scale: float = float(default_fmt[SCALE])
+#     a_mask: str = default_fmt[MASK]
+#     data[fmt_col] = data[val_col].apply(format_scale, scale=a_scale, mask=a_mask)
+
+#     groups_attrs = dic.get_tags(
+#         group=group,
+#         names=group_nms,
+#         attr_nm=attr_nm,
+#         default=default_fmt,
+#     )
+
+#     # NOTE: Must use empty dict in (groups_attrs or {}) to avoid error message
+#     for group_nm, tag in (groups_attrs or {}).items():
+#         a_scale = float(tag[SCALE])
+#         a_mask = tag[MASK]
+#         # NOTE: Must use index like this to be able to use a loop in pandas!
+#         for index, row in data.iterrows():
+#             if row[group_col] == group_nm:
+#                 formatted_value = format_scale(
+#                     data.at[index, val_col], scale=a_scale, mask=a_mask
+#                 )
+#                 data.at[index, fmt_col] = formatted_value
+#     return data

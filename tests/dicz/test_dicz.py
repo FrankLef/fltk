@@ -75,7 +75,7 @@ def test_line_filter(dicz1):
 
 
 class EntitiesNms(NamedTuple):
-    group: str
+    name: str
     CieA: str
     CieB: str
     CieC: str
@@ -86,7 +86,7 @@ class EntitiesNms(NamedTuple):
 @pytest.fixture
 def entities_nms():
     entities_nms = EntitiesNms(
-        group="entities",
+        name="entities",
         CieA="CieA",
         CieB="CieB",
         CieC="CieC",
@@ -100,3 +100,11 @@ def test_names_tupl(dicz1, entities_nms):
     a_group = dicz1.bag("bag1").group("entities")
     names_tupl = a_group.names_tupl
     assert names_tupl == entities_nms
+    assert names_tupl._fields == entities_nms._fields
+
+
+def test_get_many_lines_value(dicz1):
+    a_group = dicz1.bag("bag1").group("concepts")
+    line_keys = ("SalesNet", "MaterialCosts", "AssetsNongoodwillNoncash")
+    values = a_group.get_many_lines_value(line_keys=line_keys, item_nm="color")
+    assert len(values) == len(line_keys)

@@ -1,5 +1,5 @@
 from collections.abc import KeysView
-from typing import NamedTuple, Any
+from typing import NamedTuple, Any, Final
 
 from .enums import DiczVar as vars
 
@@ -13,14 +13,15 @@ def main(group_nm: str, line_keys: KeysView) -> NamedTuple:
 
 
 def get_fields(group_nm: str, names: tuple[str, ...]) -> dict[str, Any]:
+    NAME: Final[str] = "name"
     the_values: list[str] = list(names)
     if vars.GROUP in the_values:
-        msg: str = f"The field name '{vars.GROUP}' is reserved and must not be used."
+        msg: str = f"The field name '{NAME}' is reserved and must not be used."
         raise KeyError(msg)
 
     the_names: list[str] = list(names)
 
-    the_names.insert(0, vars.GROUP)
+    the_names.insert(0, NAME)
     the_values.insert(0, group_nm)
     assert len(the_names) == len(the_values)
 
