@@ -84,17 +84,14 @@ class DiczGroup:
     def get_many_lines_value(
         self, line_keys: Sequence[str], item_nm: str
     ) -> dict[str, Any]:
-        values: dict[str, Any] = {}
-        for line_key in line_keys:
-            a_item = self.coll[line_key].item(item_nm)
-            values[line_key] = a_item.value
+        values = {key: self.coll[key].item(item_nm).value for key in line_keys}
         return values
 
     def get_many_lines_tag(
         self, line_keys: Sequence[str], item_nm: str, default: dict[str, Any]
     ) -> dict[str, Any]:
-        tags: dict[str, Any] = {}
-        for line_key in line_keys:
-            tag = self.coll[line_key].item(item_nm).split_tag(default=default)
-            tags[line_key] = tag
+        tags = {
+            key: self.coll[key].item(item_nm).split_tag(default=default)
+            for key in line_keys
+        }
         return tags
