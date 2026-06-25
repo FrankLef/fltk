@@ -12,7 +12,7 @@ pal_nms = (
     "cividis",
     "mako",
     "rocket",
-    "turbo"
+    "turbo",
 )
 
 

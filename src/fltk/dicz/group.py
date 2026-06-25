@@ -1,8 +1,8 @@
 from collections.abc import KeysView, ValuesView
 from typing import Any, NamedTuple
 
-from .dicz_line import DiczLine
-from .dicz_enum import DiczVar as vars
+from .line import DiczLine
+from .enums import DiczVar as vars
 from .get_namestupl import main as nmstupl
 
 
@@ -57,6 +57,15 @@ class DiczGroup:
         return a_line
 
     def filter(self, item_nm: str, pattern: str) -> Any:
+        """Filter the lines using the value of a given item.
+
+        Args:
+            item_nm (str): Name of the item.
+            pattern (str): Pattern used to select the item.
+
+        Returns:
+            Any: A dicz_group.
+        """
         dicz_group = DiczGroup(key=self.key)
         for line_val in self.values:
             is_matched = line_val.is_matched(item_nm=item_nm, pattern=pattern)

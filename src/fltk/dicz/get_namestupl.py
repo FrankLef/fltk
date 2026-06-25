@@ -1,10 +1,10 @@
 from collections.abc import KeysView
 from typing import NamedTuple, Any
 
-from .dicz_enum import DiczVar as vars
+from .enums import DiczVar as vars
 
 
-def main(group_nm: str, line_keys: KeysView)->NamedTuple:
+def main(group_nm: str, line_keys: KeysView) -> NamedTuple:
     the_names = tuple(line_keys)
     specs = get_fields(group_nm=group_nm, names=the_names)
     NamesTuple = NamedTuple(group_nm, specs["fields"])  # type: ignore

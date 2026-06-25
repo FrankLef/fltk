@@ -1,13 +1,15 @@
 from collections.abc import KeysView, ValuesView
-from .dicz_group import DiczGroup
+from .group import DiczGroup
 
 
 class DiczBag:
-    def __init__(self) -> None:
+    def __init__(self, key: str) -> None:
+        self.key = key
         self.coll: dict[str, DiczGroup] = {}
 
     def __repr__(self) -> str:
         info: dict[str, str] = {
+            "key": self.key,
             "ngroups": str(self.ngroups),
             "nlines": str(self.nlines),
             "nitems": str(self.nitems),

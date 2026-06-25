@@ -1,11 +1,11 @@
 import pandas as pd
 
-from .dicz_bag import DiczBag
-from .dicz_group import DiczGroup
+from .bag import DiczBag
+# from .dicz_group import DiczGroup
 # from .dicz_line import DiczLine
 # from .dicz_item import DiczItem
 
-from . import get_dicts
+# from . import get_dicts
 from . import get_bag
 
 # type NamesArg = str | list[str] | None
@@ -17,34 +17,27 @@ type GroupDict = dict[str, LineDict]
 class Dicz:
     def __init__(self, name: str):
         self.name = name
+        self.coll: dict[str, DiczBag] = {}
 
     def __repr__(self) -> str:
         info: dict[str, str] = {
             "name": self.name,
-            "ngroups": str(self.ngroups),
-            "nlines": str(self.nlines),
+            "nbags": str(self.nbags),
         }
         msg: str = "\n".join([key + ": " + val for key, val in info.items()])
         return msg
 
-    def build(self, data: pd.DataFrame) -> None:
-        self.get_dicts(data)
-        self.get_bag()
+    @property
+    def nbags(self) -> int:
+        return len(self.coll)
 
-    def get_dicts(self, data: pd.DataFrame) -> None:
-        self.dicts: GroupDict = get_dicts.main(data)
-        self.ngroups = len(self.dicts)
-        self.nlines = sum([len(x) for x in self.dicts.values()])
+    def append(self, key: str, data: pd.DataFrame):
+        bag: DiczBag = get_bag.main(key=key, data=data)
+        self.coll[bag.key] = bag
 
-    def get_bag(self) -> None:
-        bag: DiczBag = get_bag.main(self.dicts)
-        is_err: bool = bag.nlines != self.nlines
-        if is_err:
-            msg: str = (
-                f"Data has {self.nlines} lines but the bag has {bag.nlines} lines."
-            )
-            raise AssertionError(msg)
-        self.bag: DiczBag = bag
-
-    def group(self, key: str) -> DiczGroup:
-        return self.bag.group(key)
+    def bag(self, key) -> DiczBag:
+        try:
+            a_bag = self.coll[key]
+        except KeyError:
+            raise KeyError(f"'{key}' is an invalid bag key.")
+        return a_bag

@@ -1,6 +1,6 @@
 import pandas as pd
 
-from .dicz_enum import DiczVar as vars
+from .enums import DiczVar as vars
 
 type ItemDict = dict[str, str]
 type LineDict = dict[str, ItemDict]
