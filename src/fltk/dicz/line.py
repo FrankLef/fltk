@@ -1,7 +1,7 @@
 #  Iterable imported from collections with Python 3.9+
 # with string, it is preferable to use Sequence. Otherwise a string is also an Iterable and the type checker will not consider a single string as invali
 from collections.abc import KeysView, ValuesView, Sequence
-from typing import Any
+from typing import Self
 from .item import DiczItem
 
 
@@ -44,11 +44,10 @@ class DiczLine:
             raise KeyError(f"'{key}' is an invalid item key.")
         return a_item
 
-    def filter(self, item_nms: Sequence[str]) -> Any:
-        dicz_line = DiczLine(key=self.key)
-        for nm in item_nms:
-            dicz_line.append(self.item(nm))
-        return dicz_line
+    def filter(self, item_nms: Sequence[str]) -> Self:
+        coll = {key: self.coll[key] for key in item_nms}
+        self.coll = coll
+        return self
 
     def is_matched(self, item_nm: str, pattern: str) -> bool:
         a_item = self.item(item_nm)

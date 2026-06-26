@@ -1,5 +1,5 @@
 from collections.abc import KeysView, ValuesView, Sequence
-from typing import Any, NamedTuple
+from typing import Any, Self, NamedTuple
 
 from .line import DiczLine
 from .enums import DiczVar as vars
@@ -56,13 +56,12 @@ class DiczGroup:
             raise KeyError(f"'{key}' is an invalid line key.")
         return a_line
 
-    def filter(self, line_nms: Sequence[str]) -> Any:
-        dicz_group = DiczGroup(key=self.key)
-        for nm in line_nms:
-            dicz_group.append(self.line(nm))
-        return dicz_group
+    def filter(self, line_nms: Sequence[str]) -> Self:
+        coll = {key: self.coll[key] for key in line_nms}
+        self.coll = coll
+        return self
 
-    def filter_pattern(self, item_nm: str, pattern: str) -> Any:
+    def filter_pattern(self, item_nm: str, pattern: str) -> Self:
         """Filter the lines using the value of a given item.
 
         Args:
@@ -70,14 +69,16 @@ class DiczGroup:
             pattern (str): Pattern used to select the item.
 
         Returns:
-            Any: A dicz_group.
+            Self: Filtered dicz_group.
         """
-        dicz_group = DiczGroup(key=self.key)
-        for line_val in self.values:
+
+        line_nms = []
+        for line_key, line_val in self.coll.items():
             is_matched = line_val.is_matched(item_nm=item_nm, pattern=pattern)
             if is_matched:
-                dicz_group.append(line_val)
-        return dicz_group
+                line_nms.append(line_key)
+        a_self = self.filter(line_nms)
+        return a_self
 
     def filter_role(self, role: str) -> Any:
         a_group = self.filter_pattern(item_nm=vars.ROLE, pattern=role)
