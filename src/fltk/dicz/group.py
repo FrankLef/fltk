@@ -76,16 +76,16 @@ class DiczGroup:
             for key, val in self.coll.items()
             if val.is_matched(item_nm=item_nm, pattern=pattern)
         ]
-        a_self = self.filter(line_nms)
+        a_self: Self = self.filter(line_nms)
         return a_self
 
-    def filter_role(self, role: str) -> Any:
-        a_group = self.filter_pattern(item_nm=vars.ROLE, pattern=role)
-        return a_group
+    def filter_role(self, role: str) -> Self:
+        a_self: Self = self.filter_pattern(item_nm=vars.ROLE, pattern=role)
+        return a_self
 
-    def filter_rule(self, rule: str) -> Any:
-        a_group = self.filter_pattern(item_nm=vars.RULE, pattern=rule)
-        return a_group
+    def filter_rule(self, rule: str) -> Self:
+        a_self: Self = self.filter_pattern(item_nm=vars.RULE, pattern=rule)
+        return a_self
 
     def lines_value(self, line_keys: Sequence[str], item_nm: str) -> dict[str, Any]:
         values = {key: self.coll[key].item(item_nm).value for key in line_keys}
