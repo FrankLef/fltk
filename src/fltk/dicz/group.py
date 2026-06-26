@@ -56,7 +56,13 @@ class DiczGroup:
             raise KeyError(f"'{key}' is an invalid line key.")
         return a_line
 
-    def filter(self, item_nm: str, pattern: str) -> Any:
+    def filter(self, line_nms: Sequence[str]) -> Any:
+        dicz_group = DiczGroup(key=self.key)
+        for nm in line_nms:
+            dicz_group.append(self.line(nm))
+        return dicz_group
+
+    def filter_pattern(self, item_nm: str, pattern: str) -> Any:
         """Filter the lines using the value of a given item.
 
         Args:
@@ -74,20 +80,18 @@ class DiczGroup:
         return dicz_group
 
     def filter_role(self, role: str) -> Any:
-        a_group = self.filter(item_nm=vars.ROLE, pattern=role)
+        a_group = self.filter_pattern(item_nm=vars.ROLE, pattern=role)
         return a_group
 
     def filter_rule(self, rule: str) -> Any:
-        a_group = self.filter(item_nm=vars.RULE, pattern=rule)
+        a_group = self.filter_pattern(item_nm=vars.RULE, pattern=rule)
         return a_group
 
-    def get_many_lines_value(
-        self, line_keys: Sequence[str], item_nm: str
-    ) -> dict[str, Any]:
+    def lines_value(self, line_keys: Sequence[str], item_nm: str) -> dict[str, Any]:
         values = {key: self.coll[key].item(item_nm).value for key in line_keys}
         return values
 
-    def get_many_lines_tag(
+    def lines_tag(
         self, line_keys: Sequence[str], item_nm: str, default: dict[str, Any]
     ) -> dict[str, Any]:
         tags = {

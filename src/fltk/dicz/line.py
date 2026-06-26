@@ -45,16 +45,6 @@ class DiczLine:
         return a_item
 
     def filter(self, item_nms: Sequence[str]) -> Any:
-        """Filter the items using item names.
-
-        This is not the same as the filter for dicz_group.
-
-        Args:
-            item_nms (Sequence[str]): Iterable of item names.
-
-        Returns:
-            Any: A dicz_line
-        """
         dicz_line = DiczLine(key=self.key)
         for nm in item_nms:
             dicz_line.append(self.item(nm))

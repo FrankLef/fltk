@@ -62,14 +62,28 @@ def test_group(dicz1):
     assert a_group.nlines == 5
 
 
+def test_bag_filter(dicz1):
+    a_bag = dicz1.bag("bag1")
+    group_nms = ("entities",)
+    filtered_bag = a_bag.filter(group_nms=group_nms)
+    assert filtered_bag.ngroups == 1
+
+
+def test_group_filter(dicz1):
+    a_group = dicz1.bag("bag1").group("entities")
+    line_nms = ("CieA", "CieB")
+    filtered_group = a_group.filter(line_nms=line_nms)
+    assert filtered_group.nlines == 2
+
+
 def test_filter_role(dicz1):
     a_group_role = dicz1.bag("bag1").group("entities").filter_role("core")
     assert a_group_role.nlines == 3
 
 
 def test_line_filter(dicz1):
-    item_nms = ("label", "color", "GtFmt")
     a_group = dicz1.bag("bag1").group("entities")
+    item_nms = ("label", "color", "GtFmt")
     a_line = a_group.line("CieA").filter(item_nms=item_nms)
     assert a_line.nitems == 3
 
@@ -103,8 +117,8 @@ def test_names_tupl(dicz1, entities_nms):
     assert names_tupl._fields == entities_nms._fields
 
 
-def test_get_many_lines_value(dicz1):
+def test_lines_value(dicz1):
     a_group = dicz1.bag("bag1").group("concepts")
     line_keys = ("SalesNet", "MaterialCosts", "AssetsNongoodwillNoncash")
-    values = a_group.get_many_lines_value(line_keys=line_keys, item_nm="color")
+    values = a_group.lines_value(line_keys=line_keys, item_nm="color")
     assert len(values) == len(line_keys)

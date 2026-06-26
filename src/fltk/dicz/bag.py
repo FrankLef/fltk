@@ -1,4 +1,5 @@
-from collections.abc import KeysView, ValuesView
+from collections.abc import KeysView, ValuesView, Sequence
+from typing import Any
 from .group import DiczGroup
 
 
@@ -52,3 +53,9 @@ class DiczBag:
         except KeyError:
             raise KeyError(f"'{key}' is an invalid group key.")
         return a_group
+
+    def filter(self, group_nms: Sequence[str]) -> Any:
+        dicz_bag = DiczBag(key=self.key)
+        for nm in group_nms:
+            dicz_bag.append(self.group(nm))
+        return dicz_bag
