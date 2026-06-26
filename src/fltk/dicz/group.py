@@ -71,12 +71,11 @@ class DiczGroup:
         Returns:
             Self: Filtered dicz_group.
         """
-
-        line_nms = []
-        for line_key, line_val in self.coll.items():
-            is_matched = line_val.is_matched(item_nm=item_nm, pattern=pattern)
-            if is_matched:
-                line_nms.append(line_key)
+        line_nms = [
+            key
+            for key, val in self.coll.items()
+            if val.is_matched(item_nm=item_nm, pattern=pattern)
+        ]
         a_self = self.filter(line_nms)
         return a_self
 
