@@ -1,5 +1,6 @@
-from collections.abc import KeysView, ValuesView, Sequence
+from collections.abc import ValuesView, Sequence
 from typing import Any, Self, NamedTuple
+from copy import deepcopy
 
 from .line import DiczLine
 from .enums import DiczVar as vars
@@ -34,8 +35,9 @@ class DiczGroup:
         return not self.nlines
 
     @property
-    def keys(self) -> KeysView:
-        return self.coll.keys()
+    def keys(self) -> tuple[str, ...]:
+        # must return tuple
+        return tuple(self.coll.keys())
 
     @property
     def values(self) -> ValuesView:
@@ -57,9 +59,10 @@ class DiczGroup:
         return a_line
 
     def filter(self, line_nms: Sequence[str]) -> Self:
-        coll = {key: self.coll[key] for key in line_nms}
-        self.coll = coll
-        return self
+        new_self = deepcopy(self)
+        coll = {key: new_self.coll[key] for key in line_nms}
+        new_self.coll = coll
+        return new_self
 
     def filter_pattern(self, item_nm: str, pattern: str) -> Self:
         """Filter the lines using the value of a given item.
@@ -76,26 +79,41 @@ class DiczGroup:
             for key, val in self.coll.items()
             if val.is_matched(item_nm=item_nm, pattern=pattern)
         ]
-        a_self: Self = self.filter(line_nms)
-        return a_self
+        new_self: Self = self.filter(line_nms)
+        return new_self
 
     def filter_role(self, role: str) -> Self:
-        a_self: Self = self.filter_pattern(item_nm=vars.ROLE, pattern=role)
-        return a_self
+        new_self: Self = self.filter_pattern(item_nm=vars.ROLE, pattern=role)
+        return new_self
 
     def filter_rule(self, rule: str) -> Self:
-        a_self: Self = self.filter_pattern(item_nm=vars.RULE, pattern=rule)
-        return a_self
+        new_self: Self = self.filter_pattern(item_nm=vars.RULE, pattern=rule)
+        return new_self
 
-    def lines_value(self, line_keys: Sequence[str], item_nm: str) -> dict[str, Any]:
-        values = {key: self.coll[key].item(item_nm).value for key in line_keys}
+    def lines_value(
+        self, line_keys: Sequence[str] | None, item_nm: str
+    ) -> dict[str, Any]:
+        if line_keys:
+            values: dict[str, Any] = {
+                key: self.coll[key].item(item_nm).value for key in line_keys
+            }
+        else:
+            values = {
+                key: self.coll[key].item(item_nm).value for key in self.coll.keys()
+            }
         return values
 
     def lines_tag(
-        self, line_keys: Sequence[str], item_nm: str, default: dict[str, Any]
+        self, line_keys: Sequence[str] | None, item_nm: str, default: dict[str, Any]
     ) -> dict[str, Any]:
-        tags = {
-            key: self.coll[key].item(item_nm).split_tag(default=default)
-            for key in line_keys
-        }
+        if line_keys:
+            tags: dict[str, Any] = {
+                key: self.coll[key].item(item_nm).split_tag(default=default)
+                for key in line_keys
+            }
+        else:
+            tags = {
+                key: self.coll[key].item(item_nm).split_tag(default=default)
+                for key in self.coll.keys()
+            }
         return tags

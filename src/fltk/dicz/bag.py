@@ -1,4 +1,4 @@
-from collections.abc import KeysView, ValuesView, Sequence
+from collections.abc import ValuesView, Sequence
 from typing import Self
 from .group import DiczGroup
 
@@ -37,8 +37,9 @@ class DiczBag:
         return not self.ngroups
 
     @property
-    def keys(self) -> KeysView:
-        return self.coll.keys()
+    def keys(self) -> tuple[str, ...]:
+        # must return tuple
+        return tuple(self.coll.keys())
 
     @property
     def values(self) -> ValuesView:

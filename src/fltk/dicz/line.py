@@ -1,7 +1,8 @@
 #  Iterable imported from collections with Python 3.9+
 # with string, it is preferable to use Sequence. Otherwise a string is also an Iterable and the type checker will not consider a single string as invali
-from collections.abc import KeysView, ValuesView, Sequence
+from collections.abc import ValuesView, Sequence
 from typing import Self
+from copy import deepcopy
 from .item import DiczItem
 
 
@@ -27,8 +28,9 @@ class DiczLine:
         return not self.nitems
 
     @property
-    def keys(self) -> KeysView:
-        return self.coll.keys()
+    def keys(self) -> tuple[str, ...]:
+        # must return tuple
+        return tuple(self.coll.keys())
 
     @property
     def values(self) -> ValuesView:
@@ -45,9 +47,10 @@ class DiczLine:
         return a_item
 
     def filter(self, item_nms: Sequence[str]) -> Self:
-        coll = {key: self.coll[key] for key in item_nms}
-        self.coll = coll
-        return self
+        new_self = deepcopy(self)
+        coll = {key: new_self.coll[key] for key in item_nms}
+        new_self.coll = coll
+        return new_self
 
     def is_matched(self, item_nm: str, pattern: str) -> bool:
         a_item = self.item(item_nm)
