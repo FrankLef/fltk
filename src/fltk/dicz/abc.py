@@ -13,5 +13,5 @@ class DiczBase(ABC):
 
     @abstractmethod
     def append(self, *args, **kwargs):
-        """Append new element to collection.."""
+        """Append new element to collection."""
         pass

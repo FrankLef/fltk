@@ -31,6 +31,7 @@ class Dicz(DiczBase):
     def bag(self, key) -> DiczBag:
         try:
             a_bag = self.coll[key]
-        except KeyError:
-            raise KeyError(f"'{key}' is an invalid bag key.")
+        except KeyError as e:
+            e.add_note(f"'{key}' is an invalid bag key.")
+            raise
         return a_bag

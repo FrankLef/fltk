@@ -52,8 +52,9 @@ class DiczBag(DiczBase):
     def group(self, key) -> DiczGroup:
         try:
             a_group = self.coll[key]
-        except KeyError:
-            raise KeyError(f"'{key}' is an invalid group key.")
+        except KeyError as e:
+            e.add_note(f"'{key}' is an invalid group key.")
+            raise
         return a_group
 
     def filter(self, group_nms: Sequence[str]) -> Self:
