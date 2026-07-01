@@ -5,6 +5,10 @@ from great_tables import GT
 import plotly.graph_objects as go
 from rich.console import Console
 
+from fltk.rich.print_msg import custom_theme, print_msg, MsgType
+
+console = Console(theme=custom_theme)
+
 
 class PrintObj:
     class PType(StrEnum):
@@ -30,11 +34,8 @@ class PrintObj:
             self.execute(obj, name=name, ptype=ptype)
 
     def start_msg(self) -> None:
-        console = Console()
-        msg: str = (
-            f"\n[dark_orange]Exporting file to:[/dark_orange]\n[cyan]{self.path}[/cyan]"
-        )
-        console.print(msg)
+        console.print("[process]Exporting file to:[/process]")
+        console.print(f"[info]{self.path}[/info]")
 
     def execute(self, obj: Any, name: str, ptype: PType | str):
         if ptype != self.PType.NONE:
@@ -50,6 +51,6 @@ class PrintObj:
                 else:
                     msg = f"Cannot handle object of type '{type(obj)}'"
                     raise TypeError(msg)
-                Console().print(f"[green]{fn}[/green]")
+                print_msg(fn, type=MsgType.TRACE)
             else:
                 raise ValueError(f"'{ptype}' is an invalid ptype.")

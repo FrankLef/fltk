@@ -1,55 +1,76 @@
+from enum import StrEnum, auto
 from rich.console import Console
+from rich.theme import Theme
 
 
-def create_msg(text: str, type: str | None = None) -> str:
+custom_theme = Theme(
+    {
+        "modul": "gold3",
+        "process": "dark_orange",
+        "trace": "grey69",
+        "debug": "dim cyan",
+        "info": "cyan",
+        "success": "green",
+        "warn": "yellow",
+        "fail": "magenta reverse",
+    }
+)
+
+console = Console(theme=custom_theme)
+
+
+class MsgType(StrEnum):
+    PROCESS = auto()
+    TRACE = auto()
+    DEBUG = auto()
+    INFO = auto()
+    SUCCESS = auto()
+    WARN = auto()
+    FAIL = auto()
+
+
+# Format a string to output to console using `rich`
+def create_msg(text: str, type: MsgType) -> str:
     """Format a string to output to console using `rich`.
 
+    For more standardized and formal messages used `loguru`.
+
     Args:
-        text (str): Text of the main body..
-        type (str | None, optional): Format type. Defaults to None.
+        text (str): Text to display.
+        type (MsgType): Format type.
 
     Raises:
-        ValueError: The type is invalid.
+        ValueError: Invalid type.
 
     Returns:
-        str: Formatted string to use by `rich`.
+        str: Formatted string used by `rich`.
     """
-    if type is None:
-        # if type is None, do nothing and return the text as is.
-        return text
-    else:
-        a_type = type
-        a_type = a_type.lower()
+    a_type = type.lower()
 
     match a_type:
-        case "msg":
-            fmt = ("[grey69]", " ", "[/grey69]")
-        case "modul":
-            # no space after symbol
-            fmt = ("[gold3]", "\u2022", "[/gold3]")
-        case "doc":
-            fmt = ("[dim gold3]", " ", "[/dim gold3]")
+        case "process":
+            fmt = ("[process]", "", "[/process]")
+        case "trace":
+            fmt = ("[trace]", " ", "[/trace]")
+        case "debug":
+            fmt = ("[debug]", " ", "[/debug]")
         case "info":
-            fmt = ("[cyan]", "\u2139 ", "[/cyan]")
+            fmt = ("[info]", "\u2139 ", "[/info]")
         case "success":
             # no space after symbol
-            fmt = ("[green]", "\u2713", "[/green]")
+            fmt = ("[success]", "\u2713", "[/success]")
         case "warn":
-            fmt = ("[yellow]", "\u26a0 ", "[/yellow]")
+            fmt = ("[warn]", "\u26a0 ", "[/warn]")
         case "fail":
-            fmt = ("[red]", "\u2716 ", "[/red]")
-        case "process":
-            fmt = ("[dark_orange]", "", "[/dark_orange]")
-        case "item":
-            fmt = ("[green]", "", "[/green]")
+            fmt = ("[fail]", "\u2716 ", "[/fail]")
         case _:
-            raise ValueError(f"'{a_type}' is an invalid rich msg type.")
+            raise KeyError(f"'{a_type}' is an invalid rich msg type.")
 
     msg = fmt[0] + " ".join([fmt[1], text]) + fmt[2]
     return msg
 
 
-def print_msg(text: str, type: str | None = None) -> str:
+def print_msg(text: str, type: MsgType) -> str:
     """Sent message to console using `rich`.
 
     Args:
@@ -60,19 +81,17 @@ def print_msg(text: str, type: str | None = None) -> str:
         str: Formatted string to use by `rich`.
     """
     msg = create_msg(text, type=type)
-    console = Console()
     console.print(msg)
     return msg
 
 
-def print_modul(
-    modul, modul_type: str = "modul", doc_type: str = "doc", verbose: bool = True
-) -> str:
-    """Print message for module. Usually with `importlib`."""
-    msg = f"Processing '{modul.__name__}' \u2026"
-    msg = create_msg(msg, type=modul_type)
-    if verbose & (modul.__doc__ is not None):
-        msg = msg + "\n" + create_msg(modul.__doc__, type=doc_type)
-    console = Console()
-    console.print(msg)
-    return msg
+# def print_modul(
+#     modul, modul_type: str = "modul", doc_type: str = "doc", verbose: bool = True
+# ) -> str:
+#     """Print message for module. Usually with `importlib`."""
+#     msg = f"Processing '{modul.__name__}' \u2026"
+#     msg = create_msg(msg, type=modul_type)
+#     if verbose & (modul.__doc__ is not None):
+#         msg = msg + "\n" + create_msg(modul.__doc__, type=doc_type)
+#     console.print(msg)
+#     return msg

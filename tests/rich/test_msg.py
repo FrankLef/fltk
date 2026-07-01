@@ -1,17 +1,23 @@
 """Test the richmsg.py module."""
 
+import pytest
 from fltk.rich.print_msg import create_msg
+
+
+def test_msg_error():
+    with pytest.raises(KeyError):
+        create_msg(text="This is an information", type="X")
 
 
 def test_msg_info():
     text = "This is an information"
-    target = "[cyan]" + " ".join(["\u2139 ", text]) + "[/cyan]"
+    target = "[info]" + " ".join(["\u2139 ", text]) + "[/info]"
     out = create_msg(text=text, type="info")
     assert out == target
 
 
 def test_msg_process():
     text = "Processing something"
-    target = "[dark_orange]" + " ".join(["", text]) + "[/dark_orange]"
+    target = "[process]" + " ".join(["", text]) + "[/process]"
     out = create_msg(text=text, type="process")
     assert out == target
