@@ -3,21 +3,22 @@
 from collections.abc import ValuesView, Sequence
 from typing import Self
 from copy import deepcopy
+from .abc import DiczBase
 from .item import DiczItem
 
 
-class DiczLine:
+class DiczLine(DiczBase):
     def __init__(self, key: str):
         self.key = key
         self.coll: dict[str, DiczItem] = {}
 
-    def __repr__(self) -> str:
-        info: dict[str, str] = {
+    @property
+    def info(self) -> dict[str, str | int]:
+        info: dict[str, str | int] = {
             "key": self.key,
-            "nitems": str(self.nitems),
+            "nitems": self.nitems,
         }
-        msg: str = "\n".join([key + ": " + val for key, val in info.items()])
-        return msg
+        return info
 
     @property
     def nitems(self) -> int:
@@ -42,8 +43,9 @@ class DiczLine:
     def item(self, key) -> DiczItem:
         try:
             a_item = self.coll[key]
-        except KeyError:
-            raise KeyError(f"'{key}' is an invalid item key.")
+        except KeyError as e:
+            e.add_note(f"'{key}' is an invalid item key.")
+            raise
         return a_item
 
     def filter(self, item_nms: Sequence[str]) -> Self:

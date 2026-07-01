@@ -1,22 +1,23 @@
 from collections.abc import ValuesView, Sequence
 from typing import Self
+from .abc import DiczBase
 from .group import DiczGroup
 
 
-class DiczBag:
+class DiczBag(DiczBase):
     def __init__(self, key: str) -> None:
         self.key = key
         self.coll: dict[str, DiczGroup] = {}
 
-    def __repr__(self) -> str:
-        info: dict[str, str] = {
+    @property
+    def info(self) -> dict[str, str | int]:
+        info: dict[str, str | int] = {
             "key": self.key,
             "ngroups": str(self.ngroups),
             "nlines": str(self.nlines),
             "nitems": str(self.nitems),
         }
-        msg: str = "\n".join([key + ": " + val for key, val in info.items()])
-        return msg
+        return info
 
     @property
     def ngroups(self) -> int:

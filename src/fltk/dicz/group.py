@@ -2,24 +2,25 @@ from collections.abc import ValuesView, Sequence
 from typing import Any, Self, NamedTuple
 from copy import deepcopy
 
+from .abc import DiczBase
 from .line import DiczLine
 from .enums import DiczVar as vars
 from .get_namestupl import main as nmstupl
 
 
-class DiczGroup:
+class DiczGroup(DiczBase):
     def __init__(self, key: str):
         self.key = key
         self.coll: dict[str, DiczLine] = {}
 
-    def __repr__(self) -> str:
-        info: dict[str, str] = {
+    @property
+    def info(self) -> dict[str, str | int]:
+        info: dict[str, str | int] = {
             "key": self.key,
             "nlines": str(self.nlines),
             "nitems": str(self.nitems),
         }
-        msg: str = "\n".join([key + ": " + val for key, val in info.items()])
-        return msg
+        return info
 
     @property
     def nlines(self) -> int:
@@ -54,8 +55,9 @@ class DiczGroup:
     def line(self, key) -> DiczLine:
         try:
             a_line = self.coll[key]
-        except KeyError:
-            raise KeyError(f"'{key}' is an invalid line key.")
+        except KeyError as e:
+            e.add_note(f"'{key}' is an invalid line key.")
+            raise
         return a_line
 
     def filter(self, line_nms: Sequence[str]) -> Self:

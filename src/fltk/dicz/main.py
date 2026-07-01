@@ -1,31 +1,24 @@
 import pandas as pd
 
-from .bag import DiczBag
-# from .dicz_group import DiczGroup
-# from .dicz_line import DiczLine
-# from .dicz_item import DiczItem
 
-# from . import get_dicts
+from .bag import DiczBag
+
+from .abc import DiczBase
 from . import get_bag
 
-# type NamesArg = str | list[str] | None
-type ItemDict = dict[str, str]
-type LineDict = dict[str, ItemDict]
-type GroupDict = dict[str, LineDict]
 
-
-class Dicz:
+class Dicz(DiczBase):
     def __init__(self, name: str):
-        self.name = name
+        self.name: str = name
         self.coll: dict[str, DiczBag] = {}
 
-    def __repr__(self) -> str:
-        info: dict[str, str] = {
+    @property
+    def info(self) -> dict[str, str | int]:
+        info: dict[str, str | int] = {
             "name": self.name,
             "nbags": str(self.nbags),
         }
-        msg: str = "\n".join([key + ": " + val for key, val in info.items()])
-        return msg
+        return info
 
     @property
     def nbags(self) -> int:
