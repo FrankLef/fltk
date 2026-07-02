@@ -1,5 +1,3 @@
-"""Test the richmsg.py module."""
-
 import pytest
 from fltk.prnt.print_msg import create_msg
 

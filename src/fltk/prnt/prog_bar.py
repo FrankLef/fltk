@@ -7,15 +7,26 @@ from rich.progress import (
     TimeRemainingColumn,
 )
 
-# Define custom progress bar
-# ssource: https://timothygebhard.de/posts/richer-progress-bars-for-rich/
-progress_bar = Progress(
-    TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
-    BarColumn(),
-    MofNCompleteColumn(),
-    TextColumn("•"),
-    TimeElapsedColumn(),
-    TextColumn("•"),
-    TimeRemainingColumn(),
-    transient=True,
-)
+
+def get_progress_bar(transient: bool = False) -> Progress:
+    """Custom progress bar using rich.
+
+    Args:
+        transient (bool, optional): False: Last refeshed display remains in the terminal. True: Make display disappear on exit. Defaults to False.
+
+    Returns:
+        Progress: Customized profress bar.
+
+    References:
+        https://timothygebhard.de/posts/richer-progress-bars-for-rich/.
+    """
+    return Progress(
+        TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
+        BarColumn(),
+        MofNCompleteColumn(),
+        TextColumn("•"),
+        TimeElapsedColumn(),
+        TextColumn("•"),
+        TimeRemainingColumn(),
+        transient=transient,
+    )
