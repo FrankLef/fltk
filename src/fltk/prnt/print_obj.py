@@ -5,7 +5,7 @@ from great_tables import GT
 import plotly.graph_objects as go
 from rich.console import Console
 
-from fltk.rich.print_msg import custom_theme, print_msg, MsgType
+from fltk.prnt.print_msg import custom_theme, print_msg, MsgType
 
 console = Console(theme=custom_theme)
 

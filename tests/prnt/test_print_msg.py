@@ -1,7 +1,7 @@
 """Test the richmsg.py module."""
 
 import pytest
-from fltk.rich.print_msg import create_msg
+from fltk.prnt.print_msg import create_msg
 
 
 def test_msg_error():
