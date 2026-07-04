@@ -8,7 +8,7 @@ readme = "README.md"
 homepage = "https://github.com/FrankLef/fltk.git"
 repository = "https://github.com/FrankLef/fltk.git"
 # source: https://browniebroke.com/blog/convert-existing-poetry-to-src-layout/
-packages = [{include = "fltk", from = "src"}]
+packages = [{ include = "fltk", from = "src" }]
 
 [tool.poetry.urls]
 Changelog = "https://github.com/FrankLef/fltk.git/releases"
@@ -23,12 +23,12 @@ sqlalchemy-access = "^2.0.2"
 greenlet = "^3.2.2"
 pyodbc = "5.3.0"
 dynaconf = "^3.1.11"
-rich= "^12.5.1"
-typer = "^0.13.1"
+rich = "^12.5.1"
+typer = "^0.22.0"
 duckdb = "^1.4.1"
 openpyxl = "^3.1.5"
 numpy = "^2.3.4"
-pandas = "^2.3.3"
+pandas = "^3.0.0"
 sqlalchemy-utils = "^0.42.1"
 matplotlib = "^3.10.8"
 scikit-learn = "^1.8.0"
@@ -50,10 +50,7 @@ minversion = "7.0"
 addopts = "-ra -q"
 # source: https://browniebroke.com/blog/convert-existing-poetry-to-src-layout/
 pythonpath = ["src"]
-testpaths = [
-    "tests",
-    "integration",
-]
+testpaths = ["tests", "integration"]
 
 [tool.ruff]
 # source https://blog.jerrycodes.com/ruff-the-python-linter/
@@ -67,11 +64,7 @@ testpaths = [
 ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
-module = [
-    "ruamel.yaml",
-    "io",
-    "dynaconf"
-]
+module = ["ruamel.yaml", "io", "dynaconf"]
 ignore_missing_imports = true
 
 [build-system]
