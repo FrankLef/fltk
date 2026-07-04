@@ -1,37 +1,36 @@
-[tool.poetry]
+[project]
 name = "fltk"
 version = "0.1.0"
-description = "Ephel tollkit"
-authors = ["François Lefebvre <flefebvre01@hotmail.com>"]
+description = "Ephel toolkit"
+authors = [{ name = "François Lefebvre", email = "flefebvre01@hotmail.com" }]
 license = "MIT"
 readme = "README.md"
-homepage = "https://github.com/FrankLef/fltk.git"
-repository = "https://github.com/FrankLef/fltk.git"
+requires-python = ">=3.12"
+dependencies = [
+    "pandas>=3.0.0",
+    "numpy>=2.3.4",
+    "openpyxl>=3.1.5",
+    "SQLAlchemy>=2.0.0",
+    "sqlalchemy-access>=2.0.2",
+    "sqlalchemy-utils>=0.42.1",
+    "pyodbc>=5.3.0",
+    "greenlet>=3.2.2",
+    "dynaconf>=3.1.11",
+    "rich>=15.0.0",
+    "typer>=0.26.0",
+    "duckdb>=1.5.2",
+    "matplotlib>=3.10.8",
+    "scikit-learn>=1.8.0",
+]
 # source: https://browniebroke.com/blog/convert-existing-poetry-to-src-layout/
 packages = [{ include = "fltk", from = "src" }]
 
-[tool.poetry.urls]
+[project.urls]
+homepage = "https://github.com/FrankLef/fltk.git"
+repository = "https://github.com/FrankLef/fltk.git"
 Changelog = "https://github.com/FrankLef/fltk.git/releases"
 
-[tool.poetry.dependencies]
-# python changed to allow install of scipy
-python = "^3.12"
-SQLAlchemy = "^2.0.0"
-# sqlalchemy addin to connect to MS Access databases
-sqlalchemy-access = "^2.0.2"
-# greenlet version ^3.2.2 for python 3.14, it is a dependency of pyodbc
-greenlet = "^3.2.2"
-pyodbc = "5.3.0"
-dynaconf = "^3.1.11"
-rich = "^12.5.1"
-typer = "^0.22.0"
-duckdb = "^1.4.1"
-openpyxl = "^3.1.5"
-numpy = "^2.3.4"
-pandas = "^3.0.0"
-sqlalchemy-utils = "^0.42.1"
-matplotlib = "^3.10.8"
-scikit-learn = "^1.8.0"
+#[tool.poetry.dependencies]
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.6.2"
