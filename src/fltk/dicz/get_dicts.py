@@ -1,4 +1,6 @@
-import pandas as pd
+import polars as pl
+from collections import defaultdict
+from typing import Any
 
 from .enums import DiczVar as vars
 
@@ -7,22 +9,17 @@ type LineDict = dict[str, ItemDict]
 type GroupDict = dict[str, LineDict]
 
 
-def main(data: pd.DataFrame) -> GroupDict:
-    if data.empty:
+def main(data: pl.DataFrame) -> GroupDict:
+    if data.is_empty():
         raise ValueError("The data is empty.")
-    audit_columns(data)
+    audit_columns(data, vars=vars)
     filtered_data = rm_skipped(data)
-    the_dicts = get_dictionnaries(filtered_data)
-    return the_dicts
+    nested_dicts = get_nested_dicts(filtered_data)
+    return nested_dicts
 
 
-def audit_columns(data: pd.DataFrame) -> None:
+def audit_columns(data: pl.DataFrame, vars: Any) -> None:
     cols = data.columns
-
-    check = sum(cols.duplicated())
-    if check:
-        msg: str = f"Data has {check} duplicates in its columns."
-        raise KeyError(msg)
 
     reserved_nms = [x.value for x in vars]
     missing_nms = [x for x in reserved_nms if x not in cols]
@@ -31,32 +28,38 @@ def audit_columns(data: pd.DataFrame) -> None:
         raise KeyError(msg)
 
 
-def rm_skipped(data: pd.DataFrame) -> pd.DataFrame:
-    filtered_data = data[~data[vars.SKIPPED]]
+def rm_skipped(data: pl.DataFrame) -> pl.DataFrame:
+    filtered_data = data.filter(~pl.col(vars.SKIPPED))
     return filtered_data
 
 
-def get_dictionnaries(data) -> GroupDict:
-    groups = get_groups(data, col=vars.GROUP)
-    out = {nm: get_lines(df, col=vars.LINE) for nm, df in groups.items()}
-    return out
+def get_nested_dicts(data: pl.DataFrame) -> GroupDict:
+    # Define the nesting keys
+    nesting_keys = [vars.GROUP, vars.LINE]
+
+    # Initialize the nested structure
+    nested_dict = tree()
+    multilevel_dict = nested_dict
+
+    # Loop and dynamically separate keys from remaining columns
+    for row in data.iter_rows(named=True):
+        # Extract keys and remove them from the row dict
+        k1 = row.pop(nesting_keys[0])
+        k2 = row.pop(nesting_keys[1])
+
+        # The 'row' dictionary now only contains the remaining unknown columns
+        multilevel_dict[k1][k2] = row
+
+    nested_dicts = to_standard_dict(multilevel_dict)
+    return nested_dicts
 
 
-def get_groups(data: pd.DataFrame, col: str) -> dict[str, pd.DataFrame]:
-    nms = data[col].unique()
-    out = {nm: get_df(data, col=col, value=nm) for nm in nms}
-    return out
+def tree():
+    return defaultdict(tree)
 
 
-def get_lines(data: pd.DataFrame, col: str) -> LineDict:
-    nms = data[col].unique()
-    out = {
-        nm: get_df(data, col=col, value=nm).to_dict(orient="records")[0] for nm in nms
-    }
-    return out
-
-
-def get_df(data: pd.DataFrame, col: str, value: str) -> pd.DataFrame:
-    df = data[data[col] == value]
-    df.drop(columns=col, inplace=True)
-    return df
+def to_standard_dict(mlevel_dict):
+    # Convert back to standard dict for clean printing
+    if isinstance(mlevel_dict, defaultdict):
+        return {k: to_standard_dict(v) for k, v in mlevel_dict.items()}
+    return mlevel_dict

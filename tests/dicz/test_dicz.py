@@ -2,7 +2,9 @@
 
 import pytest
 from pathlib import Path
-import pandas as pd
+
+# import pandas as pd
+import polars as pl
 
 from fltk.dicz.main import Dicz
 
@@ -33,14 +35,14 @@ def test_dicz(dicz):
 
 
 def test_dicz_append(dicz, xlfile, xlsheet):
-    df = pd.read_excel(xlfile, sheet_name=xlsheet)
+    df = pl.read_excel(xlfile, sheet_name=xlsheet)
     dicz.append(key="bag1", data=df)
     assert dicz.nbags == 1
 
 
 @pytest.fixture
 def dicz1(dicz, xlfile, xlsheet):
-    df = pd.read_excel(xlfile, sheet_name=xlsheet)
+    df = pl.read_excel(xlfile, sheet_name=xlsheet)
     dicz.append(key="bag1", data=df)
     return dicz
 

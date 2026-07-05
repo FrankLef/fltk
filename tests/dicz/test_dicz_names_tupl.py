@@ -2,7 +2,7 @@
 
 import pytest
 from pathlib import Path
-import pandas as pd
+import polars as pl
 from typing import NamedTuple
 
 from fltk.dicz.main import Dicz
@@ -30,7 +30,7 @@ def xlsheet():
 
 @pytest.fixture
 def dicz1(dicz, xlfile, xlsheet):
-    df = pd.read_excel(xlfile, sheet_name=xlsheet)
+    df = pl.read_excel(xlfile, sheet_name=xlsheet)
     dicz.append(key="bag1", data=df)
     return dicz
 
