@@ -1,12 +1,12 @@
 from __future__ import annotations  # Must be at the top
 from typing import TYPE_CHECKING
-import pandas as pd
+import polars as pl
 
 if TYPE_CHECKING:
     from .main import MungBridge  # Only imported when checking types
 
 
-def get_periods(inst: MungBridge) -> pd.DataFrame:
+def get_periods(inst: MungBridge) -> pl.DataFrame:
     _data = inst.raw
     _period = inst.raw_vars.period
     _periods = inst.periods_vars
@@ -16,6 +16,6 @@ def get_periods(inst: MungBridge) -> pd.DataFrame:
         raise ValueError("There must be at least 2 distinct periods.")
     the_starts = the_periods[:-1]
     the_ends = the_periods[1:]
-    periods_df = pd.DataFrame({_periods.start: the_starts, _periods.end: the_ends})
-    assert not periods_df.empty, "Periods df is empty!"
+    periods_df = pl.DataFrame({_periods.start: the_starts, _periods.end: the_ends})
+    assert not periods_df.is_empty(), "Periods df is empty!"
     return periods_df

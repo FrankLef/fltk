@@ -1,4 +1,4 @@
-import pandas as pd
+import polars as pl
 
 from rich import print as rprint
 
@@ -55,7 +55,7 @@ class MungBridge(Mung):
 
     def load_raw_data(
         self,
-        data: pd.DataFrame,
+        data: pl.DataFrame,
         groups: tuple[str, ...],
         period: str,
         ratio_nm: str,

@@ -1,34 +1,41 @@
 from pathlib import Path
-import pandas as pd
+import polars as pl
+import xlsxwriter
 from rich.console import Console
 
 
-def to_excel(name: str, path: Path, dfs: dict[str, pd.DataFrame]) -> None:
+def to_excel(name: str, path: Path, dfs: dict[str, pl.DataFrame]) -> None:
     """Export data to excel.
 
     Args:
         name (str): Name of the object.
         path (Path): Path to xl file.
-        dfs (dict[str, pd.DataFrame]): Dictionary of dataframes.
+        dfs (dict[str, pl.DataFrame]): Dictionary of dataframes.
     """
     start_msg(name, path=path)
 
-    items_iter = iter(dfs.items())
+    # items_iter = iter(dfs.items())
 
-    sheet_nm, df = next(items_iter)
-    Console().print(f"[green]{sheet_nm}[/green]")
-    df.to_excel(path, sheet_name=sheet_nm, index=False, engine="openpyxl")
+    # sheet_nm, df = next(items_iter)
+    # Console().print(f"[green]{sheet_nm}[/green]")
+    # df.write_excel(path, worksheet=sheet_nm)
 
-    with pd.ExcelWriter(
-        path, mode="a", engine="openpyxl", if_sheet_exists="replace"
-    ) as writer:
-        while True:
-            try:
-                sheet_nm, df = next(items_iter)
-                Console().print(f"[green]{sheet_nm}[/green]")
-                df.to_excel(writer, sheet_name=sheet_nm, index=False)
-            except StopIteration:
-                break
+    # with pd.ExcelWriter(
+    #     path, mode="a", engine="openpyxl", if_sheet_exists="replace"
+    # ) as writer:
+    #     while True:
+    #         try:
+    #             sheet_nm, df = next(items_iter)
+    #             Console().print(f"[green]{sheet_nm}[/green]")
+    #             df.to_excel(writer, sheet_name=sheet_nm, index=False)
+    #         except StopIteration:
+    #             break
+
+    with xlsxwriter.Workbook(path) as workbook:
+        for sheet_nm, df in dfs.items():
+            # Polars handles writing directly to the xlsxwriter workbook object
+            df.write_excel(workbook=workbook, worksheet=sheet_nm)
+            Console().print(f"[green]{sheet_nm}[/green]")
 
 
 def start_msg(name: str, path: Path) -> str:

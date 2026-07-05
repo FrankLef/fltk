@@ -1,4 +1,4 @@
-import pandas as pd
+import polars as pl
 from pathlib import Path
 from datetime import datetime as dt
 
@@ -33,14 +33,18 @@ cols = (
     "num",
     "den",
 )
-raw_data = pd.read_excel(
+# raw_data = pl.read_excel(
+#     data_path,
+#     sheet_name=data_sheet,
+#     usecols=cols,
+#     engine="openpyxl",
+#     engine_kwargs={"data_only": True},
+# )
+raw_data = pl.read_excel(
     data_path,
     sheet_name=data_sheet,
-    usecols=cols,
-    engine="openpyxl",
-    engine_kwargs={"data_only": True},
+    columns=cols,
 )
-
 bridge.load_raw_data(
     raw_data,
     groups=("entity", "pertype"),
@@ -58,6 +62,6 @@ bridge.transform(verbose=True)
 
 print("\n", bridge, sep="")
 
-# print("\n", bridge.bridge.head(), sep="")
+print("\n", bridge.bridge.head(), sep="")
 
-# bridge.to_excel(out_path)
+bridge.to_excel(out_path)

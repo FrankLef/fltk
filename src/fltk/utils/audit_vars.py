@@ -1,9 +1,9 @@
-import pandas as pd
+import polars as pl
 
 
-def audit_missing(data: pd.DataFrame, vars: str | tuple[str, ...]) -> bool:
+def audit_missing(data: pl.DataFrame, vars: str | tuple[str, ...]) -> bool:
     """Validate if some variables are not found in the columns."""
-    cols = data.columns.to_list()
+    cols = data.columns
     missing_vars = [var for var in vars if var not in cols]
     if missing_vars:
         msg: str = f"{missing_vars} are not found in the column names."
@@ -11,9 +11,9 @@ def audit_missing(data: pd.DataFrame, vars: str | tuple[str, ...]) -> bool:
     return True
 
 
-def audit_illegal(data: pd.DataFrame, vars: str | tuple[str, ...]) -> bool:
+def audit_illegal(data: pl.DataFrame, vars: str | tuple[str, ...]) -> bool:
     """Validate if some columns have illegal names."""
-    cols = data.columns.to_list()
+    cols = data.columns
     illegal_vars = [var for var in vars if var in cols]
     if illegal_vars:
         msg = f"""
@@ -24,16 +24,16 @@ def audit_illegal(data: pd.DataFrame, vars: str | tuple[str, ...]) -> bool:
     return True
 
 
-def audit_keys(data: pd.DataFrame, keys: str | tuple[str, ...]) -> bool:
-    """Validate the keys."""
-    if isinstance(keys, str):
-        cols: str | list[str] = keys
-    else:
-        cols = list(keys)
-    unique_counts = data[cols].value_counts()
-    ndistinct = len(unique_counts)
-    check = data.shape[0] - ndistinct
-    if check:
-        msg: str = f"Data has {check} duplicates in the keys."
-        raise KeyError(msg)
-    return True
+# def audit_keys(data: pd.DataFrame, keys: str | tuple[str, ...]) -> bool:
+#     """Validate the keys."""
+#     if isinstance(keys, str):
+#         cols: str | list[str] = keys
+#     else:
+#         cols = list(keys)
+#     unique_counts = data[cols].value_counts()
+#     ndistinct = len(unique_counts)
+#     check = data.shape[0] - ndistinct
+#     if check:
+#         msg: str = f"Data has {check} duplicates in the keys."
+#         raise KeyError(msg)
+#     return True
