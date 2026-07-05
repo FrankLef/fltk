@@ -7,20 +7,18 @@ license = "MIT"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "pandas>=3.0.0",
+    "polars>=1.42.0",
     "numpy>=2.3.4",
     "openpyxl>=3.1.5",
     "SQLAlchemy>=2.0.0",
     "sqlalchemy-access>=2.0.2",
     "sqlalchemy-utils>=0.42.1",
     "pyodbc>=5.3.0",
-    "greenlet>=3.2.2",
+    # "greenlet>=3.2.2",
     "dynaconf>=3.1.11",
     "rich>=15.0.0",
     "typer>=0.26.0",
     "duckdb>=1.5.2",
-    "matplotlib>=3.10.8",
-    "scikit-learn>=1.8.0",
 ]
 # source: https://browniebroke.com/blog/convert-existing-poetry-to-src-layout/
 packages = [{ include = "fltk", from = "src" }]
@@ -33,16 +31,16 @@ Changelog = "https://github.com/FrankLef/fltk.git/releases"
 #[tool.poetry.dependencies]
 
 [tool.poetry.group.dev.dependencies]
-pre-commit = "^3.6.2"
+pre-commit = "^4.6.0"
 pre-commit-hooks = "^5.0.0"
+pytest = "^9.0.0"
 mypy = "^0.971"
 typeguard = "^2.13.3"
 mkdocs = "^1.5.3"
 mkdocstrings = "^0.19.0"
 mkdocs-material = "^8.5.4"
 mkdocstrings-python = "^0.7.1"
-pytest = "^9.0.2"
-ruff = "^0.14.14"
+ipykernel = "^6.29.5"
 
 [tool.pytest.ini_options]
 minversion = "7.0"
