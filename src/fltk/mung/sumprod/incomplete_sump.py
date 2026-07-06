@@ -35,5 +35,4 @@ def get_incomplete_sump(inst: MungSumprod) -> dict[str, pl.DataFrame]:
 
     uniq_cols = list(_groups) + [_idx]
     incomplete_uniq_df = incomplete_df.select(uniq_cols).unique()
-    # breakpoint()
     return {"incomplete": incomplete_df, "incomplete_uniq": incomplete_uniq_df}

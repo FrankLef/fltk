@@ -1,5 +1,5 @@
 from __future__ import annotations  # Must be at the top
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Final
 import polars as pl
 
 if TYPE_CHECKING:
@@ -7,22 +7,25 @@ if TYPE_CHECKING:
 
 
 def flag_incomplete(inst: MungSumprod) -> pl.DataFrame:
+    FLAG_COL: Final[str] = "incomplete_sump"
     calc_df = inst.calc
     _idx = inst.raw_vars.idx  # the index column in the raw data
     _groups = inst.raw_vars.groups
 
     incomplete_uniq_df = inst.incomplete_uniq
 
-    flag_col = "incomplete_sump"
-
     _join_cols = list(_groups) + [_idx]
-    breakpoint()
+
     augmented_calc = calc_df.join(
         incomplete_uniq_df.select(_join_cols).with_columns(
-            pl.lit(True).alias(flag_col)
+            pl.lit(True).alias(FLAG_COL)
         ),
         on=_join_cols,
         how="left",
-    ).with_columns(pl.col(flag_col).fill_null(False))
+    ).with_columns(pl.col(FLAG_COL).fill_null(False))
+
+    if calc_df.height != augmented_calc.height:
+        msg: str = f"Calc has {calc_df.height} whereas augmented_calc has {augmented_calc.height}. Weird!"
+        raise AssertionError(msg)
 
     return augmented_calc

@@ -19,12 +19,6 @@ def calculate(inst: MungSumprod) -> pl.DataFrame:
 
     merged_df = raw_df.join(sump_df, left_on=_idx, right_on=_idx_from, how="inner")
 
-    # df = pd.merge(
-    #     left=inst.valid,
-    #     right=inst.sump,
-    #     left_on=inst.raw_vars.idx,
-    #     right_on=inst.sump_vars.idx_from,
-    # )
     calc_newval = pl.col(_sump_coef) * pl.col(inst.raw_vars.value)
     merged_df = merged_df.with_columns(calc_newval.alias(_newvalue))
 
@@ -32,7 +26,4 @@ def calculate(inst: MungSumprod) -> pl.DataFrame:
     calc_data = merged_df.group_by(calc_groups).agg(pl.col(_newvalue).sum())
     calc_data = calc_data.sort(calc_groups)
     calc_data = calc_data.rename({_idx_to: _idx})
-    # sumkeys = list(inst.raw_vars.groups)
-    # sumkeys.append(inst.sump_vars.idx_to)
-    # calc_data = df.groupby(by=sumkeys, as_index=False)[inst.raw_vars.newvalue].sum()
     return calc_data

@@ -1,6 +1,5 @@
 import polars as pl
 from pathlib import Path
-from rich import print as rprint
 
 from ..abc import Mung
 from ...utils.value_cls import StrName
@@ -11,11 +10,7 @@ from . import load_sump as lc
 from . import load_raw_data as lrd
 from . import incomplete_sump as incomp
 from . import incomplete_flag as incomp_flag
-
-# from . import invalid_data as gid
-# from . import valid_data as gvd
 from . import calculate as calc
-from . import add_calc as ac
 
 
 class MungSumprod(Mung):
@@ -97,71 +92,29 @@ class MungSumprod(Mung):
         incomplete_dfs = incomp.get_incomplete_sump(self)
         self.incomplete = incomplete_dfs["incomplete"]
         self.incomplete_uniq = incomplete_dfs["incomplete_uniq"]
-        # self.invalid: pl.DataFrame = gid.get_invalid_data(self)
 
-    def fit_transform(
-        self, is_fillna: bool, is_merged: bool, verbose: bool = False
-    ) -> None:
+    def fit_transform(self) -> None:
         """Process the fit and transform steps in a sequence.
 
         Args:
             is_merged (bool, optional): If True, merge the calculated data to the original dataframe. Otherwise, don't do it.
             verbose (bool, optional): If True, display info. Defaults to False.
         """
-        self.fit(is_fillna=is_fillna, verbose=verbose)
-        self.transform(is_merged=is_merged, verbose=verbose)
+        self.fit()
+        self.transform()
 
-    def fit(self, is_fillna: bool = False, verbose: bool = False) -> None:
-        """Fit the data. Find invalid and undetermined data.
-
-        Args:
-            is_fillna (bool): If True, replace missing values by zero. If False, eliminate rows summprod that have invalid input, e.g. when computing period values.
-            verbose (bool, optional): If True, display info. Defaults to False.
-        """
+    def fit(self) -> None:
+        """Fit the data. Find incomplete data."""
         self.get_incomplete_sump()
-        # if is_fillna:
-        #     self.fillna()
-        #     self.invalid = pl.DataFrame()
-        # else:
-        #     self.get_invalid_data()
-        #     self.get_valid_data()
-        # if verbose:
-        #     rprint(f"{self.name} MungSumprod.fit() completed.")
 
-    def transform(self, is_merged: bool, verbose: bool = False) -> None:
-        """Do the calculations.
-
-        Args:
-            is_merged (bool, optional): If True, merge the calculated data to the original dataframe. Otherwise, don't do it.
-            verbose (bool, optional): If True, display info. Defaults to False.
-        """
+    def transform(self) -> None:
+        """Do the calculations."""
         self.calculate()
-
-        # if is_merged:
-        #     self.output = self.add_calc()
-        # else:
-        #     self.output = self.calc
-        # if verbose:
-        #     rprint(f"{self.name} MungSumprod.transform() completed.")
-
-    def get_valid_data(self) -> None:
-        try:
-            self.valid = gvd.get_valid_data(self)
-        except AttributeError as e:
-            msg: str = "Attribute Error: Are you sure you ran fit()?"
-            e.add_note(msg)
-            raise
-
-    def fillna(self) -> None:
-        self.valid = gvd.fill_na(self)
 
     def calculate(self) -> None:
         """Calculate sumprods."""
         self.calc = calc.calculate(self)
         self.calc_aug = incomp_flag.flag_incomplete(self)
-
-    def add_calc(self) -> pl.DataFrame:
-        return ac.add_calc(self)
 
     @property
     def dfs(self):
@@ -170,7 +123,6 @@ class MungSumprod(Mung):
             "sumprod": self.sump,
             "incomplete": self.incomplete,
             "incomplete_uniq": self.incomplete_uniq,
-            "calc": self.calc,
-            "calc_aug": self.calc_aug,
+            "calc": self.calc_aug,
         }
         return dfs

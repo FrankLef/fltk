@@ -23,12 +23,7 @@ sump_df = pl.read_excel(sumprod_path, sheet_name="concepts_adds")
 sumprod.load_sump(sump_df)
 # sumprod.sump_df.info()
 
-raw_data = pd.read_excel(
-    sumprod_path,
-    sheet_name=data_sheet,
-    engine="openpyxl",
-    engine_kwargs={"data_only": True},
-)
+raw_data = pl.read_excel(sumprod_path, sheet_name=data_sheet)
 # raw_data.info()
 
 sumprod.load_raw_data(
@@ -39,9 +34,9 @@ sumprod.load_raw_data(
     newvalue=newvalue_var,
 )
 
-sumprod.fit(is_fillna=True)
-sumprod.transform(is_merged=False)
+sumprod.fit()
+sumprod.transform()
 
 print("\n", sumprod, sep="")
 
-# sumprod.to_excel(out_path)
+sumprod.to_excel(out_path)
