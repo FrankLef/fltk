@@ -26,8 +26,8 @@ sumprod.load_raw_data(
     newvalue=newvalue_var,
 )
 
-sumprod.fit(is_fillna=False)
-sumprod.transform(is_merged=True)
+sumprod.fit()
+sumprod.transform()
 
 print("\n", sumprod, sep="")
 

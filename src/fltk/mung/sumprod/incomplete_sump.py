@@ -33,6 +33,5 @@ def get_incomplete_sump(inst: MungSumprod) -> dict[str, pl.DataFrame]:
     incomplete_df = incomplete_df.sort((_idx_to, _idx_from))
     incomplete_df = incomplete_df.rename({_idx_to: _idx})
 
-    uniq_cols = list(_groups) + [_idx]
-    incomplete_uniq_df = incomplete_df.select(uniq_cols).unique()
+    incomplete_uniq_df = incomplete_df.select(raw_cols).unique()
     return {"incomplete": incomplete_df, "incomplete_uniq": incomplete_uniq_df}
