@@ -14,26 +14,9 @@ def to_excel(name: str, path: Path, dfs: dict[str, pl.DataFrame]) -> None:
     """
     start_msg(name, path=path)
 
-    # items_iter = iter(dfs.items())
-
-    # sheet_nm, df = next(items_iter)
-    # Console().print(f"[green]{sheet_nm}[/green]")
-    # df.write_excel(path, worksheet=sheet_nm)
-
-    # with pd.ExcelWriter(
-    #     path, mode="a", engine="openpyxl", if_sheet_exists="replace"
-    # ) as writer:
-    #     while True:
-    #         try:
-    #             sheet_nm, df = next(items_iter)
-    #             Console().print(f"[green]{sheet_nm}[/green]")
-    #             df.to_excel(writer, sheet_name=sheet_nm, index=False)
-    #         except StopIteration:
-    #             break
-
-    with xlsxwriter.Workbook(path) as workbook:
+    # NOTE: nan_inf_to_errors allows to send NaN and in to excel. Otherwise an exception will be triggered.
+    with xlsxwriter.Workbook(path, {"nan_inf_to_errors": True}) as workbook:
         for sheet_nm, df in dfs.items():
-            # Polars handles writing directly to the xlsxwriter workbook object
             df.write_excel(workbook=workbook, worksheet=sheet_nm)
             Console().print(f"[green]{sheet_nm}[/green]")
 

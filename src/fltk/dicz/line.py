@@ -9,13 +9,12 @@ from .item import DiczItem
 
 class DiczLine(DiczBase):
     def __init__(self, key: str):
-        self.key = key
+        super().__init__(key=key)
         self.coll: dict[str, DiczItem] = {}
 
     @property
     def info(self) -> dict[str, str | int]:
         info: dict[str, str | int] = {
-            "key": self.key,
             "nitems": self.nitems,
         }
         return info

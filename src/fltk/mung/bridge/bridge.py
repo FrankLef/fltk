@@ -17,9 +17,7 @@ def get_bridge(inst: MungBridge) -> pl.DataFrame:
 
 def filter_data_with_ratios(inst: MungBridge) -> pl.DataFrame:
     _ratio = inst.raw_vars.ratio_nm
-    # data = inst.raw.copy()
     data = inst.raw
-    # filtered_data = data[data[inst.raw_vars.ratio_nm].isin(inst.ratios)]
     filtered_data = data.filter(pl.col(_ratio).is_in(inst.ratios))
     if filtered_data.is_empty():
         raise ValueError("No data returned for any of the ratios.")
@@ -34,28 +32,14 @@ def merge_data_with_periods(inst: MungBridge, data: pl.DataFrame) -> pl.DataFram
     _start = inst.periods_vars.start
     _end = inst.periods_vars.end
 
-    # data = data[list(inst.raw_vars.vars)]
     data = data.select(inst.raw_vars.vars)
-    # bridge_start = _periods.merge(
-    #     right=data, how="inner", left_on=_start, right_on=_period
-    # )
     bridge_start = _periods.join(data, left_on=_start, right_on=_period)
-    # bridge_start.drop(columns=_period, inplace=True)
 
-    # bridge_start = bridge_start.drop(_period)
-
-    # bridge_end = _periods.merge(right=data, how="inner", left_on=_end, right_on=_period)
     bridge_end = _periods.join(data, how="inner", left_on=_end, right_on=_period)
-    # bridge_end.drop(columns=[_period, _start], inplace=True)
-    # bridge_end.drop([_period, _start])
     _on = (*_groups, _ratio_nm, _end)
     suffixes = inst.add_suffix("")
-    # bridge_df = bridge_start.merge(
-    #     right=bridge_end, how="inner", on=_on, suffixes=suffixes
-    # )
     suffixes = inst.add_suffix("")
     bridge_df = bridge_start.join(bridge_end, how="inner", on=_on, suffix=suffixes[1])
-    # breakpoint()
     if bridge_df.is_empty():
         raise ValueError("No data returned for the given periods.")
     return bridge_df

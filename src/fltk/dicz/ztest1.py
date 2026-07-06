@@ -1,5 +1,5 @@
 from pathlib import Path
-import pandas as pd
+import polars as pl
 from datetime import datetime as dt
 
 from fltk.dicz.main import Dicz
@@ -11,9 +11,9 @@ xlsheet: str = "data1"
 out_fn = f"dicz1_z1_{dt.now().date().isoformat()}.xlsx"
 out_path = Path(__file__).parent.joinpath(out_fn)
 
-dicz = Dicz(name="ztest1")
+dicz = Dicz(key="ztest1")
 
-data = pd.read_excel(xlpath, sheet_name=xlsheet)
+data = pl.read_excel(xlpath, sheet_name=xlsheet)
 dicz.append(key="bag1", data=data)
 print("\ndicz:\n", dicz, "\n", sep="")
 

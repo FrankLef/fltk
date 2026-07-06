@@ -2,8 +2,14 @@ from abc import ABC, abstractmethod
 
 
 class DiczBase(ABC):
+    def __init__(self, key: str) -> None:
+        self.key: str = key
+
     def __repr__(self) -> str:
-        msg: str = "\n".join([key + ": " + str(val) for key, val in self.info.items()])
+        title = f"{type(self).__name__}: {self.key}"
+        msg = title + "\n" + ("-" * len(title)) + "\n"
+        for key, value in self.info.items():
+            msg += f"{key:<10}: {value}\n"
         return msg
 
     @property

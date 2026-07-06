@@ -1,4 +1,4 @@
-import pandas as pd
+import polars as pl
 from pathlib import Path
 from datetime import datetime as dt
 
@@ -13,12 +13,13 @@ out_path = fixtures_path.joinpath(out_fn)
 
 ewm = MungEwm(name="testEwmZ1")
 
-raw_data = pd.read_excel(
-    data_path,
-    sheet_name=data_sheet,
-    engine="openpyxl",
-    engine_kwargs={"data_only": True},
-)
+# raw_data = pl.read_excel(
+#     data_path,
+#     sheet_name=data_sheet,
+#     engine="openpyxl",
+#     engine_kwargs={"data_only": True},
+# )
+raw_data = pl.read_excel(data_path, sheet_name=data_sheet)
 
 ewm.load_raw_data(
     raw_data,
@@ -32,5 +33,4 @@ ewm.transform(verbose=True)
 
 print("\n", ewm, sep="")
 
-
-# ewm.to_excel(out_path)
+ewm.to_excel(out_path)

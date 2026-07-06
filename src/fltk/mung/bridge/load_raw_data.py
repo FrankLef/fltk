@@ -12,5 +12,4 @@ def load_raw_data(inst: MungBridge, data: pl.DataFrame) -> pl.DataFrame:
     if data.is_empty():
         raise ValueError("The raw data is empty.")
     audit.audit_missing(data, vars=inst.raw_vars.vars)
-    # audit.audit_keys(data, keys=inst.raw_vars.keys)
     return data

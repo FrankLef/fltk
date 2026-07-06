@@ -10,13 +10,12 @@ from .get_namestupl import main as nmstupl
 
 class DiczGroup(DiczBase):
     def __init__(self, key: str):
-        self.key = key
+        super().__init__(key=key)
         self.coll: dict[str, DiczLine] = {}
 
     @property
     def info(self) -> dict[str, str | int]:
         info: dict[str, str | int] = {
-            "key": self.key,
             "nlines": str(self.nlines),
             "nitems": str(self.nitems),
         }

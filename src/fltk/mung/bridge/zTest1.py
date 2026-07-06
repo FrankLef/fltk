@@ -62,6 +62,6 @@ bridge.transform(verbose=True)
 
 print("\n", bridge, sep="")
 
-print("\n", bridge.bridge.head(), sep="")
+# print("\n", bridge.bridge.head(), sep="")
 
-bridge.to_excel(out_path)
+# bridge.to_excel(out_path)

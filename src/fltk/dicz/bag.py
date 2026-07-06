@@ -6,13 +6,12 @@ from .group import DiczGroup
 
 class DiczBag(DiczBase):
     def __init__(self, key: str) -> None:
-        self.key = key
+        super().__init__(key=key)
         self.coll: dict[str, DiczGroup] = {}
 
     @property
     def info(self) -> dict[str, str | int]:
         info: dict[str, str | int] = {
-            "key": self.key,
             "ngroups": str(self.ngroups),
             "nlines": str(self.nlines),
             "nitems": str(self.nitems),

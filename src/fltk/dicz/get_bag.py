@@ -1,4 +1,4 @@
-import pandas as pd
+import polars as pl
 
 from .bag import DiczBag
 from .group import DiczGroup
@@ -11,7 +11,7 @@ type LineDict = dict[str, ItemDict]
 type GroupDict = dict[str, LineDict]
 
 
-def main(key: str, data: pd.DataFrame) -> DiczBag:
+def main(key: str, data: pl.DataFrame) -> DiczBag:
     dicts: GroupDict = get_dicts.main(data)
     bag: DiczBag = build_bag(key=key, dicts=dicts)
     nlines = sum([len(x) for x in dicts.values()])

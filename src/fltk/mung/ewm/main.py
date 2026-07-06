@@ -1,4 +1,4 @@
-import pandas as pd
+import polars as pl
 from typing import Final
 from rich import print as rprint
 
@@ -7,7 +7,7 @@ from ...utils.value_cls import StrName
 
 from . import vars
 from . import load_raw_data as lrd
-from . import base
+
 from . import ewm
 
 
@@ -35,7 +35,7 @@ class MungEwm(Mung):
 
     def load_raw_data(
         self,
-        data: pd.DataFrame,
+        data: pl.DataFrame,
         groups: tuple[str, ...],
         period: str,
         values: tuple[str, ...],
@@ -52,10 +52,9 @@ class MungEwm(Mung):
         self.transform(verbose=verbose)
 
     def fit(self, verbose: bool = False) -> None:
-        self.base = base.get_base(self)
         if verbose:
             type_nm = type(self).__name__
-            rprint(f"{self.name} {type_nm}.fit() completed.")
+            rprint(f"{self.name} {type_nm}.fit() not used.")
 
     def transform(self, verbose: bool = False) -> None:
         self.ewm = ewm.get_ewm(self)
@@ -67,7 +66,6 @@ class MungEwm(Mung):
     def dfs(self):
         dfs = {
             "raw": self.raw,
-            "base": self.base,
             "ewm": self.ewm,
         }
         return dfs

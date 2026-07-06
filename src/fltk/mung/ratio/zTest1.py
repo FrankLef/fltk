@@ -1,4 +1,4 @@
-import pandas as pd
+import polars as pl
 from pathlib import Path
 from datetime import datetime as dt
 
@@ -12,24 +12,27 @@ out_path = fixtures_path.joinpath(out_fn)
 ratio_sheet: str = "concepts_ratios"
 data_sheet: str = "data1"
 
-ratios_df = pd.read_excel(
-    ratio_path,
-    sheet_name=ratio_sheet,
-    engine="openpyxl",
-    engine_kwargs={"data_only": True},
-)
+# ratios_df = pl.read_excel(
+#     ratio_path,
+#     sheet_name=ratio_sheet,
+#     engine="openpyxl",
+#     engine_kwargs={"data_only": True},
+# )
+ratios_df = pl.read_excel(ratio_path, sheet_name=ratio_sheet)
 
 ratio = MungRatio(name="testRatioZ1", data=ratios_df)
 
 # ratio.load_ratios(ratios_df)
 
 
-raw_data = pd.read_excel(
-    ratio_path,
-    sheet_name=data_sheet,
-    engine="openpyxl",
-    engine_kwargs={"data_only": True},
-)
+# raw_data = pl.read_excel(
+#     ratio_path,
+#     sheet_name=data_sheet,
+#     engine="openpyxl",
+#     engine_kwargs={"data_only": True},
+# )
+raw_data = pl.read_excel(ratio_path, sheet_name=data_sheet)
+
 group_vars = ["entity", "pertype", "period"]
 ratio.load_raw_data(
     raw_data,
@@ -43,4 +46,4 @@ ratio.transform(is_cleaned=True)
 
 print("\n", ratio, sep="")
 
-# ratio.to_excel(out_path)
+ratio.to_excel(out_path)

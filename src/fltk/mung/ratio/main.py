@@ -1,4 +1,4 @@
-import pandas as pd
+import polars as pl
 from rich import print as rprint
 
 from ..abc import Mung
@@ -16,7 +16,7 @@ class MungRatio(Mung):
     def __init__(
         self,
         name: str,
-        data: pd.Dataframe,
+        data: pl.DataFrame,
         concept_ratio: str = "concept_ratio",
         concept_num: str = "concept_num",
         concept_den: str = "concept_den",
@@ -30,7 +30,7 @@ class MungRatio(Mung):
 
         Args:
             name (str): Name to identify the object.
-            data (pd.Dataframe): Ratio definitions.
+            data (pl.DataFrame): Ratio definitions.
             concept_ratio (str, optional): Names of ratio. Defaults to "concept_ratio".
             concept_num (str, optional): Names of concepts in numerator. Defaults to "concept_num".
             concept_den (str, optional): Names of Concepts in denominator. Defaults to "concept_den".
@@ -60,7 +60,7 @@ class MungRatio(Mung):
 
     def load_raw_data(
         self,
-        data: pd.DataFrame,
+        data: pl.DataFrame,
         concept: str,
         value: str,
         groups: tuple[str, ...],
@@ -68,7 +68,7 @@ class MungRatio(Mung):
         """Load the data for processing.
 
         Args:
-            data (pd.DataFrame): Dataframe to process.
+            data (pl.DataFrame): Dataframe to process.
             concept (str): Column with the concept used for calculations.
             value (str): Column with values used for calculations.
             group (tuple[str, ...]): Columns making up a composite key.
@@ -79,7 +79,7 @@ class MungRatio(Mung):
         self.raw = data
 
     def merge_data(self) -> None:
-        self.merged: pd.DataFrame = md.merge_data(self)
+        self.merged: pl.DataFrame = md.merge_data(self)
 
     def fit_transform(self, is_cleaned: bool, verbose: bool = False) -> None:
         """Process the the fit and transform steps in sequence.
@@ -125,8 +125,13 @@ class MungRatio(Mung):
         _value_den = self.ratios_vars.value_den
         df = self.calc
         cols = (_value_ratio, _value_num, _value_den)
-        df.replace([float("inf"), float("-inf")], value=None, inplace=True)
-        df.dropna(subset=cols, inplace=True)
+        df = df.with_columns(
+            pl.when(pl.col(cols).is_infinite())
+            .then(None)
+            .otherwise(pl.col(cols))
+            .name.keep()
+        )
+        df = df.drop_nulls(cols)
 
     @property
     def dfs(self):
