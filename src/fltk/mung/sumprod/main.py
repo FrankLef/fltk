@@ -1,4 +1,4 @@
-import pandas as pd
+import polars as pl
 from pathlib import Path
 from rich import print as rprint
 
@@ -9,8 +9,11 @@ from . import vars
 from . import load_mat_xl as lmx
 from . import load_sump as lc
 from . import load_raw_data as lrd
-from . import invalid_data as gid
-from . import valid_data as gvd
+from . import incomplete_sump as incomp
+from . import incomplete_flag as incomp_flag
+
+# from . import invalid_data as gid
+# from . import valid_data as gvd
 from . import calculate as calc
 from . import add_calc as ac
 
@@ -40,24 +43,24 @@ class MungSumprod(Mung):
             sump_coef=StrName(sump_coef),
             sump_value=StrName(sump_value),
         )
-        self.sump = pd.DataFrame()
+        self.sump = pl.DataFrame()
 
     def _init_sump_vars(self) -> None:
         self._sump_vars: list[str] = []
         self._sump_keys: list[str] = []
         self._sump_vars_base: list[str] = []
 
-    def load_sump(self, data: pd.DataFrame) -> None:
+    def load_sump(self, data: pl.DataFrame) -> None:
         """Load sumproduct specifications from a pandas dataframe.
 
         Args:
-            data (pd.DataFrame): Dataframe of sumproduct specifications.
+            data (pl.DataFrame): Dataframe of sumproduct specifications.
         """
         lc.load_sump(self, data=data)
 
     def load_raw_data(
         self,
-        data: pd.DataFrame,
+        data: pl.DataFrame,
         idx: str,
         value: str,
         groups: tuple[str, ...],
@@ -66,7 +69,7 @@ class MungSumprod(Mung):
         """Raw data to process.
 
         Args:
-            data (pd.DataFrame): Raw data dataframe.
+            data (pl.DataFrame): Raw data dataframe.
             idx (str): Column with the concept used for calculations.
             value (str): Column with values used for calculations.
             groups (tuple[str, ...]): Columns making up a composite key.
@@ -75,7 +78,7 @@ class MungSumprod(Mung):
         self.raw_vars = vars.RawVars(
             groups=groups, idx=idx, value=value, newvalue=newvalue
         )
-        self.raw: pd.DataFrame = pd.DataFrame()
+        self.raw: pl.DataFrame = pl.DataFrame()
 
         data = lrd.load_raw_data(self, data=data)
         self.raw = data
@@ -90,8 +93,11 @@ class MungSumprod(Mung):
         df = lmx.load_mat_from_xl(self, path=path, sheet_nm=sheet_nm)
         self.load_sump(df)
 
-    def get_invalid_data(self) -> None:
-        self.invalid: pd.DataFrame = gid.get_invalid_data(self)
+    def get_incomplete_sump(self) -> None:
+        incomplete_dfs = incomp.get_incomplete_sump(self)
+        self.incomplete = incomplete_dfs["incomplete"]
+        self.incomplete_uniq = incomplete_dfs["incomplete_uniq"]
+        # self.invalid: pl.DataFrame = gid.get_invalid_data(self)
 
     def fit_transform(
         self, is_fillna: bool, is_merged: bool, verbose: bool = False
@@ -105,21 +111,22 @@ class MungSumprod(Mung):
         self.fit(is_fillna=is_fillna, verbose=verbose)
         self.transform(is_merged=is_merged, verbose=verbose)
 
-    def fit(self, is_fillna: bool, verbose: bool = False) -> None:
+    def fit(self, is_fillna: bool = False, verbose: bool = False) -> None:
         """Fit the data. Find invalid and undetermined data.
 
         Args:
             is_fillna (bool): If True, replace missing values by zero. If False, eliminate rows summprod that have invalid input, e.g. when computing period values.
             verbose (bool, optional): If True, display info. Defaults to False.
         """
-        if is_fillna:
-            self.fillna()
-            self.invalid = pd.DataFrame()
-        else:
-            self.get_invalid_data()
-            self.get_valid_data()
-        if verbose:
-            rprint(f"{self.name} MungSumprod.fit() completed.")
+        self.get_incomplete_sump()
+        # if is_fillna:
+        #     self.fillna()
+        #     self.invalid = pl.DataFrame()
+        # else:
+        #     self.get_invalid_data()
+        #     self.get_valid_data()
+        # if verbose:
+        #     rprint(f"{self.name} MungSumprod.fit() completed.")
 
     def transform(self, is_merged: bool, verbose: bool = False) -> None:
         """Do the calculations.
@@ -129,12 +136,13 @@ class MungSumprod(Mung):
             verbose (bool, optional): If True, display info. Defaults to False.
         """
         self.calculate()
-        if is_merged:
-            self.output = self.add_calc()
-        else:
-            self.output = self.calc
-        if verbose:
-            rprint(f"{self.name} MungSumprod.transform() completed.")
+
+        # if is_merged:
+        #     self.output = self.add_calc()
+        # else:
+        #     self.output = self.calc
+        # if verbose:
+        #     rprint(f"{self.name} MungSumprod.transform() completed.")
 
     def get_valid_data(self) -> None:
         try:
@@ -150,8 +158,9 @@ class MungSumprod(Mung):
     def calculate(self) -> None:
         """Calculate sumprods."""
         self.calc = calc.calculate(self)
+        self.calc_aug = incomp_flag.flag_incomplete(self)
 
-    def add_calc(self) -> pd.DataFrame:
+    def add_calc(self) -> pl.DataFrame:
         return ac.add_calc(self)
 
     @property
@@ -159,9 +168,9 @@ class MungSumprod(Mung):
         dfs = {
             "raw data": self.raw,
             "sumprod": self.sump,
-            "invalid": self.invalid,
-            "valid": self.valid,
+            "incomplete": self.incomplete,
+            "incomplete_uniq": self.incomplete_uniq,
             "calc": self.calc,
-            "output": self.output,
+            "calc_aug": self.calc_aug,
         }
         return dfs

@@ -1,4 +1,4 @@
-import pandas as pd
+import polars as pl
 from pathlib import Path
 from datetime import datetime as dt
 
@@ -16,12 +16,7 @@ newvalue_var = "rolly_amt"
 sumprod = MungSumprod(name="testSumprodZ1", idx_to="idx")
 sumprod.load_mat_from_xl(sumprod_path, sheet_nm=idx_sheet)
 
-raw_data = pd.read_excel(
-    sumprod_path,
-    sheet_name=data_sheet,
-    engine="openpyxl",
-    engine_kwargs={"data_only": True},
-)
+raw_data = pl.read_excel(sumprod_path, sheet_name=data_sheet)
 
 sumprod.load_raw_data(
     raw_data,

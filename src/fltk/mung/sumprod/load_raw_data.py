@@ -1,30 +1,29 @@
 from __future__ import annotations  # Must be at the top
 from typing import TYPE_CHECKING
-import pandas as pd
+import polars as pl
 from rich.prompt import Confirm
 
-from ...utils import audit_vars as audit
 
 if TYPE_CHECKING:
     from .main import MungSumprod  # Only imported when checking types
 
 
-def load_raw_data(inst: MungSumprod, data: pd.DataFrame) -> pd.DataFrame:
+def load_raw_data(inst: MungSumprod, data: pl.DataFrame) -> pl.DataFrame:
     _vars = inst.raw_vars
-    if inst.sump.empty:
+    if inst.sump.is_empty():
         msg: str = "You must load the matrix before the data."
         raise ValueError(msg)
-    if data.empty:
+    if data.is_empty():
         raise ValueError("The raw data is empty.")
     validate_data_names(inst, data=data, newvalue_var=_vars.newvalue)
-    audit.audit_keys(data, keys=_vars.keys)
     return data
 
 
 def validate_data_names(
-    inst: MungSumprod, data: pd.DataFrame, newvalue_var: str
+    inst: MungSumprod, data: pl.DataFrame, newvalue_var: str
 ) -> None:
-    cols = data.columns.to_list()
+    # cols = data.columns.to_list()
+    cols = data.columns
     if newvalue_var in cols:
         msg: str = f"'{newvalue_var}' will be replaced with new calculations?"
         if not Confirm.ask(msg, default=True):

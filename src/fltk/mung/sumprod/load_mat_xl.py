@@ -1,6 +1,6 @@
 from __future__ import annotations  # Must be at the top
 from typing import TYPE_CHECKING
-import pandas as pd
+import polars as pl
 from pathlib import Path
 
 if TYPE_CHECKING:
@@ -9,8 +9,8 @@ if TYPE_CHECKING:
 
 def load_mat_from_xl(
     inst: MungSumprod, path: Path, sheet_nm: str | None = None
-) -> pd.DataFrame:
-    df = pd.read_excel(path, sheet_name=sheet_nm)
+) -> pl.DataFrame:
+    df = pl.read_excel(path, sheet_name=sheet_nm)
     top_name = df.columns[0]
     _idx_to = inst.sump_vars.idx_to
     _idx_from = inst.sump_vars.idx_from
@@ -22,12 +22,17 @@ def load_mat_from_xl(
         """
         raise KeyError(msg)
 
-    cols = df.columns[df.columns != _idx_to].to_list()
-    df = df.melt(
-        id_vars=_idx_to,
-        value_vars=cols,
-        var_name=_idx_from,
-        value_name=_sump_coef,
+    # cols = df.columns[df.columns != _idx_to].to_list()
+    cols = df.select(pl.exclude(_idx_to)).columns
+    df = df.unpivot(
+        index=_idx_to, on=cols, variable_name=_idx_from, value_name=_sump_coef
     )
-    df.dropna(inplace=True)
+    df = df.drop_nulls()
+    # df = df.melt(
+    #     id_vars=_idx_to,
+    #     value_vars=cols,
+    #     var_name=_idx_from,
+    #     value_name=_sump_coef,
+    # )
+    # df.dropna(inplace=True)
     return df

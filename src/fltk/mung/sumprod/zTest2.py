@@ -1,4 +1,4 @@
-import pandas as pd
+import polars as pl
 from pathlib import Path
 from datetime import datetime as dt
 
@@ -19,7 +19,7 @@ sumprod = MungSumprod(
     sump_coef="coef",
     sump_value="summ_amt",
 )
-sump_df = pd.read_excel(sumprod_path, sheet_name="concepts_adds")
+sump_df = pl.read_excel(sumprod_path, sheet_name="concepts_adds")
 sumprod.load_sump(sump_df)
 # sumprod.sump_df.info()
 
