@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from pathlib import Path
-import pandas as pd
+import polars as pl
 
 from ..utils import to_excel as xl
 
@@ -29,7 +29,7 @@ class Mung(ABC):
 
     @property
     @abstractmethod
-    def dfs(self) -> dict[str, pd.DataFrame]:
+    def dfs(self) -> dict[str, pl.DataFrame]:
         """Dictionnary of dataframes."""
         pass
 

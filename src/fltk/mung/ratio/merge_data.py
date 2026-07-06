@@ -45,10 +45,12 @@ def augment_data(inst: MungRatio, data: pl.DataFrame) -> pl.DataFrame:
         left_on=_concept_ratio,
         right_on=_concept_ratio,
     )
+    moved_cols = list(cols.values())
+    augmented_data = move_cols_to_end(augmented_data, cols=moved_cols)
     return augmented_data
 
 
-def move_cols(inst: MungRatio, data: pl.DataFrame) -> pl.DataFrame:
+def move_cols_to_end(data: pl.DataFrame, cols: list[str]) -> pl.DataFrame:
     new_cols = [col for col in data.columns if col not in cols] + cols
     data = data.select(new_cols)
     return data
