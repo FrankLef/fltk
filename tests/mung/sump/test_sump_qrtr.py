@@ -14,19 +14,13 @@ def sumprod() -> MungSumprod:
 
 @pytest.fixture
 def fixtures_path() -> Path:
-    return Path(__file__).parent.joinpath("fixtures")
+    return Path(__file__).parents[1].joinpath("fixtures")
 
 
 @pytest.fixture
-def qrtr_mat_xl(fixtures_path) -> dict[str, str]:
+def matrix_xl(fixtures_path) -> dict[str, str]:
     out = {"path": fixtures_path.joinpath("sumprod.xlsx"), "sheet": "qrtr"}
     return out
-
-
-# @pytest.fixture
-# def rolly_mat_xl(fixtures_path) -> dict[str, str]:
-#     out = {"path": fixtures_path.joinpath("sumprod.xlsx"), "sheet": "rolly"}
-#     return out
 
 
 @pytest.fixture
@@ -59,8 +53,8 @@ def test_err_name() -> None:
         MungSumprod(name="?", idx_to="idx")
 
 
-def test_load_mat_xl(sumprod, qrtr_mat_xl: dict[str, Path]) -> None:
-    sumprod.load_mat_from_xl(path=qrtr_mat_xl["path"], sheet_nm=qrtr_mat_xl["sheet"])
+def test_load_mat_xl(sumprod, matrix_xl: dict[str, Path]) -> None:
+    sumprod.load_mat_from_xl(path=matrix_xl["path"], sheet_nm=matrix_xl["sheet"])
     assert sumprod.sump.shape == (16, 3)
 
 
@@ -76,8 +70,8 @@ def test_load_data(sumprod, raw_data, data_vars) -> None:
 
 
 @pytest.fixture
-def init_sumprod(sumprod, qrtr_mat_xl, raw_data, data_vars) -> MungSumprod:
-    sumprod.load_mat_from_xl(path=qrtr_mat_xl["path"], sheet_nm=qrtr_mat_xl["sheet"])
+def init_sumprod(sumprod, matrix_xl, raw_data, data_vars) -> MungSumprod:
+    sumprod.load_mat_from_xl(path=matrix_xl["path"], sheet_nm=matrix_xl["sheet"])
     sumprod.load_raw_data(
         raw_data,
         idx=data_vars["idx_var"],

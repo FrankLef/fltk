@@ -2,7 +2,7 @@
 
 import pytest
 from pathlib import Path
-import pandas as pd
+import polars as pl
 
 from fltk.mung.bridge.main import MungBridge
 
@@ -31,14 +31,9 @@ def fixtures_path() -> Path:
 
 
 @pytest.fixture
-def raw_data(fixtures_path) -> pd.DataFrame:
+def raw_data(fixtures_path) -> pl.DataFrame:
     fn = fixtures_path.joinpath("bridge.xlsx")
-    out = pd.read_excel(
-        fn,
-        sheet_name="data1",
-        engine="openpyxl",
-        engine_kwargs={"data_only": True},
-    )
+    out = pl.read_excel(fn, sheet_name="data1")
     return out
 
 
@@ -75,9 +70,9 @@ def bridge_init(bridge, raw_data):
 
 def test_fit(bridge_init):
     bridge_init.fit()
-    assert bridge_init.bridge.shape == (27, 15)
+    assert bridge_init.bridge.shape == (27, 16)
 
 
 def test_fit_transform(bridge_init):
     bridge_init.fit_transform()
-    assert bridge_init.bridge.shape == (27, 21)
+    assert bridge_init.bridge.shape == (27, 22)

@@ -2,7 +2,7 @@
 
 import pytest
 from pathlib import Path
-import pandas as pd
+import polars as pl
 
 from fltk.mung.waterfall.main import MungWaterfall
 
@@ -23,14 +23,9 @@ def fixtures_path() -> Path:
 
 
 @pytest.fixture
-def raw_data(fixtures_path) -> pd.DataFrame:
+def raw_data(fixtures_path) -> pl.DataFrame:
     fn = fixtures_path.joinpath("waterfall.xlsx")
-    out = pd.read_excel(
-        fn,
-        sheet_name="data1",
-        engine="openpyxl",
-        engine_kwargs={"data_only": True},
-    )
+    out = pl.read_excel(fn, sheet_name="data1")
     return out
 
 

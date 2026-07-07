@@ -1,4 +1,4 @@
-import pandas as pd
+import polars as pl
 from typing import Literal
 
 from rich import print as rprint
@@ -42,7 +42,7 @@ class MungWaterfall(Mung):
 
     def load_raw_data(
         self,
-        data: pd.DataFrame,
+        data: pl.DataFrame,
         groups: tuple[str, ...],
         period_from: str,
         period_to: str,

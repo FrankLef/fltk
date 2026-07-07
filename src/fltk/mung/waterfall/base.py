@@ -1,41 +1,37 @@
 from __future__ import annotations  # Must be at the top
 from typing import TYPE_CHECKING
-import pandas as pd
-from pandas.api.types import CategoricalDtype
+import polars as pl
 
 if TYPE_CHECKING:
     from .main import MungWaterfall  # Only imported when checking types
 
 
-def get_base(inst: MungWaterfall) -> pd.DataFrame:
-    if inst.raw.empty:
+def get_base(inst: MungWaterfall) -> pl.DataFrame:
+    if inst.raw.is_empty():
         raise ValueError("Raw data is empty.")
     wfall_types = get_wfall_types(inst)
     wfall_factors = list(wfall_types.keys())
     data_long = melt_raw(inst, factors=wfall_factors)
     base_df = add_wfall_type(inst, data_long=data_long, wfall_types=wfall_types)
-
-    base_df[inst.wfall_vars.is_initial] = False
+    base_df = base_df.with_columns(pl.lit(False).alias(inst.wfall_vars.is_initial))
 
     return base_df
 
 
-def melt_raw(inst: MungWaterfall, factors: list[str]) -> pd.DataFrame:
+def melt_raw(inst: MungWaterfall, factors: list[str]) -> pl.DataFrame:
     _keys = inst.raw_vars.keys
     _factors = inst.raw_vars.factors
     _vars = inst.raw_vars.vars
     _diff_nm = inst.wfall_vars.diff_nm
     _diff_val = inst.wfall_vars.diff_val
 
-    data_wide = inst.raw.copy()
-    data_wide = data_wide[list(_vars)]
+    data_wide = inst.raw.select(_vars)
 
-    data_long = data_wide.melt(
-        id_vars=_keys, value_vars=_factors, var_name=_diff_nm, value_name=_diff_val
+    data_long = data_wide.unpivot(
+        index=_keys, on=_factors, variable_name=_diff_nm, value_name=_diff_val
     )
-    cat_dtype = CategoricalDtype(categories=_factors, ordered=True)
-    data_long[_diff_nm] = data_long[_diff_nm].astype(cat_dtype)
-    data_long = data_long.sort_values(by=list(_keys))
+    data_long = data_long.with_columns(pl.col(_diff_nm).cast(pl.Enum(_factors)))
+    data_long = data_long.sort(by=list(_keys))
     return data_long
 
 
@@ -58,24 +54,27 @@ def get_wfall_types(inst: MungWaterfall) -> dict[str, str]:
 
 
 def add_wfall_type(
-    inst: MungWaterfall, data_long: pd.DataFrame, wfall_types: dict[str, str]
-) -> pd.DataFrame:
+    inst: MungWaterfall, data_long: pl.DataFrame, wfall_types: dict[str, str]
+) -> pl.DataFrame:
     _diff_nm = inst.wfall_vars.diff_nm
     _wfall_type = inst.wfall_vars.wfall_type
-    data_long[_wfall_type] = data_long[_diff_nm].astype(str)
-    data_long[_wfall_type] = data_long[_wfall_type].replace(wfall_types)
 
-    err_df = data_long[data_long[_wfall_type].isna()]
-    err_nb = err_df.shape[0]
-    if err_nb:
-        msg: str = f"{err_nb} rows with empty waterfall type."
+    data_long = data_long.with_columns(
+        pl.col(_diff_nm).cast(pl.String).alias(_wfall_type)
+    )
+    data_long = data_long.with_columns(
+        pl.col(_wfall_type).replace_strict(wfall_types, default=None)
+    )
+
+    null_nb = data_long[_wfall_type].null_count()
+    if null_nb:
+        msg: str = f"{null_nb} rows with empty waterfall type."
         raise AssertionError(msg)
 
     types = list(wfall_types.values())
-    err_df = data_long[~data_long[_wfall_type].isin(types)]
-    err_nb = err_df.shape[0]
-    if err_nb:
-        msg = f"{err_nb} rows with invalid waterfall type."
+    err_df = data_long.filter(~pl.col(_wfall_type).is_in(types))
+    if err_df.height:
+        msg = f"{err_df.height} rows with invalid waterfall type."
         raise AssertionError(msg)
 
     return data_long

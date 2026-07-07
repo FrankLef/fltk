@@ -114,7 +114,9 @@ class MungSumprod(Mung):
     def calculate(self) -> None:
         """Calculate sumprods."""
         self.calc = calc.calculate(self)
-        self.calc_aug = incomp_flag.flag_incomplete(self)
+        self.calc_aug = incomp_flag.flag_incomplete(
+            self.calc, self.incomplete_uniq, self.raw_vars
+        )
 
     @property
     def dfs(self):
@@ -123,6 +125,7 @@ class MungSumprod(Mung):
             "sumprod": self.sump,
             "incomplete": self.incomplete,
             "incomplete_uniq": self.incomplete_uniq,
-            "calc": self.calc_aug,
+            "calc": self.calc,
+            "calc_aug": self.calc_aug,
         }
         return dfs

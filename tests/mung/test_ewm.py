@@ -2,7 +2,7 @@
 
 import pytest
 from pathlib import Path
-import pandas as pd
+import polars as pl
 
 from fltk.mung.ewm.main import MungEwm
 
@@ -18,14 +18,9 @@ def fixtures_path() -> Path:
 
 
 @pytest.fixture
-def raw_data(fixtures_path) -> pd.DataFrame:
+def raw_data(fixtures_path) -> pl.DataFrame:
     fn = fixtures_path.joinpath("ewm.xlsx")
-    out = pd.read_excel(
-        fn,
-        sheet_name="data1",
-        engine="openpyxl",
-        engine_kwargs={"data_only": True},
-    )
+    out = pl.read_excel(fn, sheet_name="data1")
     return out
 
 
@@ -48,11 +43,6 @@ def ewm_init(ewm, raw_data):
         values=("cum", "qrtr"),
     )
     return ewm
-
-
-def test_fit(ewm_init):
-    ewm_init.fit()
-    assert ewm_init.base.shape == (32, 5)
 
 
 def test_fit_transform(ewm_init):

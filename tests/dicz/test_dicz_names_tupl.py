@@ -10,7 +10,7 @@ from fltk.dicz.main import Dicz
 
 @pytest.fixture
 def dicz():
-    return Dicz(name="dicz_test")
+    return Dicz(key="dicz_test")
 
 
 @pytest.fixture

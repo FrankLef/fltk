@@ -9,9 +9,9 @@ fixtures_path = Path(__file__).parents[4].joinpath("tests", "mung", "fixtures")
 sumprod_path = fixtures_path.joinpath("sumprod.xlsx")
 out_fn = f"sumprod_z1_{dt.now().date().isoformat()}.xlsx"
 out_path = fixtures_path.joinpath(out_fn)
-idx_sheet: str = "rolly"
+idx_sheet: str = "qrtr"
 data_sheet = "data1"
-newvalue_var = "rolly_amt"
+newvalue_var = "qrtr_amt"
 
 sumprod = MungSumprod(name="testSumprodZ1", idx_to="idx")
 sumprod.load_mat_from_xl(sumprod_path, sheet_nm=idx_sheet)

@@ -14,19 +14,13 @@ def sumprod() -> MungSumprod:
 
 @pytest.fixture
 def fixtures_path() -> Path:
-    return Path(__file__).parent.joinpath("fixtures")
+    return Path(__file__).parents[1].joinpath("fixtures")
 
 
 @pytest.fixture
-def qrtr_mat_xl(fixtures_path) -> dict[str, str]:
-    out = {"path": fixtures_path.joinpath("sumprod.xlsx"), "sheet": "qrtr"}
+def matrix_xl(fixtures_path) -> dict[str, str]:
+    out = {"path": fixtures_path.joinpath("sumprod.xlsx"), "sheet": "rolly"}
     return out
-
-
-# @pytest.fixture
-# def rolly_mat_xl(fixtures_path) -> dict[str, str]:
-#     out = {"path": fixtures_path.joinpath("sumprod.xlsx"), "sheet": "rolly"}
-#     return out
 
 
 @pytest.fixture
@@ -47,7 +41,7 @@ def data_vars() -> dict[str, Any]:
         "idx_var": "period",
         "value_var": "amount",
         "group_vars": ["entity", "concept", "pertype"],
-        "newvalue_var": "qrtr_amt",
+        "newvalue_var": "rolly_amt",
     }
     return out
 
@@ -59,9 +53,9 @@ def test_err_name() -> None:
         MungSumprod(name="?", idx_to="idx")
 
 
-def test_load_mat_xl(sumprod, qrtr_mat_xl: dict[str, Path]) -> None:
-    sumprod.load_mat_from_xl(path=qrtr_mat_xl["path"], sheet_nm=qrtr_mat_xl["sheet"])
-    assert sumprod.sump.shape == (16, 3)
+def test_load_mat_xl(sumprod, matrix_xl: dict[str, Path]) -> None:
+    sumprod.load_mat_from_xl(path=matrix_xl["path"], sheet_nm=matrix_xl["sheet"])
+    assert sumprod.sump.shape == (21, 3)
 
 
 def test_load_data(sumprod, raw_data, data_vars) -> None:
@@ -76,8 +70,8 @@ def test_load_data(sumprod, raw_data, data_vars) -> None:
 
 
 @pytest.fixture
-def init_sumprod(sumprod, qrtr_mat_xl, raw_data, data_vars) -> MungSumprod:
-    sumprod.load_mat_from_xl(path=qrtr_mat_xl["path"], sheet_nm=qrtr_mat_xl["sheet"])
+def init_sumprod(sumprod, matrix_xl, raw_data, data_vars) -> MungSumprod:
+    sumprod.load_mat_from_xl(path=matrix_xl["path"], sheet_nm=matrix_xl["sheet"])
     sumprod.load_raw_data(
         raw_data,
         idx=data_vars["idx_var"],
@@ -89,7 +83,7 @@ def init_sumprod(sumprod, qrtr_mat_xl, raw_data, data_vars) -> MungSumprod:
 
 
 def test_init_sumprod(init_sumprod) -> None:
-    assert init_sumprod.sump.shape == (16, 3)
+    assert init_sumprod.sump.shape == (21, 3)
     assert init_sumprod.raw.shape == (33, 7)
 
 
@@ -101,8 +95,8 @@ def final_sumprod(init_sumprod) -> MungSumprod:
 
 
 def test_incomplete(final_sumprod) -> None:
-    assert final_sumprod.incomplete.shape == (11, 6)
-    assert final_sumprod.incomplete_uniq.shape == (11, 4)
+    assert final_sumprod.incomplete.shape == (19, 6)
+    assert final_sumprod.incomplete_uniq.shape == (16, 4)
 
 
 # @pytest.fixture

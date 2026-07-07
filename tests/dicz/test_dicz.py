@@ -3,7 +3,6 @@
 import pytest
 from pathlib import Path
 
-# import pandas as pd
 import polars as pl
 
 from fltk.dicz.main import Dicz
@@ -11,7 +10,7 @@ from fltk.dicz.main import Dicz
 
 @pytest.fixture
 def dicz():
-    return Dicz(name="dicz_test")
+    return Dicz(key="dicz_test")
 
 
 @pytest.fixture
@@ -31,7 +30,7 @@ def xlsheet():
 
 def test_dicz(dicz):
     assert isinstance(dicz, Dicz)
-    assert dicz.name == "dicz_test"
+    assert dicz.key == "dicz_test"
 
 
 def test_dicz_append(dicz, xlfile, xlsheet):

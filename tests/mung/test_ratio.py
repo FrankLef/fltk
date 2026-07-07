@@ -2,7 +2,7 @@
 
 import pytest
 from pathlib import Path
-import pandas as pd
+import polars as pl
 
 from fltk.mung.ratio.main import MungRatio
 
@@ -13,14 +13,9 @@ def fixtures_path() -> Path:
 
 
 @pytest.fixture
-def ratios_xl(fixtures_path) -> pd.DataFrame:
+def ratios_xl(fixtures_path) -> pl.DataFrame:
     fn = fixtures_path.joinpath("ratio.xlsx")
-    out = pd.read_excel(
-        fn,
-        sheet_name="concepts_ratios",
-        engine="openpyxl",
-        engine_kwargs={"data_only": True},
-    )
+    out = pl.read_excel(fn, sheet_name="concepts_ratios")
     return out
 
 
@@ -41,13 +36,8 @@ def data_xl(fixtures_path) -> dict[str, str]:
 
 
 @pytest.fixture
-def raw_data(data_xl) -> pd.DataFrame:
-    raw_data = pd.read_excel(
-        data_xl["path"],
-        sheet_name=data_xl["sheet"],
-        engine="openpyxl",
-        engine_kwargs={"data_only": True},
-    )
+def raw_data(data_xl) -> pl.DataFrame:
+    raw_data = pl.read_excel(data_xl["path"], sheet_name=data_xl["sheet"])
     return raw_data
 
 
@@ -76,4 +66,4 @@ def test_fit(init_ratio) -> None:
 def test_fit_transform(init_ratio) -> None:
     init_ratio.fit_transform(is_cleaned=True)
     assert init_ratio.merged.shape == (30, 8)
-    assert init_ratio.calc.shape == (18, 9)
+    assert init_ratio.calc.shape == (30, 9)

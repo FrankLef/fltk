@@ -1,4 +1,4 @@
-import pandas as pd
+import polars as pl
 from pathlib import Path
 from datetime import datetime as dt
 
@@ -13,11 +13,9 @@ out_path = fixtures_path.joinpath(out_fn)
 
 wfall = MungWaterfall(name="testWaterfallZ1", initial="absolute")
 
-raw_data = pd.read_excel(
+raw_data = pl.read_excel(
     data_path,
     sheet_name=data_sheet,
-    engine="openpyxl",
-    engine_kwargs={"data_only": True},
 )
 
 wfall.load_raw_data(
@@ -40,4 +38,4 @@ wfall.transform(verbose=True)
 print("\n", wfall, sep="")
 
 
-# wfall.to_excel(out_path)
+wfall.to_excel(out_path)
