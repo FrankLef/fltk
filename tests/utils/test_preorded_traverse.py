@@ -2,7 +2,6 @@ import pytest
 from pathlib import Path
 import polars as pl
 
-# from typing import Any
 from fltk.utils.preorded_traverse import PreordedTraverse
 
 
