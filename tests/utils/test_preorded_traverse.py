@@ -58,14 +58,14 @@ def test_preord_trav_calc(preord_trav) -> None:
 
 
 def test_preord_trav_err(tree_data) -> None:
+    preord_trav = PreordedTraverse(
+        tree_data,
+        child="Child",
+        parent="Parent",
+        level="LevelID",
+        left="LeftID",
+        right="RightID",
+        max_iter=10,
+    )
     with pytest.raises(AssertionError):
-        preord_trav = PreordedTraverse(
-            tree_data,
-            child="Child",
-            parent="Parent",
-            level="LevelID",
-            left="LeftID",
-            right="RightID",
-            max_iter=10,
-        )
         preord_trav.fit_transform()
