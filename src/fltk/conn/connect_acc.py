@@ -99,3 +99,7 @@ class ConnectAcc:
     @property
     def path(self) -> Path:
         return self._path
+
+    @property
+    def engine(self):
+        return self._engine
