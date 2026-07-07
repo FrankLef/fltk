@@ -1,5 +1,5 @@
 from great_tables import GT, html, style as gt_style, loc as gt_loc
-import pandas as pd
+import polars as pl
 from typing import Self
 
 from ...graphics.basics import IBaseGeom
@@ -12,7 +12,7 @@ class GtRatios:
 
     def add_base(
         self,
-        data: pd.DataFrame,
+        data: pl.DataFrame,
         rowname_col: str,
         groupname_col: str,
         tab_spanner_label: str,

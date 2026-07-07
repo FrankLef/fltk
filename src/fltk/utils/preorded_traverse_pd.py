@@ -1,13 +1,11 @@
+import pandas as pd
 from collections import deque
-from typing import Any
-
-import polars as pl
 
 
 class PreordedTraverse:
     def __init__(
         self,
-        data: pl.DataFrame,
+        data: pd.DataFrame,
         child: str,
         parent: str,
         level: str,
@@ -22,13 +20,10 @@ class PreordedTraverse:
         self._left = left
         self._right = right
         self._max_iter = max_iter
-        self._stack: deque[int] = deque()
-        self._rows: list[dict[str, Any]] = [
-            dict(row) for row in self._data.iter_rows(named=True)
-        ]
+        self._stack: deque = deque()
 
     @property
-    def data(self) -> pl.DataFrame:
+    def data(self) -> pd.DataFrame:
         return self._data
 
     def fit_transform(self) -> None:
@@ -40,7 +35,7 @@ class PreordedTraverse:
         self.fit_reset()
 
     def fit_validate(self) -> None:
-        if self._data.is_empty():
+        if self._data.empty:
             msg: str = "The data to traverse is empty."
             raise ValueError(msg)
         if self._stack:
@@ -48,15 +43,12 @@ class PreordedTraverse:
             raise ValueError(msg)
         if self._max_iter < 10:
             msg = f"{self._max_iter=}, it must be >= 10."
-            raise AssertionError(msg)
+            raise ValueError(msg)
 
     def fit_reset(self) -> None:
-        self._data = self._data.with_columns(
-            pl.lit(0).cast(pl.Int64).alias(self._level),
-            pl.lit(0).cast(pl.Int64).alias(self._left),
-            pl.lit(0).cast(pl.Int64).alias(self._right),
-        )
-        self._rows = [dict(row) for row in self._data.iter_rows(named=True)]
+        self._data[self._level] = 0
+        self._data[self._left] = 0
+        self._data[self._right] = 0
 
     def transform(self) -> None:
         self.set_root()
@@ -65,47 +57,37 @@ class PreordedTraverse:
 
     def set_root(self) -> None:
         """Set the root."""
-        index_df = self._data.with_row_index(name="__idx")
-        root_idx = (
-            index_df.filter(pl.col(self._child) == pl.col(self._parent))
-            .get_column("__idx")
-            .to_list()
-        )
-        nroot = len(root_idx)
+        data = self._data
+        sel = data.loc[(data[self._child] == data[self._parent])]
+        nroot = sel.shape[0]
         if nroot != 1:
             msg = f"{nroot} roots found. There must be a unique root."
             raise AssertionError(msg)
-
-        root_pos = root_idx[0]
-        self._rows[root_pos][self._left] = 1
-        self._stack.append(root_pos)
+        data.loc[sel.index, self._left] = 1
+        self._stack.append(sel.index)
         if len(self._stack) != 1:
             msg = "There must be exactly 1 element, the root, in the stack."
             raise AssertionError(msg)
-        self._data = pl.DataFrame(self._rows, schema=self._data.schema)
+        self._data = data
 
     def traverse(self) -> None:
+        data = self._data
         stack = self._stack
         level_no: int = 0
         path_no: int = 1
         while stack:
             path_no += 1
-            a_node = self._rows[stack[-1]][self._child]
-            child_idx = [
-                idx
-                for idx, row in enumerate(self._rows)
-                if row[self._parent] == a_node and row[self._left] == 0
-            ]
-            if child_idx:
+            a_node = data.loc[stack[-1], self._child]
+            sel = (data[self._parent].isin(a_node)) & (data[self._left] == 0)
+            if any(sel):
                 level_no += 1
-                idx = child_idx[0]
-                self._rows[idx][self._level] = level_no
-                self._rows[idx][self._left] = path_no
+                idx = data.loc[sel].head(1).index
+                data.loc[idx, [self._level, self._left]] = level_no, path_no
                 stack.append(idx)
             else:
                 level_no -= 1
                 idx = stack.pop()
-                self._rows[idx][self._right] = path_no
+                data.loc[idx, self._right] = path_no
             if path_no > self._max_iter:
                 msg: str = f"""
                 POT terminated because {path_no=} greater than {self._max_iter=}.
@@ -118,28 +100,25 @@ class PreordedTraverse:
             This implies that not all rows have been traversed.
             """
             raise AssertionError(msg)
-        self._data = pl.DataFrame(self._rows, schema=self._data.schema)
+        self._data = data
         self._stack = stack
 
     def audit(self) -> None:
-        if not self._rows:
+        if self._data.empty:
             raise ValueError("The traversal returned empty data. Weird!")
-        left_count = sum(1 for row in self._rows if row[self._left] == 1)
-        if left_count != 1:
-            msg: str = (
-                f"There must be 1 left id equal to 1, there is {left_count} of them."
-            )
+        data = self._data
+        sel = data[self._left] == 1
+        check = sel.sum()
+        if check != 1:
+            msg: str = f"There must be 1 left id equal to 1, there is {check} of them."
             raise AssertionError(msg)
 
-        root_idx = next(
-            idx for idx, row in enumerate(self._rows) if row[self._left] == 1
-        )
-        if self._rows[root_idx][self._level] != 0:
+        check = (data.loc[sel, self._level] == 0).item()
+        if not check:
             raise AssertionError("The level must be 0 at the root.")
 
-        root_right = self._rows[root_idx][self._right]
-        target_right = 2 * len(self._rows)
-        if root_right != target_right:
+        root_right = data.loc[sel, self._right]
+        target_right = 2 * data.shape[0]
+        if (root_right != target_right).item():
             msg = f"The root has right value of {root_right}, it should be {target_right}."
             raise AssertionError(msg)
-        self._data = pl.DataFrame(self._rows, schema=self._data.schema)

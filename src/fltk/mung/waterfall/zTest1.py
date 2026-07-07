@@ -37,5 +37,4 @@ wfall.transform(verbose=True)
 
 print("\n", wfall, sep="")
 
-
-wfall.to_excel(out_path)
+# wfall.to_excel(out_path)

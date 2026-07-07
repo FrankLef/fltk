@@ -1,5 +1,5 @@
 import plotly.graph_objects as go
-import pandas as pd
+import polars as pl
 from typing import Self
 
 
@@ -10,7 +10,7 @@ class PlyWaterfall:
 
     def add_base(
         self,
-        data: pd.DataFrame,
+        data: pl.DataFrame,
         x_year: str,
         x_label: str,
         measure: str,

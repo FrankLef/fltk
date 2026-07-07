@@ -1,6 +1,6 @@
 """Multiplies a value by scale and formats it as a string."""
 
-import pandas as pd
+import polars as pl
 from typing import Any, Final
 # from ..dic.main import IDic
 
@@ -22,7 +22,7 @@ def format_scale(value: float, scale: float, mask: str, na: str = "-") -> str:
     Returns:
         str: Formatted value in a given scale.
     """
-    is_ok: bool = not (pd.isna(value) | (value is None))
+    is_ok: bool = value is not None
     if is_ok:
         scaled_val: float = value * scale
         formatted_val: str = mask.format(scaled_val)
@@ -32,29 +32,40 @@ def format_scale(value: float, scale: float, mask: str, na: str = "-") -> str:
 
 
 def format_scale_many(
-    data: pd.DataFrame,
+    data: pl.DataFrame,
     group_col: str,
     val_col: str,
     fmt_col: str,
     tags: dict[str, Any],
     default: dict[str, Any],
-) -> pd.DataFrame:
+) -> pl.DataFrame:
     SCALE: Final[str] = "scale"
     MASK: Final[str] = "mask"
 
     a_scale: float = float(default[SCALE])
     a_mask: str = default[MASK]
-    data[fmt_col] = data[val_col].apply(format_scale, scale=a_scale, mask=a_mask)
+    data = data.with_columns(
+        pl.col(val_col)
+        .map_elements(
+            lambda v: format_scale(v, scale=a_scale, mask=a_mask),
+            return_dtype=pl.String,
+        )
+        .alias(fmt_col)
+    )
 
     for group_nm, tag in tags.items():
         a_scale = float(tag[SCALE])
         a_mask = tag[MASK]
-        # NOTE: Must use index like this to be able to use a loop in pandas!
-        for ndx, row in data.iterrows():
-            if row[group_col] == group_nm:
-                formatted_value = format_scale(
-                    data.at[ndx, val_col], scale=a_scale, mask=a_mask
+        data = data.with_columns(
+            pl.when(pl.col(group_col) == group_nm)
+            .then(
+                pl.col(val_col).map_elements(
+                    lambda v: format_scale(v, scale=a_scale, mask=a_mask),
+                    return_dtype=pl.String,
                 )
-                data.at[ndx, fmt_col] = formatted_value
+            )
+            .otherwise(pl.col(fmt_col))
+            .alias(fmt_col)
+        )
 
     return data

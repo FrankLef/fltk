@@ -31,4 +31,4 @@ sumprod.transform()
 
 print("\n", sumprod, sep="")
 
-sumprod.to_excel(out_path)
+# sumprod.to_excel(out_path)
