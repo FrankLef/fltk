@@ -73,28 +73,23 @@ class WorkFlow:
         """This execute the workflow."""
         self._pat = pat
         self.parse_jobs(jobs_args)
-        # self.sequence_jobs()
         self.run_jobs()
         utils.ring_success(self.success_wav)
 
     def parse_jobs(self, jobs_args: str) -> None:
         """Parse the jobs from the CLI."""
-        # remove all whitspace, tab, newline, etc
+        # remove whitespace, tab, newline, etc
         jobs = re.sub(r"\s+", "", jobs_args)
-        if not jobs:
-            utils.ring_error()
-            msg: str = f"The job arguments '{jobs_args}' is empty."
-            raise ValueError(msg)
         jobs_clean = set(jobs.lower().split(sep=","))
         if len(jobs_clean):
             invalid_jobs = [job for job in jobs_clean if job not in self.jobs]
             if invalid_jobs:
-                msg = f"{len(invalid_jobs)} invalid jobs: {invalid_jobs}."
+                msg: str = f"{len(invalid_jobs)} invalid jobs: {invalid_jobs}."
                 raise KeyError(msg)
         else:
             utils.ring_error()
-            msg = f"No jobs obtained from '{jobs_args}'."
-            raise AssertionError(msg)
+            msg = f"The job arguments '{jobs_args}' is empty."
+            raise ValueError(msg)
         # Must sequence the jobs to do in order of priority.
         jobs_todo = tuple([job for job in self.jobs if job in jobs_clean])
         self._jobs_todo = jobs_todo
