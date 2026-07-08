@@ -9,14 +9,13 @@ from .main import Dicz
 type DiczSpecs = dict[str, list[Any]]
 
 
-def get_specs(path: Path, prefix: str = "bag_", sheet_nm: str = "data") -> DiczSpecs:
-    file_nms = [file.name for file in path.glob("*.xlsx") if file.is_file()]
+def get_specs(path: Path, prefix: str, sheet_nm: str) -> DiczSpecs:
+    file_nms = [file for file in path.glob("*.xlsx") if file.is_file()]
     specs = {}
-    for file_nm in file_nms:
-        fn = Path(path).joinpath(file_nm)
-        mtime = fn.stat().st_mtime
-        bag_nm = fn.stem.replace(prefix, "")
-        specs[bag_nm] = [fn, sheet_nm, mtime]
+    for file in file_nms:
+        mtime = file.stat().st_mtime  # only used to validate the cache.
+        bag_nm = file.stem.replace(prefix, "")
+        specs[bag_nm] = [file, sheet_nm, mtime]
     return specs
 
 
