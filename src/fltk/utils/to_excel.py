@@ -1,6 +1,6 @@
 from pathlib import Path
 import polars as pl
-import xlsxwriter
+import xlsxwriter as xlsxw
 from rich.console import Console
 
 
@@ -15,7 +15,7 @@ def to_excel(name: str, path: Path, dfs: dict[str, pl.DataFrame]) -> None:
     start_msg(name, path=path)
 
     # NOTE: nan_inf_to_errors allows to send NaN and in to excel. Otherwise an exception will be triggered.
-    with xlsxwriter.Workbook(path, {"nan_inf_to_errors": True}) as workbook:
+    with xlsxw.Workbook(path, {"nan_inf_to_errors": True}) as workbook:
         for sheet_nm, df in dfs.items():
             df.write_excel(workbook=workbook, worksheet=sheet_nm)
             Console().print(f"[green]{sheet_nm}[/green]")

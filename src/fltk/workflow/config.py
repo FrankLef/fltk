@@ -1,4 +1,4 @@
-from typing import Any, Final
+from typing import Any
 import shutil
 from pathlib import Path
 from rich import print as rprint
@@ -18,14 +18,15 @@ def load_dirs(dirs: list[dict[str, Any]]) -> dict[str, DirSpecs]:
     return sorted_dirs_dict
 
 
-def get_config_default_file(path: Path) -> None:
-    """Get a copy of the default config file. Use it as a template!
+# Get a copy of the default config file. Use it as a template!
+def get_config_default_file(path: Path, file_nm: str = "config_wf.json") -> None:
+    """Get a copy of the default config file. Can be used as a template for creating a new config file.
 
     Args:
-        path (Path): File name, including path, given to the config file.
+        path (Path): Path to copy the default config file to.
+        file_nm (str, optional): Name of config file. Defaults to "config_wf.json".
     """
-    FN: Final[str] = "config_wf.json"
-    input_path: Path = Path(__file__).parent.joinpath(FN)
+    input_path: Path = Path(__file__).parent.joinpath(file_nm)
     shutil.copy2(src=input_path, dst=path)
     msg: str = f"Default workflow config file copied to:\n{path}"
     rprint(msg)

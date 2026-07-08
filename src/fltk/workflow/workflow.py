@@ -4,7 +4,7 @@ import json
 from importlib import import_module
 
 from .dirs_specs import DirSpecs
-from . import config as cf
+from . import config as cfg
 from . import utils
 from . import get_files as gf
 
@@ -55,9 +55,9 @@ class WorkFlow:
         self.success_wav = self.check_path(success_wav, is_dir=False)
 
         dirs = config["dirs"]
-        sorted_dirs = cf.load_dirs(dirs=dirs)
+        sorted_dirs = cfg.load_dirs(dirs=dirs)
         self.dirs: dict[str, DirSpecs] = sorted_dirs
-        self.names: tuple[str, ...] = tuple(sorted_dirs.keys())
+        self.jobs: tuple[str, ...] = tuple(sorted_dirs.keys())
 
         return path
 
@@ -67,13 +67,13 @@ class WorkFlow:
         Args:
             path (Path): File name, including path, given to the config file.
         """
-        cf.get_config_default_file(path=path)
+        cfg.get_config_default_file(path=path)
 
     def execute(self, jobs_args: str, pat: str | None) -> None:
         """This execute the workflow."""
         self._pat = pat
         self.parse_jobs(jobs_args)
-        self.sequence_jobs()
+        # self.sequence_jobs()
         self.run_jobs()
         utils.ring_success(self.success_wav)
 
@@ -83,33 +83,21 @@ class WorkFlow:
         jobs = re.sub(r"\s+", "", jobs_args)
         if not jobs:
             utils.ring_error()
-            msg: str = f"The job arguments '{jobs_args}' is invalid."
+            msg: str = f"The job arguments '{jobs_args}' is empty."
             raise ValueError(msg)
-        jobs_clean = jobs.lower().split(sep=",")
-        jobs_clean = [x[:2] for x in jobs_clean]
-        jobs_todo = set(jobs_clean)
-        if not len(jobs_todo):
+        jobs_clean = set(jobs.lower().split(sep=","))
+        if len(jobs_clean):
+            invalid_jobs = [job for job in jobs_clean if job not in self.jobs]
+            if invalid_jobs:
+                msg = f"{len(invalid_jobs)} invalid jobs: {invalid_jobs}."
+                raise KeyError(msg)
+        else:
             utils.ring_error()
             msg = f"No jobs obtained from '{jobs_args}'."
             raise AssertionError(msg)
+        # Must sequence the jobs to do in order of priority.
+        jobs_todo = tuple([job for job in self.jobs if job in jobs_clean])
         self._jobs_todo = jobs_todo
-
-    def sequence_jobs(self) -> None:
-        """Sequence the jobs according to the established priorities."""
-        jobs_todo = self._jobs_todo
-        jobs_names = list(self.names)
-        try:
-            # NOTE: We can use index because the dictionary is sorted by priority in the load function above.
-            jobs_pos = sorted([jobs_names.index(x) for x in jobs_todo])
-        except ValueError:
-            utils.ring_error()
-            msg: str = "A job is not in the list of available jobs."
-            raise ValueError(msg)
-        if not jobs_pos:
-            utils.ring_error()
-            raise ValueError("No job found in the list of available jobs.")
-        jobs_sequence = [jobs_names[pos] for pos in jobs_pos]
-        self._jobs_sequence = jobs_sequence
 
     def get_files(self, specs: DirSpecs, pat: str | None) -> list[str]:
         """Get the list of files in the folder, given a name pattern."""
@@ -123,8 +111,8 @@ class WorkFlow:
     def run_jobs(self) -> None:
         """Run each job required by the user."""
         pat = self._pat
-        jobs_sequence = self._jobs_sequence
-        for job in jobs_sequence:
+        jobs_todo = self._jobs_todo
+        for job in jobs_todo:
             specs: DirSpecs = self.dirs[job]
             utils.print_run(dir=specs.dir, pat=pat, emo=specs.emo)
             the_files: list[str] = self.get_files(specs=specs, pat=pat)
