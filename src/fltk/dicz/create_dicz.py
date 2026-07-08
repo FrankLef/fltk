@@ -10,7 +10,7 @@ type DiczSpecs = dict[str, list[Any]]
 
 
 def get_specs(path: Path, prefix: str, sheet_nm: str) -> DiczSpecs:
-    file_nms = [file for file in path.glob("*.xlsx") if file.is_file()]
+    file_nms = [file for file in path.glob(f"{prefix}*.xlsx") if file.is_file()]
     specs = {}
     for file in file_nms:
         mtime = file.stat().st_mtime  # only used to validate the cache.
