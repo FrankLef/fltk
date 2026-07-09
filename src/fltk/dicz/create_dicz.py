@@ -20,7 +20,7 @@ def get_specs(path: Path, prefix: str, sheet_nm: str) -> DiczSpecs:
             specs[bag_nm] = [file, sheet_nm, mtime]
     else:
         msg: str = f"No file found with pattern '{pat}' in\n{path}"
-        raise KeyError(msg)
+        raise FileNotFoundError(msg)
     return specs
 
 
