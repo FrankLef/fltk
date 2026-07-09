@@ -10,12 +10,17 @@ type DiczSpecs = dict[str, list[Any]]
 
 
 def get_specs(path: Path, prefix: str, sheet_nm: str) -> DiczSpecs:
-    file_nms = [file for file in path.glob(f"{prefix}*.xlsx") if file.is_file()]
-    specs = {}
-    for file in file_nms:
-        mtime = file.stat().st_mtime  # only used to validate the cache.
-        bag_nm = file.stem.replace(prefix, "")
-        specs[bag_nm] = [file, sheet_nm, mtime]
+    pat: str = f"{prefix}*.xlsx"
+    files = [file for file in path.glob(pat) if file.is_file()]
+    if files:
+        specs = {}
+        for file in files:
+            mtime = file.stat().st_mtime  # only used to validate the cache.
+            bag_nm = file.stem.replace(prefix, "")
+            specs[bag_nm] = [file, sheet_nm, mtime]
+    else:
+        msg: str = f"No file found with pattern '{pat}' in\n{path}"
+        raise KeyError(msg)
     return specs
 
 
