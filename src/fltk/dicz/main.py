@@ -1,3 +1,4 @@
+from collections.abc import ValuesView
 import polars as pl
 
 
@@ -22,6 +23,19 @@ class Dicz(DiczBase):
     @property
     def nbags(self) -> int:
         return len(self.coll)
+
+    @property
+    def empty(self) -> bool:
+        return not self.nbags
+
+    @property
+    def keys(self) -> tuple[str, ...]:
+        # must return tuple
+        return tuple(self.coll.keys())
+
+    @property
+    def values(self) -> ValuesView:
+        return self.coll.values()
 
     def append(self, key: str, data: pl.DataFrame):
         bag: DiczBag = get_bag.main(key=key, data=data)

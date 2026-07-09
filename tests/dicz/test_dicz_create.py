@@ -16,6 +16,7 @@ def test_create(path) -> None:
     dicz = create_dicz(key, path=path)
     assert dicz.key == key
     assert dicz.nbags == 2
+    assert dicz.keys == ("groups", "xbr")
 
 
 def test_create_err() -> None:

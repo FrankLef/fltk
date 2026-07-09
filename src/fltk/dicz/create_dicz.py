@@ -32,6 +32,9 @@ def create_dicz(
     cache_nm: str = ".dicz_cache",
     clear_cache: bool = False,
 ) -> Dicz:
+    # NOTE: must do get_specs first to avoid creating cache when no file found. e.g. when doing tests.
+    specs = get_specs(path=path, prefix=prefix, sheet_nm=sheet_nm)
+
     cache_path: Path = path.joinpath(cache_nm)
     memory = Memory(cache_path, verbose=0)
 
@@ -43,8 +46,6 @@ def create_dicz(
             data = pl.read_excel(val[0], sheet_name=val[1])
             dicz.append(key=key, data=data)
         return dicz
-
-    specs = get_specs(path=path, prefix=prefix, sheet_nm=sheet_nm)
 
     # NOTE: clear the cache to force its update
     if clear_cache:
