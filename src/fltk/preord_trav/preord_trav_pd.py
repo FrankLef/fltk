@@ -92,7 +92,7 @@ class PreordedTraversePd:
                 msg: str = f"""
                 POT terminated because {path_no=} greater than {self._max_iter=}.
                 Maybe you should increase `max_iter`."""
-                raise AssertionError(msg)
+                raise ValueError(msg)
         nstack = len(stack)
         if nstack:
             msg = f"""

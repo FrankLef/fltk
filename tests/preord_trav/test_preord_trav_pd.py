@@ -2,7 +2,7 @@ import pytest
 from pathlib import Path
 import pandas as pd
 
-from fltk.preord_trav.preorded_traverse_pd import PreordedTraversePd
+from fltk.preord_trav.preord_trav_pd import PreordedTraversePd
 
 
 @pytest.fixture
@@ -56,5 +56,5 @@ def test_preord_trav_err(tree_data) -> None:
         right="RightID",
         max_iter=10,
     )
-    with pytest.raises(AssertionError):
+    with pytest.raises(ValueError):
         preord_trav_pd.fit_transform()

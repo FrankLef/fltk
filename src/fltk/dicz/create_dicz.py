@@ -27,6 +27,7 @@ def get_specs(path: Path, prefix: str, sheet_nm: str) -> DiczSpecs:
 def create_dicz(
     key: str,
     path: Path,
+    *,
     prefix: str = "bag_",
     sheet_nm="data",
     cache_nm: str = ".dicz_cache",

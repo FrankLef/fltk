@@ -2,7 +2,7 @@ import pytest
 from pathlib import Path
 import polars as pl
 
-from fltk.preord_trav.preorded_traverse import PreordedTraverse
+from fltk.preord_trav.preord_trav import PreordedTraverse
 
 
 @pytest.fixture
@@ -56,5 +56,5 @@ def test_preord_trav_err(tree_data) -> None:
         right="RightID",
         max_iter=10,
     )
-    with pytest.raises(AssertionError):
+    with pytest.raises(ValueError):
         preord_trav.fit_transform()
