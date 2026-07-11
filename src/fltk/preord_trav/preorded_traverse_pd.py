@@ -2,7 +2,7 @@ import pandas as pd
 from collections import deque
 
 
-class PreordedTraverse:
+class PreordedTraversePd:
     def __init__(
         self,
         data: pd.DataFrame,
@@ -92,7 +92,7 @@ class PreordedTraverse:
                 msg: str = f"""
                 POT terminated because {path_no=} greater than {self._max_iter=}.
                 Maybe you should increase `max_iter`."""
-                raise StopIteration(msg)
+                raise AssertionError(msg)
         nstack = len(stack)
         if nstack:
             msg = f"""

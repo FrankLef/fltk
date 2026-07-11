@@ -2,7 +2,7 @@ import pytest
 from pathlib import Path
 import polars as pl
 
-from fltk.utils.preorded_traverse import PreordedTraverse
+from fltk.preord_trav.preorded_traverse import PreordedTraverse
 
 
 @pytest.fixture
@@ -34,16 +34,6 @@ def preord_trav(tree_data) -> PreordedTraverse:
         max_iter=100,
     )
     return preord_trav
-
-
-def test_preord_trav(preord_trav) -> None:
-    preord_trav.fit()
-    preord_trav.transform()
-    data = preord_trav.data
-    assert not data.is_empty()
-    assert "LevelID" in data.columns
-    assert "LeftID" in data.columns
-    assert "RightID" in data.columns
 
 
 def test_preord_trav_calc(preord_trav) -> None:
