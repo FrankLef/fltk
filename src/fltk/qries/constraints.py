@@ -1,11 +1,11 @@
 import duckdb as ddb
-from typing import Iterable
+from typing import Sequence
 
 from ._qry_repo import QryRepo
 
 
 class QryConstraints(QryRepo):
-    def write_add_primary_key(self, keys: Iterable[str]) -> str:
+    def write_add_primary_key(self, keys: Sequence[str]) -> str:
         the_keys = ",".join(keys)
         qry = f"ALTER TABLE {self.table_nm} ADD PRIMARY KEY ({the_keys})"
         return qry
@@ -14,7 +14,7 @@ class QryConstraints(QryRepo):
         qry = f"ALTER TABLE {self.table_nm} ALTER COLUMN {col} SET NOT NULL"
         return qry
 
-    def add_primary_key(self, keys: Iterable[str]) -> None:
+    def add_primary_key(self, keys: Sequence[str]) -> None:
         qry = self.write_add_primary_key(keys)
         try:
             self.conn.sql(qry)
@@ -23,7 +23,7 @@ class QryConstraints(QryRepo):
             e.add_note(msg)
             raise
 
-    def set_not_null(self, cols: Iterable[str], skip_on_error: bool = False) -> None:
+    def set_not_null(self, cols: Sequence[str], skip_on_error: bool = False) -> None:
         for col in cols:
             qry = self.write_set_not_null(col)
             try:

@@ -1,4 +1,4 @@
-from typing import Iterable
+from typing import Sequence
 
 from ._qry_repo import QryRepo
 
@@ -21,7 +21,7 @@ class QryClean(QryRepo):
             """
             self.conn.sql(qry)
 
-    def drop_cols(self, cols: Iterable[str]) -> None:
+    def drop_cols(self, cols: Sequence[str]) -> None:
         for col in cols:
             qry: str = f"ALTER TABLE {self.table_nm} DROP COLUMN {col};"
             self.conn.sql(qry)
@@ -30,3 +30,17 @@ class QryClean(QryRepo):
         for old_nm, new_nm in cols.items():
             qry = f"ALTER TABLE {self.table_nm} RENAME {old_nm} TO {new_nm};"
             self.conn.sql(qry)
+
+    def reorder_cols(self, schema_cols: Sequence[str]) -> None:
+        qry: str = f"SELECT column_name FROM (DESCRIBE {self.table_nm});"
+        describe_cols = self.conn.sql(qry).fetchall()
+        table_cols = [col[0] for col in describe_cols]
+        missed_cols = [col for col in table_cols if col not in schema_cols]
+        ordered_cols = [col for col in schema_cols if col in table_cols]
+        select_cols = ordered_cols + missed_cols
+        select_csv = ",".join(select_cols)
+        qry = f"""
+        CREATE OR REPLACE {self.table_nm} AS
+        SELECT {select_csv} FROM {self.table_nm};
+        """
+        self.conn.sql(qry)
