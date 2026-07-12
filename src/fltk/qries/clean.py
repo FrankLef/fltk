@@ -22,6 +22,11 @@ class QryClean(QryRepo):
             self.conn.sql(qry)
 
     def drop_cols(self, cols: Sequence[str]) -> None:
+        """_summary_
+
+        Args:
+            cols (Sequence[str]): _description_
+        """
         for col in cols:
             qry: str = f"ALTER TABLE {self.table_nm} DROP COLUMN {col};"
             self.conn.sql(qry)
@@ -32,6 +37,11 @@ class QryClean(QryRepo):
             self.conn.sql(qry)
 
     def reorder_cols(self, schema_cols: Sequence[str]) -> None:
+        """Reorder columns according to `schema_cols`.
+
+        Args:
+            cols (Sequence[str]): Seuqnce of column names.
+        """
         qry: str = f"SELECT column_name FROM (DESCRIBE {self.table_nm});"
         describe_vals = self.conn.sql(qry).fetchall()
         table_cols = [col[0] for col in describe_vals]

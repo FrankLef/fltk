@@ -30,6 +30,11 @@ class QryUpdate(QryRepo):
         return qry
 
     def add_cols(self, cols: dict[str, str]) -> None:
+        """_summary_
+
+        Args:
+            cols (dict[str, str]): _description_
+        """
         for name, dtype in cols.items():
             qry_add = self.write_add_col(col=name, dtype=dtype)
             self.conn.sql(qry_add)
@@ -41,6 +46,14 @@ class QryUpdate(QryRepo):
     def update_from(
         self, col: str, upd_text: str, from_table: str, join_vars: tuple[str, str]
     ) -> None:
+        """Update a table using values from a reference table.
+
+        Args:
+            col (str): Name of column to update.
+            upd_text (str): Text to describle the update to apply on `col`.
+            from_table (str): Name of reference table.
+            join_vars (tuple[str, str]): The name of the 2 columns, first column for the table, second for the reference table.
+        """
         qry_update_from = self.write_update_from(
             col=col, upd_text=upd_text, from_table=from_table, join_vars=join_vars
         )
