@@ -40,7 +40,7 @@ class QryClean(QryRepo):
         select_cols = ordered_cols + missed_cols
         select_csv = ",".join(select_cols)
         qry = f"""
-        CREATE OR REPLACE {self.table_nm} AS
+        CREATE OR REPLACE TABLE {self.table_nm} AS
         SELECT {select_csv} FROM {self.table_nm};
         """
         self.conn.sql(qry)
