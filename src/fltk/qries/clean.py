@@ -33,8 +33,8 @@ class QryClean(QryRepo):
 
     def reorder_cols(self, schema_cols: Sequence[str]) -> None:
         qry: str = f"SELECT column_name FROM (DESCRIBE {self.table_nm});"
-        describe_cols = self.conn.sql(qry).fetchall()
-        table_cols = [col[0] for col in describe_cols]
+        describe_vals = self.conn.sql(qry).fetchall()
+        table_cols = [col[0] for col in describe_vals]
         missed_cols = [col for col in table_cols if col not in schema_cols]
         ordered_cols = [col for col in schema_cols if col in table_cols]
         select_cols = ordered_cols + missed_cols
