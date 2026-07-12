@@ -4,10 +4,6 @@ from ._qry_repo import QryRepo
 
 
 class QryClean(QryRepo):
-    @property
-    def table_nm(self) -> str:
-        return self._table_nm
-
     def clean_ws(self, col: str) -> None:
         """Remove leading and trailing white spaces and replace multiple whitespaces.
 
@@ -23,14 +19,14 @@ class QryClean(QryRepo):
             SET {col} = regexp_replace({col}, '{pat}', '{replace}', 'g')
             WHERE {col} IS NOT NULL;
             """
-            self._conn.sql(qry)
+            self.conn.sql(qry)
 
     def drop_cols(self, cols: Iterable[str]) -> None:
         for col in cols:
-            qry: str = f"ALTER TABLE {self._table_nm} DROP COLUMN {col};"
-            self._conn.sql(qry)
+            qry: str = f"ALTER TABLE {self.table_nm} DROP COLUMN {col};"
+            self.conn.sql(qry)
 
     def ren_cols(self, cols: dict[str, str]) -> None:
         for old_nm, new_nm in cols.items():
-            qry = f"ALTER TABLE {self._table_nm} RENAME {old_nm} TO {new_nm};"
-            self._conn.sql(qry)
+            qry = f"ALTER TABLE {self.table_nm} RENAME {old_nm} TO {new_nm};"
+            self.conn.sql(qry)
