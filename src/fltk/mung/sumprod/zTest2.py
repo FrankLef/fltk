@@ -15,7 +15,7 @@ newvalue_var = "adds_amt"
 sumprod = MungSumprod(
     name="testSumprodZ2",
     idx_to="concept_add",
-    idx_from="concept_from",
+    idx_from="concept_addend",
     sump_coef="coef",
     sump_value="summ_amt",
 )
