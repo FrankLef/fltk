@@ -6,10 +6,12 @@ import polars as pl
 from typing import Any
 from fltk.mung.sumprod.main import MungSumprod
 
+newvalue_nm: str = "rolly_amt"
+
 
 @pytest.fixture
 def sumprod() -> MungSumprod:
-    return MungSumprod(name="test_sumprod", idx_to="idx")
+    return MungSumprod(name="test_sump_rolly", idx_to="idx")
 
 
 @pytest.fixture
@@ -41,7 +43,7 @@ def data_vars() -> dict[str, Any]:
         "idx_var": "period",
         "value_var": "amount",
         "group_vars": ["entity", "concept", "pertype"],
-        "newvalue_var": "rolly_amt",
+        "newvalue_var": newvalue_nm,
     }
     return out
 
@@ -90,21 +92,11 @@ def test_init_sumprod(init_sumprod) -> None:
 @pytest.fixture
 def final_sumprod(init_sumprod) -> MungSumprod:
     init_sumprod.fit()
-    init_sumprod.transform()
+    init_sumprod.transform(missing_to_zero=False)
     return init_sumprod
 
 
-def test_incomplete(final_sumprod) -> None:
-    assert final_sumprod.incomplete.shape == (19, 6)
-    assert final_sumprod.incomplete_uniq.shape == (16, 4)
-
-
-# @pytest.fixture
-# def transform_sumprod(final_sumprod) -> MungSumprod:
-#     fi_sumprod.transform()
-#     return fit_sumprod
-
-
 def test_calc(final_sumprod) -> None:
-    final_sumprod.calc.shape == (34, 5)
-    final_sumprod.calc_aug.shape == (34, 6)
+    calc_df = final_sumprod.calc
+    assert calc_df.shape == (40, 5)
+    assert calc_df[newvalue_nm].null_count() == 16

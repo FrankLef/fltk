@@ -2,7 +2,7 @@ import polars as pl
 from typing import Final
 from rich import print as rprint
 
-from ..abc import Mung
+from ..base import Mung
 from ...utils.value_cls import StrName
 
 from . import vars

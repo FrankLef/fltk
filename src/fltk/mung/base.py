@@ -33,7 +33,7 @@ class Mung(ABC):
         """Dictionnary of dataframes."""
         pass
 
-    def get_summary(self) -> dict[str, tuple[int, ...]]:
+    def get_summary(self) -> dict[str, tuple[int, int]]:
         """Create summary of dataframes."""
         summary = {key: df.shape for key, df in self.dfs.items()}
         return summary

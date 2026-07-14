@@ -6,23 +6,23 @@ import polars as pl
 from typing import Any
 from fltk.mung.sumprod.main import MungSumprod
 
-newvalue_nm: str = "qrtr_amt"
+newvalue_nm: str = "adds_amt"
 
 
 @pytest.fixture
 def sumprod() -> MungSumprod:
-    return MungSumprod(name="test_sump_qrtr", idx_to="idx")
+    return MungSumprod(
+        name="test_adds",
+        idx_to="concept_add",
+        idx_from="concept_addend",
+        sump_coef="coef",
+        sump_value="sum_amt",
+    )
 
 
 @pytest.fixture
 def fixtures_path() -> Path:
     return Path(__file__).parents[1].joinpath("fixtures")
-
-
-@pytest.fixture
-def matrix_xl(fixtures_path) -> dict[str, str]:
-    out = {"path": fixtures_path.joinpath("sumprod.xlsx"), "sheet": "qrtr"}
-    return out
 
 
 @pytest.fixture
@@ -32,32 +32,33 @@ def data_xl(fixtures_path) -> dict[str, str]:
 
 
 @pytest.fixture
-def raw_data(data_xl) -> pl.DataFrame:
-    raw_data = pl.read_excel(data_xl["path"], sheet_name=data_xl["sheet"])
+def raw_data(fixtures_path) -> pl.DataFrame:
+    path = fixtures_path.joinpath("sumprod.xlsx")
+    raw_data = pl.read_excel(path, sheet_name="data2")
     return raw_data
+
+
+@pytest.fixture
+def sump_df(fixtures_path) -> pl.DataFrame:
+    path = fixtures_path.joinpath("sumprod.xlsx")
+    sump_df = pl.read_excel(path, sheet_name="concepts_adds")
+    return sump_df
+
+
+def test_load_sump(sumprod, sump_df) -> None:
+    sumprod.load_sump(sump_df)
+    sumprod.sump.shape == (26, 4)
 
 
 @pytest.fixture
 def data_vars() -> dict[str, Any]:
     out = {
-        "idx_var": "period",
+        "idx_var": "concept",
         "value_var": "amount",
-        "group_vars": ["entity", "concept", "pertype"],
+        "group_vars": ("entity", "period", "pertype"),
         "newvalue_var": newvalue_nm,
     }
     return out
-
-
-def test_err_name() -> None:
-    with pytest.raises(ValueError):
-        MungSumprod(name=" ", idx_to="idx")
-    with pytest.raises(ValueError):
-        MungSumprod(name="?", idx_to="idx")
-
-
-def test_load_mat_xl(sumprod, matrix_xl: dict[str, Path]) -> None:
-    sumprod.load_mat_from_xl(path=matrix_xl["path"], sheet_nm=matrix_xl["sheet"])
-    assert sumprod.sump.shape == (16, 3)
 
 
 def test_load_data(sumprod, raw_data, data_vars) -> None:
@@ -72,8 +73,8 @@ def test_load_data(sumprod, raw_data, data_vars) -> None:
 
 
 @pytest.fixture
-def init_sumprod(sumprod, matrix_xl, raw_data, data_vars) -> MungSumprod:
-    sumprod.load_mat_from_xl(path=matrix_xl["path"], sheet_nm=matrix_xl["sheet"])
+def init_sumprod(sumprod, sump_df, raw_data, data_vars) -> MungSumprod:
+    sumprod.load_sump(sump_df)
     sumprod.load_raw_data(
         raw_data,
         idx=data_vars["idx_var"],
@@ -85,18 +86,19 @@ def init_sumprod(sumprod, matrix_xl, raw_data, data_vars) -> MungSumprod:
 
 
 def test_init_sumprod(init_sumprod) -> None:
-    assert init_sumprod.sump.shape == (16, 3)
-    assert init_sumprod.raw.shape == (33, 7)
+    assert init_sumprod.sump.shape == (26, 4)
+    assert init_sumprod.raw.shape == (22, 6)
 
 
 @pytest.fixture
 def final_sumprod(init_sumprod) -> MungSumprod:
     init_sumprod.fit()
-    init_sumprod.transform(missing_to_zero=False)
+    init_sumprod.transform(missing_to_zero=True)
     return init_sumprod
 
 
 def test_calc(final_sumprod) -> None:
     calc_df = final_sumprod.calc
-    assert calc_df.shape == (40, 5)
-    assert calc_df[newvalue_nm].null_count() == 11
+    assert calc_df.shape == (42, 5)
+    assert calc_df[newvalue_nm].null_count() == 0
+    assert calc_df[newvalue_nm].sum() == 5560

@@ -4,38 +4,30 @@ from datetime import datetime as dt
 
 from fltk.mung.sumprod.main import MungSumprod
 
+
 fixtures_path = Path(__file__).parents[4].joinpath("tests", "mung", "fixtures")
 sumprod_path = fixtures_path.joinpath("sumprod.xlsx")
 out_fn = f"sumprod_z2_{dt.now().date().isoformat()}.xlsx"
 out_path = fixtures_path.joinpath(out_fn)
-idx_sheet: str = "concepts_adds"
-data_sheet = "data2"
-newvalue_var = "adds_amt"
+idx_sheet: str = "rolly"
+data_sheet = "data1"
+newvalue_var = "rolly_amt"
 
-sumprod = MungSumprod(
-    name="testSumprodZ2",
-    idx_to="concept_add",
-    idx_from="concept_addend",
-    sump_coef="coef",
-    sump_value="summ_amt",
-)
-sump_df = pl.read_excel(sumprod_path, sheet_name="concepts_adds")
-sumprod.load_sump(sump_df)
-# sumprod.sump_df.info()
+sumprod = MungSumprod(name="testSumprodZ1", idx_to="idx")
+sumprod.load_mat_from_xl(sumprod_path, sheet_nm=idx_sheet)
 
 raw_data = pl.read_excel(sumprod_path, sheet_name=data_sheet)
-# raw_data.info()
 
 sumprod.load_raw_data(
     raw_data,
-    idx="concept",
+    idx="period",
     value="amount",
-    groups=("entity", "period", "pertype"),
+    groups=("entity", "concept", "pertype"),
     newvalue=newvalue_var,
 )
 
 sumprod.fit()
-sumprod.transform()
+sumprod.transform(missing_to_zero=False)
 
 print("\n", sumprod, sep="")
 

@@ -1,29 +1,55 @@
-from __future__ import annotations  # Must be at the top
-from typing import TYPE_CHECKING
 import polars as pl
 
-if TYPE_CHECKING:
-    from .main import MungSumprod  # Only imported when checking types
+from .vars import RawVars, SumprodVars
 
 
-def calculate(inst: MungSumprod) -> pl.DataFrame:
-    raw_df = inst.raw
-    _idx = inst.raw_vars.idx  # the index column in the raw data
-    _newvalue = inst.raw_vars.newvalue
-    _groups = inst.raw_vars.groups
+def calculate(
+    data: pl.DataFrame,
+    sumprod: pl.DataFrame,
+    raw_vars: RawVars,
+    sump_vars: SumprodVars,
+    missing_to_zero: bool,
+) -> pl.DataFrame:
+    _idx_from = sump_vars.idx_from
+    _idx_to = sump_vars.idx_to
+    _coef = sump_vars.sump_coef
 
-    sump_df = inst.sump
-    _idx_from = inst.sump_vars.idx_from
-    _idx_to = inst.sump_vars.idx_to
-    _sump_coef = inst.sump_vars.sump_coef
+    _idx = raw_vars.idx
+    _groups = raw_vars.groups
+    _value = raw_vars.value
+    _newvalue = raw_vars.newvalue
 
-    merged_df = raw_df.join(sump_df, left_on=_idx, right_on=_idx_from, how="inner")
+    dfs = []
+    for _, sump_df in sumprod.group_by(_idx_to):
+        for group_vals, raw_df in data.group_by(_groups):
+            merged_df = sump_df.join(
+                raw_df, left_on=_idx_from, right_on=_idx, how="left"
+            )
+            # add groups to see which one had missing data
+            cols = {col: pl.lit(val) for col, val in zip(_groups, group_vals)}
+            merged_df = merged_df.with_columns(**cols)
 
-    calc_newval = pl.col(_sump_coef) * pl.col(inst.raw_vars.value)
-    merged_df = merged_df.with_columns(calc_newval.alias(_newvalue))
+            merged_df = merged_df.with_columns(
+                (pl.col(_coef) * pl.col(_value)).alias(_newvalue)
+            )
 
-    calc_groups = list(_groups) + [_idx_to]
-    calc_data = merged_df.group_by(calc_groups).agg(pl.col(_newvalue).sum())
-    calc_data = calc_data.sort(calc_groups)
-    calc_data = calc_data.rename({_idx_to: _idx})
-    return calc_data
+            merged_df = merged_df.with_columns(
+                pl.when(missing_to_zero)
+                .then(pl.col(_newvalue).fill_null(0))
+                .otherwise(pl.col(_newvalue))
+            )
+
+            dfs.append(merged_df)
+
+    all_df = pl.concat(dfs, how="vertical")
+
+    all_groups = list(_groups) + [_idx_to]
+    final_df = all_df.group_by(all_groups).agg(
+        pl.when(pl.col(_newvalue).has_nulls())
+        .then(None)
+        .otherwise(pl.col(_newvalue).sum())
+        .alias(_newvalue)
+    )
+    final_df = final_df.sort(all_groups).rename({_idx_to: _idx})
+
+    return final_df

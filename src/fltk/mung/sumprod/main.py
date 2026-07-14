@@ -1,16 +1,14 @@
 import polars as pl
 from pathlib import Path
 
-from ..abc import Mung
+from ..base import Mung
 from ...utils.value_cls import StrName
 
 from . import vars
 from . import load_mat_xl as lmx
 from . import load_sump as lc
 from . import load_raw_data as lrd
-from . import incomplete_sump as incomp
-from . import incomplete_flag as incomp_flag
-from . import calculate as calc
+from .calculate import calculate as calc
 
 
 class MungSumprod(Mung):
@@ -65,10 +63,10 @@ class MungSumprod(Mung):
 
         Args:
             data (pl.DataFrame): Raw data dataframe.
-            idx (str): Column with the concept used for calculations.
-            value (str): Column with values used for calculations.
+            idx (str): Column with the concept used for calcXulations.
+            value (str): Column with values used for calcXulations.
             groups (tuple[str, ...]): Columns making up a composite key.
-            newvalue (str): _description_Column with calculated ratio value.
+            newvalue (str): _description_Column with calcXulated ratio value.
         """
         self.raw_vars = vars.RawVars(
             groups=groups, idx=idx, value=value, newvalue=newvalue
@@ -88,44 +86,41 @@ class MungSumprod(Mung):
         df = lmx.load_mat_from_xl(self, path=path, sheet_nm=sheet_nm)
         self.load_sump(df)
 
-    def get_incomplete_sump(self) -> None:
-        incomplete_dfs = incomp.get_incomplete_sump(self)
-        self.incomplete = incomplete_dfs["incomplete"]
-        self.incomplete_uniq = incomplete_dfs["incomplete_uniq"]
-
-    def fit_transform(self) -> None:
+    def fit_transform(self, missing_to_zero: bool) -> None:
         """Process the fit and transform steps in a sequence.
 
         Args:
-            is_merged (bool, optional): If True, merge the calculated data to the original dataframe. Otherwise, don't do it.
+            is_merged (bool, optional): If True, merge the calcXulated data to the original dataframe. Otherwise, don't do it.
             verbose (bool, optional): If True, display info. Defaults to False.
         """
         self.fit()
-        self.transform()
+        self.transform(missing_to_zero=missing_to_zero)
 
     def fit(self) -> None:
-        """Fit the data. Find incomplete data."""
-        self.get_incomplete_sump()
+        """Fit the data."""
+        # Not used.
 
-    def transform(self) -> None:
-        """Do the calculations."""
-        self.calculate()
+    def transform(self, missing_to_zero: bool) -> None:
+        """Do the calcXulations."""
+        self.calculate(missing_to_zero=missing_to_zero)
 
-    def calculate(self) -> None:
-        """Calculate sumprods."""
-        self.calc = calc.calculate(self)
-        self.calc_aug = incomp_flag.flag_incomplete(
-            self.calc, self.incomplete_uniq, self.raw_vars
+    def calculate(self, missing_to_zero: bool) -> None:
+        data = self.raw
+        sump_df = self.sump
+        calc_df = calc(
+            data,
+            sumprod=sump_df,
+            raw_vars=self.raw_vars,
+            sump_vars=self.sump_vars,
+            missing_to_zero=missing_to_zero,
         )
+        self.calc = calc_df
 
     @property
     def dfs(self):
         dfs = {
             "raw data": self.raw,
-            "sumprod": self.sump,
-            "incomplete": self.incomplete,
-            "incomplete_uniq": self.incomplete_uniq,
+            "sump": self.sump,
             "calc": self.calc,
-            "calc_aug": self.calc_aug,
         }
         return dfs
