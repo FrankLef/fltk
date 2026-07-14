@@ -100,3 +100,4 @@ def test_calc(final_sumprod) -> None:
     calc_df = final_sumprod.calc
     assert calc_df.shape == (40, 5)
     assert calc_df[newvalue_nm].null_count() == 16
+    assert calc_df[newvalue_nm].sum() == 4726
