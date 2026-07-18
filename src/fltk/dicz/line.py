@@ -1,8 +1,10 @@
 from collections.abc import Sequence
 from typing import Self, Any
 from copy import deepcopy
+
 from .base import DiczBase
 from .item import DiczItem
+from .enums import DiczVar
 
 
 class DiczLine(DiczBase):
@@ -19,8 +21,7 @@ class DiczLine(DiczBase):
 
     @property
     def nitems(self) -> int:
-        # NOTE: Total includes the `skipped` column if loaded.
-        return len(self.coll)
+        return len(self.keys)
 
     @property
     def empty(self) -> bool:
@@ -28,8 +29,9 @@ class DiczLine(DiczBase):
 
     @property
     def keys(self) -> tuple[str, ...]:
-        # must return tuple
-        return tuple(self.coll.keys())
+        # must return tuple and not include `skipped`s`
+        out = tuple(key for key in self.coll.keys() if key != DiczVar.SKIPPED)
+        return out
 
     def append(self, item: DiczItem):
         self.coll[item.key] = item

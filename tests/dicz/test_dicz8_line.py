@@ -10,7 +10,7 @@ def a_line(dicz1) -> DiczLine:
 
 
 def test_info(a_line):
-    expected = {"nitems": 8}
+    expected = {"nitems": 7}
     assert a_line.info == expected
 
 

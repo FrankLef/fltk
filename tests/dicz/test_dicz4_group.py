@@ -11,13 +11,13 @@ def a_group(dicz1) -> DiczGroup:
 
 
 def test_info(a_group):
-    expected = {"nlines": 5, "nitems": 40}
+    expected = {"nlines": 5, "nitems": 35}
     assert a_group.info == expected
 
 
 def test_line(a_group):
     a_line = a_group.line("CieA")
-    assert a_line.nitems == 8
+    assert a_line.nitems == 7
 
 
 def test_err_key(a_group):
