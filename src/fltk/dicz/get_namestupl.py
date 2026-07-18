@@ -1,23 +1,23 @@
 from typing import NamedTuple, Any, Final
 
-from .enums import DiczVar as vars
+from .base import DiczVar as vars
 
 
-def main(group_nm: str, line_keys: tuple[str, ...]) -> NamedTuple:
-    specs = get_fields(group_nm=group_nm, names=line_keys)
+def main(group_nm: str, line_nms: tuple[str, ...]) -> NamedTuple:
+    specs = get_fields(group_nm=group_nm, line_nms=line_nms)
     NamesTuple = NamedTuple(group_nm, specs["fields"])  # type: ignore
     names_tupl = NamesTuple(*specs["values"])
     return names_tupl
 
 
-def get_fields(group_nm: str, names: tuple[str, ...]) -> dict[str, Any]:
+def get_fields(group_nm: str, line_nms: tuple[str, ...]) -> dict[str, Any]:
     NAME: Final[str] = "name"
-    the_values: list[str] = list(names)
+    the_values: list[str] = list(line_nms)
     if vars.GROUP in the_values:
         msg: str = f"The field name '{NAME}' is reserved and must not be used."
         raise KeyError(msg)
 
-    the_names: list[str] = list(names)
+    the_names: list[str] = list(line_nms)
 
     the_names.insert(0, NAME)
     the_values.insert(0, group_nm)

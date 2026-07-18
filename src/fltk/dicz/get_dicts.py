@@ -2,7 +2,7 @@ import polars as pl
 from collections import defaultdict
 from typing import Any
 
-from .enums import DiczVar as vars
+from .base import DiczVar as vars
 
 type ItemDict = dict[str, str]
 type LineDict = dict[str, ItemDict]
@@ -29,7 +29,7 @@ def audit_columns(data: pl.DataFrame, vars: Any) -> None:
 
 
 def rm_skipped(data: pl.DataFrame) -> pl.DataFrame:
-    filtered_data = data.filter(~pl.col(vars.SKIPPED))
+    filtered_data = data.filter(~pl.col(vars.SKIPPED)).drop(vars.SKIPPED)
     return filtered_data
 
 

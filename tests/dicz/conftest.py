@@ -14,7 +14,7 @@ def path() -> Path:
 
 @pytest.fixture
 def dicz1_() -> Dicz:
-    return Dicz(key="dicz1")
+    return Dicz(name="dicz1")
 
 
 @pytest.fixture
@@ -29,9 +29,9 @@ def xbr_xl(path) -> Path:
 
 @pytest.fixture
 def dicz1(groups_xl, xbr_xl) -> Dicz:
-    dicz1 = Dicz(key="dicz1")
+    dicz1 = Dicz(name="dicz1")
     dfs = {"groups": groups_xl, "xbr": xbr_xl}
-    for key, xl in dfs.items():
+    for bag_nm, xl in dfs.items():
         df = pl.read_excel(xl, sheet_name="data")
-        dicz1.append(key=key, data=df)
+        dicz1.append(bag_nm=bag_nm, data=df)
     return dicz1

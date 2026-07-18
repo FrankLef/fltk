@@ -4,12 +4,11 @@ from copy import deepcopy
 
 from .base import DiczBase
 from .item import DiczItem
-from .enums import DiczVar
 
 
 class DiczLine(DiczBase):
-    def __init__(self, key: str):
-        super().__init__(key=key)
+    def __init__(self, name: str):
+        super().__init__(name=name)
         self.coll: dict[str, DiczItem] = {}
 
     @property
@@ -21,26 +20,24 @@ class DiczLine(DiczBase):
 
     @property
     def nitems(self) -> int:
-        return len(self.keys)
+        return len(self.coll)
 
     @property
     def empty(self) -> bool:
         return not self.nitems
 
     @property
-    def keys(self) -> tuple[str, ...]:
-        # must return tuple and not include `skipped`s`
-        out = tuple(key for key in self.coll.keys() if key != DiczVar.SKIPPED)
-        return out
+    def item_nms(self) -> tuple[str, ...]:
+        return tuple(self.coll.keys())
 
-    def append(self, item: DiczItem):
-        self.coll[item.key] = item
+    def append(self, dicz_obj: DiczItem):
+        self.coll[dicz_obj.name] = dicz_obj
 
     def item(self, item_nm: str) -> DiczItem:
         try:
             a_item = self.coll[item_nm]
         except KeyError as e:
-            e.add_note(f"'{item_nm}' is an invalid item key.")
+            e.add_note(f"'{item_nm}' is an invalid dicz item name.")
             raise
         return a_item
 

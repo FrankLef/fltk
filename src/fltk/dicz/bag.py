@@ -6,8 +6,8 @@ from .group import DiczGroup
 
 
 class DiczBag(DiczBase):
-    def __init__(self, key: str) -> None:
-        super().__init__(key=key)
+    def __init__(self, name: str) -> None:
+        super().__init__(name=name)
         self.coll: dict[str, DiczGroup] = {}
 
     @property
@@ -32,18 +32,18 @@ class DiczBag(DiczBase):
         return not self.ngroups
 
     @property
-    def keys(self) -> tuple[str, ...]:
+    def group_nms(self) -> tuple[str, ...]:
         # must return tuple
         return tuple(self.coll.keys())
 
-    def append(self, item: DiczGroup):
-        self.coll[item.key] = item
+    def append(self, dicz_obj: DiczGroup):
+        self.coll[dicz_obj.name] = dicz_obj
 
-    def group(self, key) -> DiczGroup:
+    def group(self, group_nm: str) -> DiczGroup:
         try:
-            a_group = self.coll[key]
+            a_group = self.coll[group_nm]
         except KeyError as e:
-            e.add_note(f"'{key}' is an invalid group key.")
+            e.add_note(f"'{group_nm}' is an invalid dicz group name.")
             raise
         return a_group
 

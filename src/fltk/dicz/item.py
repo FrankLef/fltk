@@ -5,7 +5,7 @@ from typing import Any
 
 @dataclass
 class DiczItem:
-    key: str
+    name: str
     value: str
 
     def is_matched(self, pattern: str) -> bool:

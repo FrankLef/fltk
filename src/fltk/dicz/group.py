@@ -2,15 +2,14 @@ from collections.abc import Sequence
 from typing import Any, Self, NamedTuple
 from copy import deepcopy
 
-from .base import DiczBase
+from .base import DiczBase, DiczVar as vars
 from .line import DiczLine
-from .enums import DiczVar as vars
 from .get_namestupl import main as nmstupl
 
 
 class DiczGroup(DiczBase):
-    def __init__(self, key: str):
-        super().__init__(key=key)
+    def __init__(self, name: str):
+        super().__init__(name=name)
         self.coll: dict[str, DiczLine] = {}
 
     @property
@@ -35,23 +34,23 @@ class DiczGroup(DiczBase):
         return not self.nlines
 
     @property
-    def keys(self) -> tuple[str, ...]:
+    def line_nms(self) -> tuple[str, ...]:
         # must return tuple
         return tuple(self.coll.keys())
 
     @property
     def names_tupl(self) -> NamedTuple:
-        names_tupl = nmstupl(group_nm=self.key, line_keys=self.keys)
+        names_tupl = nmstupl(group_nm=self.name, line_nms=self.line_nms)
         return names_tupl
 
-    def append(self, item: DiczLine):
-        self.coll[item.key] = item
+    def append(self, dicz_obj: DiczLine):
+        self.coll[dicz_obj.name] = dicz_obj
 
-    def line(self, key) -> DiczLine:
+    def line(self, line_nm: str) -> DiczLine:
         try:
-            a_line = self.coll[key]
+            a_line = self.coll[line_nm]
         except KeyError as e:
-            e.add_note(f"'{key}' is an invalid line key.")
+            e.add_note(f"'{line_nm}' is an invalid dicz line name.")
             raise
         return a_line
 

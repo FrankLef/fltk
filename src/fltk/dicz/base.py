@@ -1,15 +1,24 @@
 from abc import ABC, abstractmethod
+from enum import StrEnum, auto
+
+
+class DiczVar(StrEnum):
+    GROUP = auto()
+    LINE = auto()
+    SKIPPED = auto()
+    ROLE = auto()
+    RULE = auto()
 
 
 class DiczBase(ABC):
-    def __init__(self, key: str) -> None:
-        self.key: str = key
+    def __init__(self, name: str) -> None:
+        self.name: str = name
 
     def __repr__(self) -> str:
-        title = f"{type(self).__name__}: {self.key}"
+        title = f"{type(self).__name__}: {self.name}"
         msg = title + "\n" + ("-" * len(title)) + "\n"
         for key, value in self.info.items():
-            msg += f"{key:<10}: {str(value)}\n"
+            msg += f"{key}: {str(value)}\n"
         return msg
 
     @property

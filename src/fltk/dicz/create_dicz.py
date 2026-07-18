@@ -25,7 +25,7 @@ def get_specs(path: Path, prefix: str, sheet_nm: str) -> DiczSpecs:
 
 
 def create_dicz(
-    key: str,
+    name: str,
     path: Path,
     *,
     prefix: str = "bag_",
@@ -40,17 +40,17 @@ def create_dicz(
     memory = Memory(cache_path, verbose=0)
 
     @memory.cache
-    def initialize_dicz(key: str, specs: DiczSpecs) -> Dicz:
-        print(f"Dicz cache '{key}' updated {datetime.now().isoformat()}.")
-        dicz = Dicz(key)
-        for key, val in specs.items():
+    def initialize_dicz(name: str, specs: DiczSpecs) -> Dicz:
+        print(f"Dicz cache '{name}' updated {datetime.now().isoformat()}.")
+        dicz = Dicz(name)
+        for bag_nm, val in specs.items():
             data = pl.read_excel(val[0], sheet_name=val[1])
-            dicz.append(key=key, data=data)
+            dicz.append(bag_nm, data=data)
         return dicz
 
     # NOTE: clear the cache to force its update
     if clear_cache:
         initialize_dicz.clear()
 
-    dicz = initialize_dicz(key=key, specs=specs)
+    dicz = initialize_dicz(name=name, specs=specs)
     return dicz

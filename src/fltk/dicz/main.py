@@ -11,8 +11,8 @@ from . import get_bag
 
 
 class Dicz(DiczBase):
-    def __init__(self, key: str):
-        super().__init__(key=key)
+    def __init__(self, name: str):
+        super().__init__(name=name)
         self.coll: dict[str, DiczBag] = {}
 
     @property
@@ -31,19 +31,19 @@ class Dicz(DiczBase):
         return not self.nbags
 
     @property
-    def keys(self) -> tuple[str, ...]:
+    def bag_nms(self) -> tuple[str, ...]:
         # must return tuple
         return tuple(self.coll.keys())
 
-    def append(self, key: str, data: pl.DataFrame):
-        bag: DiczBag = get_bag.main(key=key, data=data)
-        self.coll[bag.key] = bag
+    def append(self, bag_nm: str, data: pl.DataFrame):
+        bag: DiczBag = get_bag.main(bag_nm=bag_nm, data=data)
+        self.coll[bag_nm] = bag
 
-    def bag(self, key) -> DiczBag:
+    def bag(self, bag_nm: str) -> DiczBag:
         try:
-            a_bag = self.coll[key]
+            a_bag = self.coll[bag_nm]
         except KeyError as e:
-            e.add_note(f"'{key}' is an invalid bag key.")
+            e.add_note(f"'{bag_nm}' is an invalid dicz bag name.")
             raise
         return a_bag
 
