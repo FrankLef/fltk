@@ -2,9 +2,8 @@ from collections.abc import Sequence
 import polars as pl
 
 
+from .base import DiczBase, DiczNames
 from .bag import DiczBag
-
-from .base import DiczBase
 from . import get_bag
 
 type DiczBags = tuple[DiczBag, ...]
@@ -31,7 +30,7 @@ class Dicz(DiczBase):
         return not self.nbags
 
     @property
-    def bag_nms(self) -> tuple[str, ...]:
+    def bag_nms(self) -> DiczNames:
         # must return tuple
         return tuple(self.coll.keys())
 

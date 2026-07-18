@@ -1,6 +1,6 @@
 from collections.abc import Sequence
 
-from .base import DiczBase
+from .base import DiczBase, DiczNames
 from .group import DiczGroup
 
 type DiczGroups = tuple[DiczGroup, ...]
@@ -33,7 +33,7 @@ class DiczBag(DiczBase):
         return not self.ngroups
 
     @property
-    def group_nms(self) -> tuple[str, ...]:
+    def group_nms(self) -> DiczNames:
         # must return tuple
         return tuple(self.coll.keys())
 

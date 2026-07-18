@@ -2,6 +2,9 @@ from abc import ABC, abstractmethod
 from enum import StrEnum, auto
 
 
+type DiczNames = tuple[str, ...]
+
+
 class DiczVar(StrEnum):
     GROUP = auto()
     LINE = auto()

@@ -1,12 +1,11 @@
 from collections.abc import Sequence
 from typing import Any, NamedTuple
 
-from .base import DiczBase, DiczVar as vars
+from .base import DiczBase, DiczNames, DiczVar as vars
 from .line import DiczLine
 from .get_namestupl import main as nmstupl
 
 type DiczLines = tuple[DiczLine, ...]
-type DiczNames = tuple[str, ...]
 
 
 class DiczGroup(DiczBase):
@@ -36,7 +35,7 @@ class DiczGroup(DiczBase):
         return not self.nlines
 
     @property
-    def line_nms(self) -> tuple[str, ...]:
+    def line_nms(self) -> DiczNames:
         # must return tuple
         return tuple(self.coll.keys())
 
@@ -63,7 +62,7 @@ class DiczGroup(DiczBase):
             the_lines = tuple(self.coll.values())
         return the_lines
 
-    def filter_pattern(self, item_nm: str, pattern: str) -> tuple[str, ...]:
+    def filter_pattern(self, item_nm: str, pattern: str) -> DiczNames:
         """Filter the lines using the value of a given item.
 
         Args:

@@ -1,7 +1,7 @@
 from collections.abc import Sequence
 from typing import Any
 
-from .base import DiczBase
+from .base import DiczBase, DiczNames
 from .item import DiczItem
 
 type DiczItems = tuple[DiczItem, ...]
@@ -28,7 +28,7 @@ class DiczLine(DiczBase):
         return not self.nitems
 
     @property
-    def item_nms(self) -> tuple[str, ...]:
+    def item_nms(self) -> DiczNames:
         return tuple(self.coll.keys())
 
     def append(self, dicz_obj: DiczItem):
