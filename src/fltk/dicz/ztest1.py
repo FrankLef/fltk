@@ -5,19 +5,19 @@ from datetime import datetime as dt
 from fltk.dicz.main import Dicz
 
 
-fixtures_path = Path(__file__).parents[3].joinpath("tests", "dicz")
-xlpath = fixtures_path.joinpath("bag1.xlsx")
-xlsheet: str = "data1"
+fixtures_path = Path(__file__).parents[3].joinpath("tests", "dicz", "fixtures")
+xlpath = fixtures_path.joinpath("bag_groups.xlsx")
+xlsheet: str = "data"
 out_fn = f"dicz1_z1_{dt.now().date().isoformat()}.xlsx"
 out_path = Path(__file__).parent.joinpath(out_fn)
 
-dicz = Dicz(key="ztest1")
+dicz = Dicz(name="ztest1")
 
 data = pl.read_excel(xlpath, sheet_name=xlsheet)
-dicz.append(key="bag1", data=data)
+dicz.append(bag_nm="groups", data=data)
 print("\ndicz:\n", dicz, "\n", sep="")
 
-a_bag = dicz.bag("bag1")
+a_bag = dicz.bag("groups")
 print("\na_bag:\n", a_bag, sep="")
 
 a_group = a_bag.group("entities")
