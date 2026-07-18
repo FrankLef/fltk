@@ -6,6 +6,7 @@ from .line import DiczLine
 from .get_namestupl import main as nmstupl
 
 type DiczLines = tuple[DiczLine, ...]
+type DiczNames = tuple[str, ...]
 
 
 class DiczGroup(DiczBase):
@@ -62,7 +63,7 @@ class DiczGroup(DiczBase):
             the_lines = tuple(self.coll.values())
         return the_lines
 
-    def filter_pattern(self, item_nm: str, pattern: str) -> DiczLines:
+    def filter_pattern(self, item_nm: str, pattern: str) -> tuple[str, ...]:
         """Filter the lines using the value of a given item.
 
         Args:
@@ -72,21 +73,29 @@ class DiczGroup(DiczBase):
         Returns:
             Self: Filtered dicz_group.
         """
-        line_nms = [
+        line_nms = tuple(
             key
             for key, val in self.coll.items()
             if val.is_matched(item_nm=item_nm, pattern=pattern)
-        ]
-        the_lines = self.lines(line_nms)
-        return the_lines
+        )
+        # the_lines = self.lines(line_nms)
+        return line_nms
 
-    def filter_role(self, role: str) -> DiczLines:
-        the_lines = self.filter_pattern(item_nm=vars.ROLE, pattern=role)
-        return the_lines
+    def filter_role(self, role: str, names_only: bool = False) -> DiczLines | DiczNames:
+        line_nms = self.filter_pattern(item_nm=vars.ROLE, pattern=role)
+        if not names_only:
+            out: DiczLines | DiczNames = self.lines(line_nms)
+        else:
+            out = line_nms
+        return out
 
-    def filter_rule(self, rule: str) -> DiczLines:
-        the_lines = self.filter_pattern(item_nm=vars.RULE, pattern=rule)
-        return the_lines
+    def filter_rule(self, rule: str, names_only: bool = False) -> DiczLines | DiczNames:
+        line_nms = self.filter_pattern(item_nm=vars.RULE, pattern=rule)
+        if not names_only:
+            out: DiczLines | DiczNames = self.lines(line_nms)
+        else:
+            out = line_nms
+        return out
 
     def lines_value(
         self, line_nms: Sequence[str] | None, item_nm: str
