@@ -1,14 +1,7 @@
-"""Test the dic class."""
-
 import pytest
 from pathlib import Path
 
 from fltk.dicz.create_dicz import create_dicz
-
-
-@pytest.fixture
-def path():
-    return Path(__file__).parent.joinpath("fixtures")
 
 
 def test_create(path) -> None:

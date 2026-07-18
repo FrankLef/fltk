@@ -1,10 +1,12 @@
-from collections.abc import ValuesView
+from collections.abc import Sequence
+from typing import Self
+from copy import deepcopy
 import polars as pl
 
 
 from .bag import DiczBag
 
-from .abc import DiczBase
+from .base import DiczBase
 from . import get_bag
 
 
@@ -14,9 +16,9 @@ class Dicz(DiczBase):
         self.coll: dict[str, DiczBag] = {}
 
     @property
-    def info(self) -> dict[str, str | int]:
-        info: dict[str, str | int] = {
-            "nbags": str(self.nbags),
+    def info(self) -> dict[str, int]:
+        info = {
+            "nbags": self.nbags,
         }
         return info
 
@@ -33,10 +35,6 @@ class Dicz(DiczBase):
         # must return tuple
         return tuple(self.coll.keys())
 
-    @property
-    def values(self) -> ValuesView:
-        return self.coll.values()
-
     def append(self, key: str, data: pl.DataFrame):
         bag: DiczBag = get_bag.main(key=key, data=data)
         self.coll[bag.key] = bag
@@ -48,3 +46,9 @@ class Dicz(DiczBase):
             e.add_note(f"'{key}' is an invalid bag key.")
             raise
         return a_bag
+
+    def bags(self, bag_nms: Sequence[str]) -> Self:
+        new_self = deepcopy(self)
+        coll = {key: self.bag(key) for key in bag_nms}
+        new_self.coll = coll
+        return new_self

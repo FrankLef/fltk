@@ -9,7 +9,7 @@ class DiczBase(ABC):
         title = f"{type(self).__name__}: {self.key}"
         msg = title + "\n" + ("-" * len(title)) + "\n"
         for key, value in self.info.items():
-            msg += f"{key:<10}: {value}\n"
+            msg += f"{key:<10}: {str(value)}\n"
         return msg
 
     @property

@@ -1,9 +1,7 @@
-#  Iterable imported from collections with Python 3.9+
-# with string, it is preferable to use Sequence. Otherwise a string is also an Iterable and the type checker will not consider a single string as invali
-from collections.abc import ValuesView, Sequence
-from typing import Self
+from collections.abc import Sequence
+from typing import Self, Any
 from copy import deepcopy
-from .abc import DiczBase
+from .base import DiczBase
 from .item import DiczItem
 
 
@@ -13,14 +11,15 @@ class DiczLine(DiczBase):
         self.coll: dict[str, DiczItem] = {}
 
     @property
-    def info(self) -> dict[str, str | int]:
-        info: dict[str, str | int] = {
+    def info(self) -> dict[str, int]:
+        info = {
             "nitems": self.nitems,
         }
         return info
 
     @property
     def nitems(self) -> int:
+        # NOTE: Total includes the `skipped` column if loaded.
         return len(self.coll)
 
     @property
@@ -32,24 +31,34 @@ class DiczLine(DiczBase):
         # must return tuple
         return tuple(self.coll.keys())
 
-    @property
-    def values(self) -> ValuesView:
-        return self.coll.values()
-
     def append(self, item: DiczItem):
         self.coll[item.key] = item
 
-    def item(self, key) -> DiczItem:
+    def item(self, item_nm: str) -> DiczItem:
         try:
-            a_item = self.coll[key]
+            a_item = self.coll[item_nm]
         except KeyError as e:
-            e.add_note(f"'{key}' is an invalid item key.")
+            e.add_note(f"'{item_nm}' is an invalid item key.")
             raise
         return a_item
 
+    def items(self, item_nms: Sequence[str]) -> Self:
+        new_self = deepcopy(self)
+        coll = {key: self.item(key) for key in item_nms}
+        new_self.coll = coll
+        return new_self
+
+    def value(self, item_nm: str) -> Any:
+        a_value = self.item(item_nm).value
+        return a_value
+
+    def values(self, item_nms: Sequence[str]) -> dict[str, Any]:
+        values = {key: self.value(key) for key in item_nms}
+        return values
+
     def filter(self, item_nms: Sequence[str]) -> Self:
         new_self = deepcopy(self)
-        coll = {key: new_self.coll[key] for key in item_nms}
+        coll = {key: new_self.item(key) for key in item_nms}
         new_self.coll = coll
         return new_self
 

@@ -1,6 +1,7 @@
-from collections.abc import ValuesView, Sequence
+from collections.abc import Sequence
 from typing import Self
-from .abc import DiczBase
+from copy import deepcopy
+from .base import DiczBase
 from .group import DiczGroup
 
 
@@ -10,11 +11,10 @@ class DiczBag(DiczBase):
         self.coll: dict[str, DiczGroup] = {}
 
     @property
-    def info(self) -> dict[str, str | int]:
-        info: dict[str, str | int] = {
-            "ngroups": str(self.ngroups),
-            "nlines": str(self.nlines),
-            "nitems": str(self.nitems),
+    def info(self) -> dict[str, int]:
+        info = {
+            "ngroups": self.ngroups,
+            "nlines": self.nlines,
         }
         return info
 
@@ -28,11 +28,6 @@ class DiczBag(DiczBase):
         return nlines
 
     @property
-    def nitems(self) -> int:
-        nitems = sum([x.nitems for x in self.coll.values()])
-        return nitems
-
-    @property
     def empty(self) -> bool:
         return not self.ngroups
 
@@ -40,10 +35,6 @@ class DiczBag(DiczBase):
     def keys(self) -> tuple[str, ...]:
         # must return tuple
         return tuple(self.coll.keys())
-
-    @property
-    def values(self) -> ValuesView:
-        return self.coll.values()
 
     def append(self, item: DiczGroup):
         self.coll[item.key] = item
@@ -56,7 +47,8 @@ class DiczBag(DiczBase):
             raise
         return a_group
 
-    def filter(self, group_nms: Sequence[str]) -> Self:
-        coll = {key: self.coll[key] for key in group_nms}
-        self.coll = coll
-        return self
+    def groups(self, group_nms: Sequence[str]) -> Self:
+        new_self = deepcopy(self)
+        coll = {key: self.group(key) for key in group_nms}
+        new_self.coll = coll
+        return new_self
