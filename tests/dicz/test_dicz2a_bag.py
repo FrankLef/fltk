@@ -26,6 +26,5 @@ def test_err_key(a_bag):
 
 
 def test_groups(a_bag):
-    new_bag = a_bag.groups(("entities", "concepts"))
-    assert isinstance(new_bag, DiczBag)
-    assert new_bag.ngroups == 2
+    the_groups = a_bag.groups(("entities", "concepts"))
+    assert len(the_groups) == 2

@@ -1,8 +1,9 @@
 from collections.abc import Sequence
-from typing import Self
-from copy import deepcopy
+
 from .base import DiczBase
 from .group import DiczGroup
+
+type DiczGroups = tuple[DiczGroup, ...]
 
 
 class DiczBag(DiczBase):
@@ -47,8 +48,9 @@ class DiczBag(DiczBase):
             raise
         return a_group
 
-    def groups(self, group_nms: Sequence[str]) -> Self:
-        new_self = deepcopy(self)
-        coll = {key: self.group(key) for key in group_nms}
-        new_self.coll = coll
-        return new_self
+    def groups(self, group_nms: Sequence[str] | None = None) -> DiczGroups:
+        if group_nms:
+            the_groups = tuple(self.group(key) for key in group_nms)
+        else:
+            the_groups = tuple(self.coll.values())
+        return the_groups

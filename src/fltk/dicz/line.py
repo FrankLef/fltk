@@ -1,9 +1,10 @@
 from collections.abc import Sequence
-from typing import Self, Any
-from copy import deepcopy
+from typing import Any
 
 from .base import DiczBase
 from .item import DiczItem
+
+type DiczItems = tuple[DiczItem, ...]
 
 
 class DiczLine(DiczBase):
@@ -41,11 +42,12 @@ class DiczLine(DiczBase):
             raise
         return a_item
 
-    def items(self, item_nms: Sequence[str]) -> Self:
-        new_self = deepcopy(self)
-        coll = {key: self.item(key) for key in item_nms}
-        new_self.coll = coll
-        return new_self
+    def items(self, item_nms: Sequence[str] | None = None) -> DiczItems:
+        if item_nms:
+            the_items = tuple(self.item(key) for key in item_nms)
+        else:
+            the_items = tuple(self.coll.values())
+        return the_items
 
     def value(self, item_nm: str) -> Any:
         a_value = self.item(item_nm).value
@@ -54,12 +56,6 @@ class DiczLine(DiczBase):
     def values(self, item_nms: Sequence[str]) -> dict[str, Any]:
         values = {key: self.value(key) for key in item_nms}
         return values
-
-    def filter(self, item_nms: Sequence[str]) -> Self:
-        new_self = deepcopy(self)
-        coll = {key: new_self.item(key) for key in item_nms}
-        new_self.coll = coll
-        return new_self
 
     def is_matched(self, item_nm: str, pattern: str) -> bool:
         a_item = self.item(item_nm)

@@ -1,6 +1,4 @@
 from collections.abc import Sequence
-from typing import Self
-from copy import deepcopy
 import polars as pl
 
 
@@ -8,6 +6,8 @@ from .bag import DiczBag
 
 from .base import DiczBase
 from . import get_bag
+
+type DiczBags = tuple[DiczBag, ...]
 
 
 class Dicz(DiczBase):
@@ -47,8 +47,9 @@ class Dicz(DiczBase):
             raise
         return a_bag
 
-    def bags(self, bag_nms: Sequence[str]) -> Self:
-        new_self = deepcopy(self)
-        coll = {key: self.bag(key) for key in bag_nms}
-        new_self.coll = coll
-        return new_self
+    def bags(self, bag_nms: Sequence[str] | None = None) -> DiczBags:
+        if bag_nms:
+            the_bags = tuple(self.bag(key) for key in bag_nms)
+        else:
+            the_bags = tuple(self.coll.values())
+        return the_bags

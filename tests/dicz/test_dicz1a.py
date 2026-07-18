@@ -1,5 +1,4 @@
 import pytest
-from fltk.dicz.main import Dicz
 from fltk.dicz.bag import DiczBag
 
 
@@ -14,8 +13,8 @@ def test_bag(dicz1):
 
 
 def test_bags(dicz1):
-    a_dicz = dicz1.bags(["groups"])
-    assert isinstance(a_dicz, Dicz)
+    the_bags = dicz1.bags()
+    assert len(the_bags) == 2
 
 
 def test_err_key(dicz1):

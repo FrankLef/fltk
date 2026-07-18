@@ -26,6 +26,5 @@ def test_err_key(a_group):
 
 
 def test_lines(a_group):
-    new_group = a_group.lines(("CieA", "CieB"))
-    assert isinstance(new_group, DiczGroup)
-    assert new_group.nlines == 2
+    the_lines = a_group.lines(("CieA", "CieB"))
+    assert len(the_lines) == 2

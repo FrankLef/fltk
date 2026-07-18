@@ -14,6 +14,12 @@ def test_info(a_line):
     assert a_line.info == expected
 
 
+def test_items(a_line):
+    item_nms = ["label", "color"]
+    the_items = a_line.items(item_nms)
+    assert len(the_items) == 2
+
+
 def test_value(a_line):
     value = a_line.value("color")
     assert value == "magenta"
@@ -24,9 +30,3 @@ def test_values(a_line):
     values = a_line.values(item_nms)
     expected = {"label": "Consolidated", "color": "magenta"}
     assert values == expected
-
-
-def test_filter(a_line):
-    item_nms = ["label", "color"]
-    new_line = a_line.filter(item_nms)
-    assert new_line.nitems == 2

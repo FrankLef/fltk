@@ -10,10 +10,10 @@ def a_group(dicz1) -> DiczGroup:
 
 
 def test_filter_role(a_group):
-    new_group = a_group.filter_role("core")
-    assert new_group.nlines == 2
+    the_groups = a_group.filter_role("core")
+    assert len(the_groups) == 2
 
 
 def test_filter_rule(a_group):
-    new_group = a_group.filter_rule("rule1")
-    assert new_group.nlines == 2
+    the_groups = a_group.filter_rule("rule1")
+    assert len(the_groups) == 2

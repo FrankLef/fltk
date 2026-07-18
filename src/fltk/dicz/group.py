@@ -1,10 +1,11 @@
 from collections.abc import Sequence
-from typing import Any, Self, NamedTuple
-from copy import deepcopy
+from typing import Any, NamedTuple
 
 from .base import DiczBase, DiczVar as vars
 from .line import DiczLine
 from .get_namestupl import main as nmstupl
+
+type DiczLines = tuple[DiczLine, ...]
 
 
 class DiczGroup(DiczBase):
@@ -54,13 +55,14 @@ class DiczGroup(DiczBase):
             raise
         return a_line
 
-    def lines(self, line_nms: Sequence[str]) -> Self:
-        new_self = deepcopy(self)
-        coll = {key: self.line(key) for key in line_nms}
-        new_self.coll = coll
-        return new_self
+    def lines(self, line_nms: Sequence[str] | None = None) -> DiczLines:
+        if line_nms:
+            the_lines = tuple(self.line(key) for key in line_nms)
+        else:
+            the_lines = tuple(self.coll.values())
+        return the_lines
 
-    def filter_pattern(self, item_nm: str, pattern: str) -> Self:
+    def filter_pattern(self, item_nm: str, pattern: str) -> DiczLines:
         """Filter the lines using the value of a given item.
 
         Args:
@@ -75,16 +77,16 @@ class DiczGroup(DiczBase):
             for key, val in self.coll.items()
             if val.is_matched(item_nm=item_nm, pattern=pattern)
         ]
-        new_self: Self = self.lines(line_nms)
-        return new_self
+        the_lines = self.lines(line_nms)
+        return the_lines
 
-    def filter_role(self, role: str) -> Self:
-        new_self: Self = self.filter_pattern(item_nm=vars.ROLE, pattern=role)
-        return new_self
+    def filter_role(self, role: str) -> DiczLines:
+        the_lines = self.filter_pattern(item_nm=vars.ROLE, pattern=role)
+        return the_lines
 
-    def filter_rule(self, rule: str) -> Self:
-        new_self: Self = self.filter_pattern(item_nm=vars.RULE, pattern=rule)
-        return new_self
+    def filter_rule(self, rule: str) -> DiczLines:
+        the_lines = self.filter_pattern(item_nm=vars.RULE, pattern=rule)
+        return the_lines
 
     def lines_value(
         self, line_nms: Sequence[str] | None, item_nm: str
