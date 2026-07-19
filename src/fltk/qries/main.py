@@ -1,4 +1,4 @@
-from ._qry_repo import QryRepo
+from .base import QryRepo
 from .clean import QryClean
 from .constraints import QryConstraints
 from .enums import QryEnums

@@ -1,4 +1,4 @@
-from ._qry_repo import QryRepo
+from .base import QryRepo
 
 
 class QryInfo(QryRepo):

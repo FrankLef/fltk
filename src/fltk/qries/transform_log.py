@@ -1,7 +1,7 @@
 import duckdb as ddb
 from duckdb.sqltypes import DOUBLE
 
-from ._qry_repo import QryRepo
+from .base import QryRepo
 from .log1ps import log1ps10, expm1s10
 
 

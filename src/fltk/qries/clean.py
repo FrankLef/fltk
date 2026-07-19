@@ -1,6 +1,6 @@
 from typing import Sequence
 
-from ._qry_repo import QryRepo
+from .base import QryRepo
 
 
 class QryClean(QryRepo):
