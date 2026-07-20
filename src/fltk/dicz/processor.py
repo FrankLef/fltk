@@ -43,7 +43,6 @@ class DiczProcessor:
             for key, val in coll.items()
             if val.is_matched(item_nm=item_nm, pattern=pattern)
         )
-        # the_lines = self.lines(line_nms)
         return line_nms
 
     def filter_role(self, role: str) -> "DiczProcessor":
