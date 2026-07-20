@@ -5,6 +5,7 @@ from .base import DiczBase, DiczNames
 from .item import DiczItem
 
 type DiczItems = tuple[DiczItem, ...]
+type DiczLines = dict[str, DiczLine]
 
 
 class DiczLine(DiczBase):

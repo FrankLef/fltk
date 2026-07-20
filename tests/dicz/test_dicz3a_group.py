@@ -15,16 +15,11 @@ def test_info(a_group):
     assert a_group.info == expected
 
 
-def test_line(a_group):
-    a_line = a_group.line("CieA")
-    assert a_line.nitems == 7
+def test_coll_one(a_group):
+    a_coll = a_group.lines(("CieA", "CieB")).coll
+    assert len(a_coll) == 2
 
 
 def test_err_key(a_group):
     with pytest.raises(KeyError):
-        a_group.line("X")
-
-
-def test_lines(a_group):
-    the_lines = a_group.lines(("CieA", "CieB"))
-    assert len(the_lines) == 2
+        a_group.lines("X")
