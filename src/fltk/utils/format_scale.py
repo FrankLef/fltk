@@ -31,7 +31,7 @@ def format_scale(value: float, scale: float, mask: str, na: str = "-") -> str:
     return formatted_val
 
 
-def format_scale_many(
+def format_scale_groups(
     data: pl.DataFrame,
     group_col: str,
     val_col: str,
