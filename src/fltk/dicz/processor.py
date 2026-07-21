@@ -27,6 +27,10 @@ class DiczProcessor:
             return a_value
         return the_values
 
+    def get_values(self) -> dict[str, Any] | Any:
+        copied_coll = deepcopy(self.coll)
+        return copied_coll.values()
+
     @staticmethod
     def filter_pattern(coll: DiczLines, item_nm: str, pattern: str) -> DiczNames:
         """Filter the lines using the value of a given item.

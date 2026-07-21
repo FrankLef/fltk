@@ -33,6 +33,11 @@ def test_get_value_many(a_group) -> None:
     assert the_colors == {"CieA": "magenta", "CieC": "purple"}
 
 
+def test_get_values(a_group) -> None:
+    the_values = a_group.lines(("CieA", "CieC")).get_values()
+    assert len(the_values) == 2
+
+
 def test_filter_role(a_group) -> None:
     new_lines = a_group.lines().filter_role("core")
     new_coll = new_lines.coll

@@ -17,12 +17,12 @@ class DiczBase(ABC):
     def __init__(self, name: str) -> None:
         self.name: str = name
 
-    def __repr__(self) -> str:
-        title = f"{type(self).__name__}: {self.name}"
-        msg = title + "\n" + ("-" * len(title)) + "\n"
-        for key, value in self.info.items():
-            msg += f"{key}: {str(value)}\n"
-        return msg
+    # def __repr__(self) -> str:
+    #     title = f"{type(self).__name__}: {self.name}"
+    #     msg = title + "\n" + ("-" * len(title)) + "\n"
+    #     for key, value in self.info.items():
+    #         msg += f"{key}: {str(value)}\n"
+    #     return msg
 
     @property
     @abstractmethod
