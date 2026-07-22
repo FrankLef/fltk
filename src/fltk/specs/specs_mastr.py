@@ -1,0 +1,50 @@
+import polars as pl
+
+from .base import SpecsVar
+from .specs import Specs
+
+
+class SpecsMastr:
+    def __init__(self, name: str):
+        self.name = name
+        self.coll: dict[str, Specs] = {}
+
+    # @property
+    # def info(self) -> dict[str, int]:
+    #     info = {
+    #         "nbags": self.nbags,
+    #     }
+    #     return info
+
+    @property
+    def specs_nms(self) -> tuple[str, ...]:
+        return tuple(self.coll.keys())
+
+    @property
+    def nspecs(self) -> int:
+        return len(self.coll)
+
+    @property
+    def empty(self) -> bool:
+        return not self.coll
+
+    def append(self, specs_nm: str, data: pl.DataFrame):
+        reserved_nms = [x.value for x in SpecsVar]
+        missing_nms = [x for x in reserved_nms if x not in data.columns]
+        if missing_nms:
+            msg = f"{len(missing_nms)} required columns missing\n{missing_nms}"
+            raise KeyError(msg)
+        not_skipped_data = data.filter(~pl.col(SpecsVar.SKIPPED)).drop(SpecsVar.SKIPPED)
+        if not_skipped_data.is_empty():
+            msg = f"The specs '{specs_nm}', after `skipped`, is empty!"
+            raise ValueError(msg)
+        specs = Specs(not_skipped_data)
+        self.coll[specs_nm] = specs
+
+    def specs(self, specs_nm: str) -> Specs:
+        try:
+            a_specs = self.coll[specs_nm]
+        except KeyError as e:
+            e.add_note(f"'{specs_nm}' is an invalid specs name.")
+            raise
+        return a_specs

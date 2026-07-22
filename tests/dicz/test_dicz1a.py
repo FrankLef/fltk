@@ -2,9 +2,8 @@ import pytest
 from fltk.dicz.bag import DiczBag
 
 
-def test_info(dicz1):
-    expected = {"nbags": 2}
-    assert dicz1.info == expected
+def test_nspecs(specs_mastr1):
+    assert specs_mastr1.nspecs == 2
 
 
 def test_bag(dicz1):
