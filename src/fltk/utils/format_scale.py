@@ -44,6 +44,7 @@ def format_scale_groups(
 
     a_scale: float = float(default[SCALE])
     a_mask: str = default[MASK]
+    # Set the entire column to the default format.
     data = data.with_columns(
         pl.col(val_col)
         .map_elements(
