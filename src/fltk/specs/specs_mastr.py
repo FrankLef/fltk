@@ -31,7 +31,7 @@ class SpecsMastr:
         if not_skipped_data.is_empty():
             msg = f"The specs '{specs_nm}', after `skipped`, is empty!"
             raise ValueError(msg)
-        specs = Specs(not_skipped_data)
+        specs = Specs(specs_nm, df=not_skipped_data)
         self.coll[specs_nm] = specs
 
     def specs(self, specs_nm: str) -> Specs:

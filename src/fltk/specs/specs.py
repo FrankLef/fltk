@@ -5,7 +5,8 @@ from .specs_group import SpecsGroup
 
 
 class Specs:
-    def __init__(self, df: pl.DataFrame) -> None:
+    def __init__(self, name: str, df: pl.DataFrame) -> None:
+        self.name = name
         self.df = df
 
     @property
