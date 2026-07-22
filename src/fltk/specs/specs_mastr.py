@@ -9,13 +9,6 @@ class SpecsMastr:
         self.name = name
         self.coll: dict[str, Specs] = {}
 
-    # @property
-    # def info(self) -> dict[str, int]:
-    #     info = {
-    #         "nbags": self.nbags,
-    #     }
-    #     return info
-
     @property
     def specs_nms(self) -> tuple[str, ...]:
         return tuple(self.coll.keys())

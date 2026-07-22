@@ -36,23 +36,18 @@ def test_get_values(a_group) -> None:
     assert len(the_values) == 2
 
 
-def test_filter_role(a_group) -> None:
-    new_lines = a_group.lines().filter_role("core")
-    assert isinstance(new_lines, SpecsProcessor)
-    assert new_lines.get_names() == ("CieA", "CieB")
+def test_get_tag(a_group) -> None:
+    default = {"size": "1", "shape": "solid"}
+    a_tag = a_group.lines(("CieA",)).get_tag("LineGeom", default=default)
+    expected = {"size": "2", "shape": "dash"}
+    assert a_tag == expected
 
 
-def test_filter_rule(a_group) -> None:
-    new_lines = a_group.lines().filter_rule("rule1")
-    assert isinstance(new_lines, SpecsProcessor)
-    assert new_lines.get_names() == ("CieB", "CieC")
-
-
-def test_filter_role_value(a_group) -> None:
-    the_values = a_group.lines().filter_role("core").get_value("color")
-    assert the_values == {"CieA": "magenta", "CieB": "dodgerblue"}
-
-
-def test_filter_rule_value(a_group) -> None:
-    the_values = a_group.lines().filter_rule("rule1").get_value("color")
-    assert the_values == {"CieB": "dodgerblue", "CieC": "purple"}
+def test_get_many_tag(a_group) -> None:
+    default = {"size": "1", "shape": "solid"}
+    the_tags = a_group.lines(("CieA", "CieC")).get_tag("LineGeom", default=default)
+    expected = {
+        "CieA": {"size": "2", "shape": "dash"},
+        "CieC": {"size": "3", "shape": "dot"},
+    }
+    assert the_tags == expected

@@ -18,7 +18,7 @@ class Specs:
         return len(self.group_nms)
 
     def group(self, group_nm: str) -> SpecsGroup:
-        group_df = self.df.filter(pl.col(SpecsVar.GROUP) == group_nm)
+        group_df = self.df.filter(pl.col(SpecsVar.GROUP).eq(group_nm))
         if group_df.is_empty():
             msg: str = f"The group '{group_nm}' returns no records."
             raise KeyError(msg)
