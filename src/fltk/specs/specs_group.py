@@ -1,12 +1,15 @@
 from collections.abc import Sequence
 import polars as pl
+from typing import NamedTuple
 
-from .processor import SpecsProcessor
 from .base import SpecsVar
+from .processor import SpecsProcessor
+from .get_namestupl import main as nmstupl
 
 
 class SpecsGroup:
-    def __init__(self, df: pl.DataFrame) -> None:
+    def __init__(self, name: str, df: pl.DataFrame) -> None:
+        self.name = name
         self.df = df
 
     @property
@@ -17,6 +20,11 @@ class SpecsGroup:
     @property
     def nlines(self) -> int:
         return len(self.line_nms)
+
+    @property
+    def names_tupl(self) -> NamedTuple:
+        names_tupl = nmstupl(group_nm=self.name, line_nms=self.line_nms)
+        return names_tupl
 
     def lines(self, line_nms: str | Sequence[str] | None = None) -> SpecsProcessor:
         if line_nms:

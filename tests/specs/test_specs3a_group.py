@@ -1,5 +1,5 @@
 import pytest
-
+from typing import NamedTuple
 
 from fltk.specs.specs_group import SpecsGroup
 
@@ -22,3 +22,20 @@ def test_line_nms(a_group):
 
 def test_nlines(a_group):
     assert a_group.nlines == 5
+
+
+@pytest.fixture
+def names_tupl() -> NamedTuple:
+    class NamesTupl(NamedTuple):
+        name: str = "entities"
+        CieA: str = "CieA"
+        CieB: str = "CieB"
+        CieC: str = "CieC"
+        CieE: str = "CieE"
+        CieF: str = "CieF"
+
+    return NamesTupl()
+
+
+def test_names_tupl(a_group, names_tupl) -> None:
+    assert a_group.names_tupl == names_tupl

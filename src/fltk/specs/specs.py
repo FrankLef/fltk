@@ -22,4 +22,4 @@ class Specs:
         if group_df.is_empty():
             msg: str = f"The group '{group_nm}' returns no records."
             raise KeyError(msg)
-        return SpecsGroup(group_df)
+        return SpecsGroup(group_nm, df=group_df)
