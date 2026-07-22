@@ -11,6 +11,11 @@ def a_specs(mastr1) -> Specs:
     return a_specs
 
 
+def test_specs_name(a_specs):
+    assert isinstance(a_specs, Specs)
+    assert a_specs.name == "groups"
+
+
 def test_group(a_specs):
     a_group = a_specs.group("entities")
     assert isinstance(a_group, SpecsGroup)
