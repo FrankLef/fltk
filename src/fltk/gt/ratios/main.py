@@ -1,10 +1,10 @@
-from great_tables import GT, html, gt_style, gt_loc
+from great_tables import GT, html, style as gt_style, loc as gt_loc
 import polars as pl
 from typing import Self
 from types import SimpleNamespace
 
-title_geom = SimpleNamespace(shape="Arial", size=12, color="navyblue")
-subtitle_geom = SimpleNamespace(shape="Arial", size=12, color="navyblue")
+title_geom = SimpleNamespace(shape="Arial", size=18, color="navy")
+subtitle_geom = SimpleNamespace(shape="Arial", size=14, color="navy")
 
 
 class GtRatios:
