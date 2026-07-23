@@ -9,6 +9,15 @@ class SpecsMastr:
         self.name = name
         self.coll: dict[str, Specs] = {}
 
+    def __repr__(self):
+        # !r to use the repr() version of the variable (adds quotes)
+        msg = f"SpecsMastr(name={self.name!r})"
+        return msg
+
+    def __str__(self):
+        msg = f"{self.npecs} specs in the {self.name} specs master"
+        return msg
+
     @property
     def specs_nms(self) -> tuple[str, ...]:
         return tuple(self.coll.keys())

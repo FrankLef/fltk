@@ -9,6 +9,15 @@ class Specs:
         self.name = name
         self.df = df
 
+    def __repr__(self) -> str:
+        # !r to use the repr() version of the variable (adds quotes)
+        msg = f"Specs(name={self.name!r}, df={self.df.shape})"
+        return msg
+
+    def __str__(self) -> str:
+        msg = f"{self.ngroups} specs groups in the {self.name} specs"
+        return msg
+
     @property
     def group_nms(self) -> tuple[str, ...]:
         group_nms = self.df.get_column(SpecsVar.GROUP).unique(maintain_order=True)

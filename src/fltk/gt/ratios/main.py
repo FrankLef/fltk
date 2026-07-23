@@ -1,14 +1,37 @@
-from great_tables import GT, html, style as gt_style, loc as gt_loc
+from great_tables import GT, html, gt_style, gt_loc
 import polars as pl
 from typing import Self
+from types import SimpleNamespace
 
-# from ...graphics.basics import IBaseGeom
-# from ...graphics.titles import ITitles
+title_geom = SimpleNamespace(shape="Arial", size=12, color="navyblue")
+subtitle_geom = SimpleNamespace(shape="Arial", size=12, color="navyblue")
 
 
 class GtRatios:
     def __init__(self, name: str) -> None:
         self.name = str
+        self._title_geom = title_geom
+        self._subtitle_geom = subtitle_geom
+
+    @property
+    def title_geom(self) -> SimpleNamespace:
+        return self._title_geom
+
+    @title_geom.setter
+    def title_geom(self, shape: str, size: int, color: str) -> None:
+        self._title_geom.shape = shape
+        self._title_geom.size = size
+        self._title_geom.color = color
+
+    @property
+    def subtitle_geom(self) -> SimpleNamespace:
+        return self._subtitle_geom
+
+    @subtitle_geom.setter
+    def subtitle_geom(self, shape: str, size: int, color: str) -> None:
+        self._subtitle_geom.shape = shape
+        self._subtitle_geom.size = size
+        self._subtitle_geom.color = color
 
     def add_base(
         self,
@@ -33,30 +56,23 @@ class GtRatios:
         return self
 
     def add_titles(self, title: str, subtitle: str) -> Self:
-        # a_title = titles.title  # type: ignore
-        # a_subtitle = titles.subtitle  # type: ignore
-
-        # a_color: str | None = geom.title.color  # type: ignore[attr-defined]
-        # a_size: str | None = geom.title.size  # type: ignore[attr-defined]
-        # a_shape: str | None = geom.title.shape  # type: ignore[attr-defined]
-        # a_color_sub: str | None = geom.subtitle.color  # type: ignore[attr-defined]
-        # a_size_sub: str | None = geom.subtitle.size  # type: ignore[attr-defined]
-        # a_shape_sub: str | None = geom.subtitle.shape  # type: ignore[attr-defined]
-
         self.tabl = self.tabl.tab_header(
             title=html(str(title)),
             subtitle=html(str(subtitle)),
         )
 
-        # self.tabl = self.tabl.opt_table_font(a_shape)  # type: ignore
-        # self.tabl = self.tabl.tab_style(
-        #     style=gt_style.text(color=a_color, size=f"{a_size}px"),
-        #     locations=gt_loc.title(),
-        # )
-        # self.tabl = self.tabl.tab_style(
-        #     style=gt_style.text(color=a_color_sub, size=f"{a_size_sub}px"),
-        #     locations=gt_loc.subtitle(),
-        # )
+        a_color = self._title_geom.color
+        a_size = self._title_geom.size
+        self.tabl = self.tabl.tab_style(
+            style=gt_style.text(color=a_color, size=f"{a_size}px"),
+            locations=gt_loc.title(),
+        )
+        a_color = self._subtitle_geom.color
+        a_size = self._subtitle_geom.size
+        self.tabl = self.tabl.tab_style(
+            style=gt_style.text(color=a_color, size=f"{a_size}px"),
+            locations=gt_loc.subtitle(),
+        )
         return self
 
     def add_style(self, style: int, color: str, row_strip: bool) -> Self:
