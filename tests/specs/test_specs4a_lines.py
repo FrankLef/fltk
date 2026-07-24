@@ -36,6 +36,21 @@ def test_get_values(a_group) -> None:
     assert len(the_values) == 2
 
 
+def test_get_split_one(a_group) -> None:
+    the_periods = a_group.lines(("CieA",)).get_split("periods")
+    expected = ("q2021-4", "q2022-4", "q2023-4", "q2024-4", "q2025-4")
+    assert the_periods == expected
+
+
+def test_get_split_many(a_group) -> None:
+    the_periods = a_group.lines(("CieA", "CieC")).get_split("periods")
+    expected = {
+        "CieA": ("q2021-4", "q2022-4", "q2023-4", "q2024-4", "q2025-4"),
+        "CieC": ("q2021-4", "q2022-4", "q2023-4"),
+    }
+    assert the_periods == expected
+
+
 def test_get_tag(a_group) -> None:
     default = {"size": "1", "shape": "solid"}
     a_tag = a_group.lines(("CieA",)).get_tag("LineGeom", default=default)

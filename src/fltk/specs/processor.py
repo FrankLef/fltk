@@ -1,6 +1,7 @@
 import polars as pl
 from typing import Any
 from collections.abc import Sequence
+import re
 
 from .base import SpecsVar
 
@@ -28,6 +29,21 @@ class SpecsProcessor:
             for row in self.df.iter_rows(named=True)
         }
         return the_values
+
+    def get_split(self, item_nm: str) -> dict[str, Any] | Any:
+        def split_it(text: str, sep=","):
+            clean_text = re.sub(r"\s", "", text)
+            split_text = clean_text.split(sep=sep)
+            return tuple(split_text)
+
+        the_splits = {
+            row[SpecsVar.LINE]: split_it(row[item_nm])
+            for row in self.df.iter_rows(named=True)
+        }
+        if len(the_splits) == 1:
+            a_split = next(iter(the_splits.values()))
+            return a_split
+        return the_splits
 
     def filter_role(self, role: str) -> "SpecsProcessor":
         # NOTE: (?i) is for case insensitivity
