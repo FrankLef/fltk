@@ -7,8 +7,8 @@ from fltk.specs.load_specs import load_specs
 def test_load(path, name: str = "mastr_test1") -> None:
     mastr = load_specs(name, path=path)
     assert mastr.name == name
-    assert mastr.specs_nms == ("groups", "xbr")
-    assert mastr.nspecs == 2
+    assert mastr.specs_nms == ("groups", "params", "xbr")
+    assert mastr.nspecs == 3
 
 
 def test_load_err() -> None:

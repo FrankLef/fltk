@@ -1,7 +1,9 @@
 import polars as pl
 from typing import Any
 from collections.abc import Sequence
+import ast
 import re
+from warnings import deprecated
 
 from .base import SpecsVar
 
@@ -14,6 +16,45 @@ class SpecsProcessor:
         the_names = tuple(self.df.get_column(SpecsVar.LINE).to_list())
         return the_names
 
+    def cols(
+        self, col_nms: str | Sequence[str] | None = None, is_lit_eval: bool = False
+    ) -> Any:
+        if col_nms:
+            col_nms = (col_nms,) if isinstance(col_nms, str) else col_nms
+            cols = [SpecsVar.LINE] + list(col_nms)
+            df = self.df.select(cols)
+            if df.height == 1:
+                if df.width == 2:
+                    out = df.to_dicts()[0]
+                    out = out[col_nms[0]]
+                    if is_lit_eval:
+                        out = ast.literal_eval(str(out))
+
+                else:
+                    out = df.rows_by_key(key=[SpecsVar.LINE], named=True, unique=True)
+                    out = next(iter(out.values()))
+                    if is_lit_eval:
+                        out = {
+                            key: ast.literal_eval(str(val)) for key, val in out.items()
+                        }
+            else:
+                if df.width == 2:
+                    out = df.rows_by_key(key=[SpecsVar.LINE], named=True, unique=True)
+                    combined_out = {}
+                    for key, val in out.items():
+                        combined_out[key] = val[col_nms[0]]
+                    out = combined_out
+                    if is_lit_eval:
+                        out = {
+                            key: ast.literal_eval(str(val)) for key, val in out.items()
+                        }
+                else:
+                    out = df.rows_by_key(key=[SpecsVar.LINE], named=True, unique=True)
+        else:
+            out = self.df.rows_by_key(key=[SpecsVar.LINE], named=True, unique=True)
+        return out
+
+    @deprecated("Use cols() instead.")
     def get_value(self, item_nm: str) -> dict[str, Any] | Any:
         the_values = {
             row[SpecsVar.LINE]: row[item_nm] for row in self.df.iter_rows(named=True)
@@ -23,6 +64,7 @@ class SpecsProcessor:
             return a_value
         return the_values
 
+    @deprecated("Use cols() instead.")
     def get_values(self, item_nms: Sequence[str]) -> dict[str, Any] | Any:
         the_values = {
             row[SpecsVar.LINE]: (row[item_nm] for item_nm in item_nms)
@@ -30,6 +72,7 @@ class SpecsProcessor:
         }
         return the_values
 
+    @deprecated("Use cols() instead.")
     def get_split(self, item_nm: str) -> dict[str, Any] | Any:
         def split_it(text: str, sep=","):
             clean_text = re.sub(r"\s", "", text)
@@ -61,6 +104,7 @@ class SpecsProcessor:
         )
         return SpecsProcessor(filtered_df)
 
+    @deprecated("Use cols() instead.")
     def get_tag(self, item_nm: str, default: dict[str, Any]) -> dict[str, Any] | Any:
         the_tags = {
             row[SpecsVar.LINE]: self.split_tag(tag_text=row[item_nm], default=default)
@@ -71,6 +115,7 @@ class SpecsProcessor:
             return a_tag
         return the_tags
 
+    @deprecated("Use cols() instead.")
     @staticmethod
     def split_tag(
         tag_text: str,

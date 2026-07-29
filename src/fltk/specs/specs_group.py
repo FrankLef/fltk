@@ -38,9 +38,9 @@ class SpecsGroup:
     def lines(self, line_nms: str | Sequence[str] | None = None) -> SpecsProcessor:
         if line_nms:
             if isinstance(line_nms, str):
-                the_lines = self.df.filter(pl.col(SpecsVar.LINE).eq(line_nms))
+                df = self.df.filter(pl.col(SpecsVar.LINE).eq(line_nms))
             else:
-                the_lines = self.df.filter(pl.col(SpecsVar.LINE).is_in(line_nms))
+                df = self.df.filter(pl.col(SpecsVar.LINE).is_in(line_nms))
         else:
-            the_lines = self.df
-        return SpecsProcessor(the_lines)
+            df = self.df
+        return SpecsProcessor(df)
