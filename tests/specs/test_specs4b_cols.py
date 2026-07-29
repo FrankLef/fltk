@@ -56,3 +56,14 @@ def test_lines_many_cols_one_eval(a_group) -> None:
         "CieC": {"size": 3, "shape": "dot"},
     }
     assert out == expected
+
+
+def test_lines_one_cols_one_eval_na(a_group) -> None:
+    out = a_group.lines("CieE").cols("geomLine", is_lit_eval=True)
+    expected = "_na"
+    assert out == expected
+
+
+def test_lines_one_cols_one_eval_null(a_group) -> None:
+    out = a_group.lines("CieF").cols("geomLine", is_lit_eval=True)
+    assert out is None

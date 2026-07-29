@@ -15,7 +15,7 @@ class SpecsMastr:
         return msg
 
     def __str__(self):
-        msg = f"{self.npecs} specs in the {self.name} specs master"
+        msg = f"{self.nspecs} specs in the {self.name} specs master"
         return msg
 
     @property
