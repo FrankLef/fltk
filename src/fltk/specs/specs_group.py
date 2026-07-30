@@ -36,6 +36,14 @@ class SpecsGroup:
         return names_tupl
 
     def lines(self, line_nms: str | Sequence[str] | None = None) -> SpecsProcessor:
+        """Get lines from the specs with a processor to extract values.
+
+        Args:
+            line_nms (str | Sequence[str] | None, optional): Names of lines to select. Defaults to None.
+
+        Returns:
+            SpecsProcessor: Processor to obtain the values from the lines.
+        """
         if line_nms:
             if isinstance(line_nms, str):
                 df = self.df.filter(pl.col(SpecsVar.LINE).eq(line_nms))
