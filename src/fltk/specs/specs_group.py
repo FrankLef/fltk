@@ -23,7 +23,7 @@ class SpecsGroup:
 
     @property
     def line_nms(self) -> tuple[str, ...]:
-        line_nms = self.df.get_column(SpecsVar.LINE).unique(maintain_order=True)
+        line_nms = self.df.get_column(SpecsVar.LINE).to_list()
         return tuple(line_nms)
 
     @property
