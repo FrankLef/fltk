@@ -12,9 +12,14 @@ class SpecsProcessor:
     def __init__(self, df: pl.DataFrame):
         self.df = df
 
-    def get_names(self) -> tuple[str, ...]:
-        the_names = tuple(self.df.get_column(SpecsVar.LINE).to_list())
-        return the_names
+    @property
+    def line_nms(self) -> tuple[str, ...]:
+        line_nms = self.df.get_column(SpecsVar.LINE).to_list()
+        return tuple(line_nms)
+
+    @property
+    def nlines(self) -> int:
+        return len(self.line_nms)
 
     def cols(
         self, col_nms: str | Sequence[str] | None = None, is_lit_eval: bool = False

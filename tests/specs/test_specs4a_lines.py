@@ -23,6 +23,11 @@ def test_lines_many(a_group) -> None:
     assert a_proc.df.shape == (2, 9)
 
 
-def test_get_names(a_group) -> None:
-    the_names = a_group.lines(("CieA", "CieB")).get_names()
-    assert the_names == ("CieA", "CieB")
+def test_line_nms(a_group) -> None:
+    line_nms = a_group.lines(("CieA", "CieB")).line_nms
+    assert line_nms == ("CieA", "CieB")
+
+
+def test_nlines(a_group) -> None:
+    nlines = a_group.lines(("CieA", "CieB")).nlines
+    assert nlines == 2
