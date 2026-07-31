@@ -47,6 +47,8 @@ class SpecsMastr:
         try:
             a_specs = self.coll[specs_nm]
         except KeyError as e:
-            e.add_note(f"'{specs_nm}' is an invalid specs name.")
+            e.add_note(
+                f"'{specs_nm}' is an invalid specs name in specs master '{self.name}'."
+            )
             raise
         return a_specs

@@ -1,10 +1,12 @@
 from collections.abc import Sequence
 import polars as pl
-from typing import NamedTuple
+from typing import Any, NamedTuple
 
 from .base import SpecsVar
 from .processor import SpecsProcessor
 from .get_namestupl import main as nmstupl
+
+type TagsType = dict[str, dict[str, Any]]
 
 
 class SpecsGroup:
@@ -35,6 +37,19 @@ class SpecsGroup:
         names_tupl = nmstupl(group_nm=self.name, line_nms=self.line_nms)
         return names_tupl
 
+    @staticmethod
+    def keep_dicts(tags: TagsType) -> TagsType:
+        """Keep only the tags with a valid dictionnary.
+
+        Args:
+            tags (TagsType): Tags obtained using `cols(..., is_lit_val=True)`.
+
+        Returns:
+            TagsType: Tags containg only valid dictionnaries.
+        """
+        out = {key: val for key, val in tags.items() if isinstance(val, dict)}
+        return out
+
     def lines(self, line_nms: str | Sequence[str] | None = None) -> SpecsProcessor:
         """Get lines from the specs with a processor to extract values.
 
@@ -51,4 +66,9 @@ class SpecsGroup:
                 df = self.df.filter(pl.col(SpecsVar.LINE).is_in(line_nms))
         else:
             df = self.df
+        if df.is_empty():
+            msg: str = (
+                f"Specs group '{self.name}' returns no records for lines '{line_nms}'"
+            )
+            raise KeyError(msg)
         return SpecsProcessor(df)

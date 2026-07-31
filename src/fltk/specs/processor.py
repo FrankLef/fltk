@@ -5,8 +5,6 @@ import ast
 
 from .base import SpecsVar
 
-type TagsType = dict[str, dict[str, Any]]
-
 
 class SpecsProcessor:
     def __init__(self, df: pl.DataFrame):
@@ -70,19 +68,6 @@ class SpecsProcessor:
             out: Any = ast.literal_eval(text)
         except ValueError:
             out = text
-        return out
-
-    @staticmethod
-    def keep_dicts(tags: TagsType) -> TagsType:
-        """Keep only the tags with a valid dictionnary.
-
-        Args:
-            tags (TagsType): Tags obtained using `cols(..., is_lit_val=True)`.
-
-        Returns:
-            TagsType: Tags containg only valid dictionnaries.
-        """
-        out = {key: val for key, val in tags.items() if isinstance(val, dict)}
         return out
 
     def filter_role(self, role: str) -> "SpecsProcessor":

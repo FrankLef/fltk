@@ -30,6 +30,6 @@ class Specs:
     def group(self, group_nm: str) -> SpecsGroup:
         group_df = self.df.filter(pl.col(SpecsVar.GROUP).eq(group_nm))
         if group_df.is_empty():
-            msg: str = f"The group '{group_nm}' returns no records."
+            msg: str = f"Group '{group_nm}' in specs '{self.name}' returns no records."
             raise KeyError(msg)
         return SpecsGroup(group_nm, df=group_df)
