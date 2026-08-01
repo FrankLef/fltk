@@ -7,8 +7,18 @@ from .base import SpecsVar
 
 
 class SpecsProcessor:
-    def __init__(self, df: pl.DataFrame):
+    def __init__(self, name: str, df: pl.DataFrame):
+        self.name = name
         self.df = df
+
+    def __repr__(self) -> str:
+        # !r to use the repr() version of the variable (adds quotes)
+        msg = f"SpecsProcessor(df={self.df.shape})"
+        return msg
+
+    def __str__(self) -> str:
+        msg = f"{self.nlines} specs lines in the {self.name} specs processor"
+        return msg
 
     @property
     def line_nms(self) -> tuple[str, ...]:
@@ -84,7 +94,7 @@ class SpecsProcessor:
         filtered_df = self.df.filter(
             pl.col(SpecsVar.ROLE).str.replace_all(r"\s", "").str.contains(pat)
         )
-        return SpecsProcessor(filtered_df)
+        return SpecsProcessor(self.name, df=filtered_df)
 
     def filter_rule(self, rule: str) -> "SpecsProcessor":
         """Filter the specs by rule.
@@ -100,4 +110,4 @@ class SpecsProcessor:
         filtered_df = self.df.filter(
             pl.col(SpecsVar.RULE).str.replace_all(r"\s", "").str.contains(pat)
         )
-        return SpecsProcessor(filtered_df)
+        return SpecsProcessor(self.name, df=filtered_df)

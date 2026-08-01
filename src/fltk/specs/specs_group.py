@@ -75,4 +75,4 @@ class SpecsGroup:
                 f"Specs group '{self.name}' returns no records for lines '{line_nms}'"
             )
             raise KeyError(msg)
-        return SpecsProcessor(df)
+        return SpecsProcessor(self.name, df=df)
