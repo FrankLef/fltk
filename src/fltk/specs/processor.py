@@ -17,8 +17,7 @@ class SpecsProcessor:
 
     @property
     def nlines(self) -> int:
-        n = len(self.df.get_column(SpecsVar.LINE))
-        return n
+        return len(self.df.get_column(SpecsVar.LINE))
 
     def cols(
         self, col_nms: str | Sequence[str] | None = None, is_lit_eval: bool = False

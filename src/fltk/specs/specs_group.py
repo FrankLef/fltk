@@ -30,8 +30,7 @@ class SpecsGroup:
 
     @property
     def nlines(self) -> int:
-        n = len(self.df.get_column(SpecsVar.LINE))
-        return n
+        return len(self.df.get_column(SpecsVar.LINE))
 
     @property
     def names_tupl(self) -> NamedTuple:

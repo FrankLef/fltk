@@ -27,11 +27,7 @@ class Specs:
 
     @property
     def ngroups(self) -> int:
-        if isinstance(self.group_nms, str):
-            n: int = 1
-        else:
-            n = len(self.group_nms)
-        return n
+        return len(self.group_nms)
 
     def group(self, group_nm: str) -> SpecsGroup:
         group_df = self.df.filter(pl.col(SpecsVar.GROUP).eq(group_nm))
