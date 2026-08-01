@@ -42,7 +42,7 @@ class SpecsGroup:
         return names_tupl
 
     @staticmethod
-    def keep_dicts(tags: TagsType) -> TagsType:
+    def rem_non_dicts(tags: TagsType) -> TagsType:
         """Keep only the tags with a valid dictionnary.
 
         Args:

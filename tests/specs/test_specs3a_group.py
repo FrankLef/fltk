@@ -72,8 +72,8 @@ def tags() -> dict[str, Any]:
     return tags
 
 
-def test_keep_dicts(a_group, tags) -> None:
-    clean_tags = a_group.keep_dicts(tags)
+def test_rem_non_dicts(a_group, tags) -> None:
+    clean_tags = a_group.rem_non_dicts(tags)
     expected = {
         "CieA": {"size": 2, "shape": "dash"},
         "CieC": {"size": 3, "shape": "dot"},
