@@ -8,6 +8,19 @@ from .specs_mastr import SpecsMastr
 
 
 def fetch_specs(path: Path, prefix: str, sheet_nm: str) -> dict[str, Any]:
+    """Cretae dictionnary of files information used to create a specs master.
+
+    Args:
+        path (Path): Path of directory with specs files.
+        prefix (str): Prefix of the specs files.
+        sheet_nm (str): Name of the excel sheet in the specs file.
+
+    Raises:
+        FileNotFoundError: No specs file found.
+
+    Returns:
+        dict[str, Any]: Dictionnary of specs files' information.
+    """
     pat: str = f"{prefix}*.xlsx"
     files = [file for file in path.glob(pat) if file.is_file()]
     if files:
@@ -31,7 +44,21 @@ def load_specs(
     cache_nm: str = ".specs_cache",
     clear_cache: bool = False,
 ) -> SpecsMastr:
-    # NOTE: must do fetch_specs first to avoid creating cache when no file found. e.g. when doing tests.
+    """Create a specs master using specs files.
+
+    Args:
+        name (str): Specs master name.
+        path (Path): Path of directory containing the specs files.
+        prefix (str, optional): Specs file's prefix. Defaults to "specs_".
+        sheet_nm (str, optional): Sheet name. Defaults to "data".
+        cache_nm (str, optional): Cache name. Defaults to ".specs_cache".
+        clear_cache (bool, optional): True, reset the cache. Defaults to False.
+
+    Returns:
+        SpecsMastr: Specs master class instance.
+    """
+
+    # NOTE: must fetch_specs first to avoid creating cache when no file found. e.g. when doing tests.
     the_specs_files = fetch_specs(path=path, prefix=prefix, sheet_nm=sheet_nm)
 
     cache_path: Path = path.joinpath(cache_nm)
