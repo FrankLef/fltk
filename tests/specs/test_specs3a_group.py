@@ -42,6 +42,25 @@ def test_names_tupl(a_group, names_tupl) -> None:
 
 
 @pytest.fixture
+def group_one(mastr1) -> SpecsGroup:
+    a_group = mastr1.specs("groups").group("fstypes")
+    return a_group
+
+
+@pytest.fixture
+def names_tupl_one() -> NamedTuple:
+    class NamesTupl(NamedTuple):
+        name: str = "fstypes"
+        ratios: str = "ratios"
+
+    return NamesTupl()
+
+
+def test_names_tupl_one(group_one, names_tupl_one) -> None:
+    assert group_one.names_tupl == names_tupl_one
+
+
+@pytest.fixture
 def tags() -> dict[str, Any]:
     tags = {
         "CieA": {"size": 2, "shape": "dash"},

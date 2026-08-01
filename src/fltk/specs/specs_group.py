@@ -25,16 +25,21 @@ class SpecsGroup:
 
     @property
     def line_nms(self) -> tuple[str, ...]:
-        line_nms = self.df.get_column(SpecsVar.LINE).to_list()
-        return tuple(line_nms)
+        nms = tuple(self.df.get_column(SpecsVar.LINE).to_list())
+        return nms
 
     @property
     def nlines(self) -> int:
-        return len(self.line_nms)
+        n = len(self.df.get_column(SpecsVar.LINE))
+        return n
 
     @property
     def names_tupl(self) -> NamedTuple:
-        names_tupl = nmstupl(group_nm=self.name, line_nms=self.line_nms)
+        if isinstance(self.line_nms, str):
+            nms: tuple[str, ...] = tuple(self.line_nms)
+        else:
+            nms = self.line_nms
+        names_tupl = nmstupl(group_nm=self.name, line_nms=nms)
         return names_tupl
 
     @staticmethod

@@ -27,8 +27,8 @@ def test_err_key(a_specs):
 
 
 def test_group_nms(a_specs):
-    assert a_specs.group_nms == ("entities", "concepts")
+    assert a_specs.group_nms == ("entities", "concepts", "fstypes")
 
 
 def test_ngroups(a_specs):
-    assert a_specs.ngroups == 2
+    assert a_specs.ngroups == 3

@@ -20,7 +20,8 @@ class SpecsMastr:
 
     @property
     def specs_nms(self) -> tuple[str, ...]:
-        return tuple(self.coll.keys())
+        nms = tuple(self.coll.keys())
+        return nms
 
     @property
     def nspecs(self) -> int:

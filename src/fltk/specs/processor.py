@@ -12,12 +12,13 @@ class SpecsProcessor:
 
     @property
     def line_nms(self) -> tuple[str, ...]:
-        line_nms = self.df.get_column(SpecsVar.LINE).to_list()
-        return tuple(line_nms)
+        nms = tuple(self.df.get_column(SpecsVar.LINE).to_list())
+        return nms
 
     @property
     def nlines(self) -> int:
-        return len(self.line_nms)
+        n = len(self.df.get_column(SpecsVar.LINE))
+        return n
 
     def cols(
         self, col_nms: str | Sequence[str] | None = None, is_lit_eval: bool = False

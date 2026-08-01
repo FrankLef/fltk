@@ -20,12 +20,18 @@ class Specs:
 
     @property
     def group_nms(self) -> tuple[str, ...]:
-        group_nms = self.df.get_column(SpecsVar.GROUP).unique(maintain_order=True)
-        return tuple(group_nms)
+        nms = tuple(
+            self.df.get_column(SpecsVar.GROUP).unique(maintain_order=True).to_list()
+        )
+        return nms
 
     @property
     def ngroups(self) -> int:
-        return len(self.group_nms)
+        if isinstance(self.group_nms, str):
+            n: int = 1
+        else:
+            n = len(self.group_nms)
+        return n
 
     def group(self, group_nm: str) -> SpecsGroup:
         group_df = self.df.filter(pl.col(SpecsVar.GROUP).eq(group_nm))
