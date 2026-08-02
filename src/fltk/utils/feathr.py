@@ -33,3 +33,7 @@ class Feathr:
         path = self.file(name)
         data = pl.read_ipc(path)
         return data
+
+    def to_dict(self) -> dict[str, pl.DataFrame]:
+        out = {name: self.load(name) for name in self.names}
+        return out
