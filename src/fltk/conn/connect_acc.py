@@ -1,5 +1,5 @@
 from pathlib import Path
-import pandas as pd
+import polars as pl
 import sqlalchemy as sa
 
 
@@ -45,7 +45,7 @@ class ConnectAcc:
             self._engine.dispose()
         return True
 
-    def load(self, data: pd.DataFrame, tbl: str) -> pd.DataFrame:
+    def load(self, data: pl.DataFrame, tbl: str) -> pl.DataFrame:
         """Upload data to MS Access.
 
         IMPORTANT: The `con` parameter actually take an SQLAlchemy engine,
@@ -64,16 +64,23 @@ class ConnectAcc:
         Returns:
             pd.DataFrame: The original data is returned as is.
         """
-        if not isinstance(data, pd.DataFrame):
-            raise TypeError("'data' must be a pandas dataframe.")
+        if not isinstance(data, pl.DataFrame):
+            raise TypeError("'data' must be a polars dataframe.")
         if len(tbl) == 0:
             raise ValueError("The table is an empty string.")
-        # Important: `con` argument takes en engine, not a connection!
-        data.to_sql(name=tbl, con=self._engine, index=False, if_exists="replace")
+        # NOTE: `con` argument takes en engine, not a connection!
+        data.write_database(
+            table_name=tbl,
+            connection=self._engine,
+            if_table_exists="replace",
+        )
+
+        # # Important: `con` argument takes en engine, not a connection!
+        # data.to_sql(name=tbl, con=self._engine, index=False, if_exists="replace")
         self._engine.dispose()
         return data
 
-    def read(self, qry: str) -> pd.DataFrame:
+    def read(self, qry: str) -> pl.DataFrame:
         """Download  data from MS Access.
 
         IMPORTANT: Make sure you use SQLAlchemy `text()` to format the query so
@@ -90,9 +97,12 @@ class ConnectAcc:
         """
         if len(qry) == 0:
             raise ValueError("The query is an empty string.")
-        with self._engine.connect() as conn:
+        with self.engine.connect() as conn:
             a_qry = sa.text(qry)  # Important: use sa.text().
-            data = pd.read_sql(sql=a_qry, con=conn)
+            data = pl.read_database(query=a_qry, connection=conn)
+        # with self._engine.connect() as conn:
+        #     a_qry = sa.text(qry)  # Important: use sa.text().
+        #     data = pd.read_sql(sql=a_qry, con=conn)
         self._engine.dispose()
         return data
 
