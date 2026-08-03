@@ -32,7 +32,7 @@ class Feathr:
         # this is megabytes ("MB"), not megabit ("Mb")
         size = data.estimated_size("mb")
         if not silent:
-            msg: str = f"Save '{name}' to feather {data.shape}, {size:0.2f} MB"
+            msg: str = f"Save '{name}' to feather {size:.2f} MB"
             rprint(msg)
         return path
 
