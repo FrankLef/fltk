@@ -1,11 +1,12 @@
 from pathlib import Path
 import polars as pl
+from collections.abc import Sequence
 
 
 class Feathr:
-    def __init__(self, path: Path, names: tuple[str, ...]) -> None:
+    def __init__(self, path: Path, names: Sequence[str]) -> None:
         self.path = path
-        self.names = names
+        self.names: tuple[str, ...] = tuple(sorted(list(names)))
 
     def __repr__(self) -> str:
         # !r to use the repr() version of the variable (adds quotes)
