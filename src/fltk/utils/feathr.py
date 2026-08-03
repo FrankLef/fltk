@@ -26,23 +26,25 @@ class Feathr:
             raise ValueError(f"'{name}' is an invalid feather name.")
         return path
 
-    def save(self, data: pl.DataFrame, name: str) -> Path:
+    def save(self, data: pl.DataFrame, name: str, silent: bool = False) -> Path:
         path = self.file(name)
         data.write_ipc(path)
         # this is megabytes ("MB"), not megabit ("Mb")
         size = data.estimated_size("mb")
-        msg: str = f"Save '{name}' to feather {data.shape}, {size:0.2f} MB"
-        rprint(msg)
+        if not silent:
+            msg: str = f"Save '{name}' to feather {data.shape}, {size:0.2f} MB"
+            rprint(msg)
         return path
 
-    def load(self, name: str) -> pl.DataFrame:
+    def load(self, name: str, silent: bool = False) -> pl.DataFrame:
         path = self.file(name)
         with open(path, "rb") as f:
             data = pl.read_ipc(f)
-        msg: str = f"Load '{name}' from feather {data.shape}"
-        rprint(msg)
+        if not silent:
+            msg: str = f"Load '{name}' from feather {data.shape}"
+            rprint(msg)
         return data
 
     def to_dict(self) -> dict[str, pl.DataFrame]:
-        out = {name: self.load(name) for name in self.names}
+        out = {name: self.load(name, silent=True) for name in self.names}
         return out
