@@ -48,3 +48,21 @@ class Feathr:
     def to_dict(self) -> dict[str, pl.DataFrame]:
         out = {name: self.load(name, silent=True) for name in self.names}
         return out
+
+    def describe(self, name: str) -> pl.DataFrame:
+        data = self.load(name, silent=True)
+        desc_df = data.describe()
+        transp_df = desc_df.transpose(include_header=True, header_name="statistic")
+        new_headers = transp_df.row(0)
+        mapping = {old: new for old, new in zip(transp_df.columns, new_headers)}
+        # Rename columns and drop the first row
+        final_df = transp_df.rename(mapping).slice(1)
+        return final_df
+
+    def glimpse(self, name: str, max_items_per_column: int = 3) -> None:
+        data = self.load(name, silent=True)
+        return data.glimpse(max_items_per_column=max_items_per_column)
+
+    def schema(self, name: str) -> pl.Schema:
+        data = self.load(name, silent=True)
+        return data.schema
