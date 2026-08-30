@@ -2,8 +2,7 @@ from pathlib import Path
 import re
 import json
 from importlib import import_module
-# import subprocess
-# import sys
+from warnings import deprecated
 
 from .dirs_specs import DirSpecs
 from . import config as cfg
@@ -11,6 +10,7 @@ from . import utils
 from . import get_files as gf
 
 
+@deprecated("Use the new and much improved JobRun instead.")
 class WorkFlow:
     """The workflow to run the modules."""
 

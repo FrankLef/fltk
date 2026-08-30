@@ -1,9 +1,19 @@
 from pathlib import Path
 import re
-
 import subprocess
 import sys
 import os
+from loguru import logger
+
+from .rings import ring_error, ring_success
+
+logger.remove()
+
+# Add a new handler using the standard colorized format minus {name}:{function}:{line}
+logger.add(
+    sys.stderr,
+    format="<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> | <level>{level: <8}</level> | <level>{message}</level>",
+)
 
 
 class JobRun:
@@ -29,7 +39,7 @@ class JobRun:
     def parse_jobs(self, jobs_args: str) -> list[str]:
         """Parse the job argument from the CLI.
 
-        Rmove, white scpaces. Make sur no duplicate name.
+        Remove white scpaces. Make sur no duplicate name.
 
         Args:
             jobs_args (str): Job names separated by comma.
@@ -87,9 +97,11 @@ class JobRun:
     def run_jobs(self, job_files: dict[str, list[Path]]) -> None:
         project_path = str(self.project_path)
         for job_name, files in job_files.items():
-            msg: str = f"Processing '{job_name}' with {len(files)} runs."
-            print(msg)
+            msg: str = f"Job '{job_name}' with {len(files)} runs."
+            # print(msg)
+            logger.debug(msg)
             for file in files:
+                logger.info(file.name)
                 # 1. Clone system environment and fix PYTHONPATH
                 custom_env = os.environ.copy()
                 custom_env["PYTHONPATH"] = (
@@ -103,14 +115,23 @@ class JobRun:
                 # custom_env.update(script_vars)
 
                 # 3. Run the script purely by its name (no appended arguments)
+                # "-X", "utf8" used to display utf-8 character on terminal
+                # stdin, stdout, stderr allow the child process's breakpoint() to use your actual terminal.
                 result = subprocess.run(
-                    [sys.executable, file],
-                    capture_output=True,
+                    args=[sys.executable, "-X", "utf8", file],
+                    stdin=sys.stdin,
+                    stdout=sys.stdout,
+                    stderr=sys.stderr,
+                    # capture_output=True,  # do not use capture_output with stdin, stdout, stderr
                     text=True,
                     env=custom_env,
                 )
 
                 if result.returncode != 0:
-                    print(f"❌ {file.name} in {job_name} failed!\n{result.stderr}")
-                    break
-                print(f"✅ {file.name} finished.\n{result.stdout}")
+                    ring_error()
+                    # print(f"❌ {file.name} in {job_name} failed!\n{result.stderr}")
+                    # msg = f"❌ {file.name} in {job_name} failed!\n{result.stderr}"
+                    logger.exception(f"{file.name} in job '{job_name}'")
+                    sys.exit(result.stderr)
+                # print(f"✅ {file.name} finished.\n{result.stdout}")
+            ring_success()
