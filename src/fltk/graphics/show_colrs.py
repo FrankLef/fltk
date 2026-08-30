@@ -1,6 +1,5 @@
 import matplotlib.pyplot as plt
 from pypalettes import load_palette
-# from typing import Iterable
 
 
 def show_palettes(pal_nms) -> plt.Figure:

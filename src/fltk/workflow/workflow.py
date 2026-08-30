@@ -2,6 +2,8 @@ from pathlib import Path
 import re
 import json
 from importlib import import_module
+# import subprocess
+# import sys
 
 from .dirs_specs import DirSpecs
 from . import config as cfg
@@ -115,6 +117,17 @@ class WorkFlow:
 
     def run_modul(self, job_dir: str, files: list[str]) -> None:
         """Process the modules in the workflow directory with given pattern."""
+        # for a_file in files:
+        #     result = subprocess.run(
+        #         [sys.executable, a_file], capture_output=True, text=True
+        #     )
+        #     if result.returncode != 0:
+        #         print(f"❌ {a_file} crashed with exit code {result.returncode}!")
+        #         print(f"Error output:\n{result.stderr}")
+        #     else:
+        #         print(f"✅ {a_file} finished successfully.")
+
+        #     utils.print_complete(a_file)
         for a_file in files:
             modul = import_module(name="." + a_file, package=job_dir)
             utils.print_process(modul_nm=modul.__name__, modul_doc=modul.__doc__)

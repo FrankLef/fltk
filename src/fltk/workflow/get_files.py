@@ -19,6 +19,7 @@ def get_files(
         utils.ring_error()
         raise NotADirectoryError(f"Invalid path\n{wd}")
     the_files = sorted(
+        # [fn for fn in files if re.match(full_pattern, fn.name, flags=re.IGNORECASE)]
         [
             fn.stem
             for fn in files
