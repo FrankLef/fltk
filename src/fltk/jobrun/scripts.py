@@ -14,9 +14,13 @@ def get_jobs(
             for path in work_path.rglob("*/")
             if path.is_dir() and pattern.search(path.name)
         ]
-        if len(dirs) != 1:
-            msg: str = f"There must be exactly 1 directory for job '{job_name}'. There is {len(dirs)}"
-            raise AssertionError(msg)
+        if dirs:
+            if len(dirs) != 1:
+                msg: str = f"There must be exactly 1 directory for job '{job_name}' but there are {len(dirs)}."
+                raise AssertionError(msg)
+        else:
+            msg = f"No directory found for job '{job_name}' and pattern {pattern}."
+            FileNotFoundError(msg)
         jobs[job_name] = dirs[0]
     # must sort the job by dirs!
     sorted_jobs = dict(sorted(jobs.items(), key=lambda item: item[1]))
@@ -27,17 +31,20 @@ def get_files(
     jobs: dict[str, Path], file_pat: str | None, run_prefix: str
 ) -> dict[str, list[Path]]:
     if file_pat:
-        full_pat = rf"^{run_prefix}.+_{file_pat}[.]py$"
+        pat = rf"^{run_prefix}.+_{file_pat}[.]py$"
     else:
-        full_pat = rf"^{run_prefix}.+_.*[.]py$"
-    pattern = re.compile(full_pat)
+        pat = rf"^{run_prefix}.+_.*[.]py$"
+    pattern = re.compile(pat)
     job_files = {}
     for job_name, job_path in jobs.items():
-        the_files = [
+        files = [
             file
             for file in job_path.iterdir()
             if file.is_file() and pattern.search(file.name)
         ]
-        the_files.sort()
-        job_files[job_name] = the_files
+        if not files:
+            msg = f"No file found for job '{job_name}' and pattern {pat}."
+            raise FileNotFoundError(msg)
+        files.sort()
+        job_files[job_name] = files
     return job_files
