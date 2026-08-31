@@ -61,6 +61,8 @@ class JobRun:
 
     def run_jobs(self, job_files: dict[str, list[Path]]) -> None:
         project_path = str(self.project_path)
+        njobs: int = 0
+        nruns: int = 0
         for job_name, files in job_files.items():
             msg: str = f"Job '{job_name}' with {len(files)} runs."
             logger.debug(msg)
@@ -90,11 +92,13 @@ class JobRun:
                     text=True,
                     env=custom_env,
                 )
-
+                nruns += 1
                 if result.returncode != 0:
                     ring_error()
                     # print(f"❌ {file.name} in {job_name} failed!\n{result.stderr}")
                     # msg = f"❌ {file.name} in {job_name} failed!\n{result.stderr}"
                     logger.exception(f"{file.name} in job '{job_name}'")
                     sys.exit(result.stderr)
+            njobs += 1
+            logger.success(f"{nruns} runs in {njobs} jobs completed.")
             ring_success()
