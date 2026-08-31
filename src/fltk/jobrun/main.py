@@ -62,8 +62,8 @@ class JobRun:
                     sys.exit(result.stderr)
                 nruns += 1
             njobs += 1
-            logger.success(f"{nruns} runs in {njobs} jobs completed.")
-            ring_success()
+        logger.success(f"{nruns} runs in {njobs} jobs completed.")
+        ring_success()
 
     def run_command(self, file: Path) -> subprocess.CompletedProcess[str]:
         """Run a specific scrip with subprocess."""

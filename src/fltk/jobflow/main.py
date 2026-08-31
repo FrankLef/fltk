@@ -57,8 +57,8 @@ class JobFlow:
                 self.run_module(file)
                 nruns += 1
             njobs += 1
-            logger.success(f"{nruns} runs in {njobs} jobs completed.")
-            ring_success()
+        logger.success(f"{nruns} runs in {njobs} jobs completed.")
+        ring_success()
 
     def run_module(self, file: Path) -> None:
         a_script = file.stem
