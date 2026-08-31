@@ -6,9 +6,10 @@ SUCCESS_WAV = "kids-cartoon-close-bells-2256.wav"
 
 
 def ring_success() -> None:
-    sound_file = dir_path.joinpath(SUCCESS_WAV)
-    winsound.PlaySound(str(sound_file), flags=winsound.SND_FILENAME)
+    sound_file = str(dir_path.joinpath(SUCCESS_WAV))
+    winsound.PlaySound(sound_file, flags=winsound.SND_FILENAME)
     # winsound.MessageBeep(winsound.MB_ICONASTERISK)
+    # winsound.MessageBeep(winsound.MB_ICONEXCLAMATION)
     # winsound.Beep(440, 500)
 
 
