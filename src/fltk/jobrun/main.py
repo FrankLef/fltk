@@ -21,6 +21,7 @@ class JobRun:
         self,
         project_path: Path,
         work_dirs: list[str],
+        *,
         job_prefix: str = "job",
         run_prefix: str = "run",
     ):
@@ -64,10 +65,10 @@ class JobRun:
         njobs: int = 0
         nruns: int = 0
         for job_name, files in job_files.items():
-            msg: str = f"Job '{job_name}' with {len(files)} runs."
-            logger.debug(msg)
+            logger.debug(f"Job '{job_name}' with {len(files)} runs.")
             for file in files:
                 logger.info(file.name)
+
                 # 1. Clone system environment and fix PYTHONPATH
                 custom_env = os.environ.copy()
                 custom_env["PYTHONPATH"] = (
@@ -93,11 +94,9 @@ class JobRun:
                     env=custom_env,
                 )
                 nruns += 1
-                if result.returncode != 0:
-                    ring_error()
-                    # print(f"❌ {file.name} in {job_name} failed!\n{result.stderr}")
-                    # msg = f"❌ {file.name} in {job_name} failed!\n{result.stderr}"
+                if result.returncode:
                     logger.exception(f"{file.name} in job '{job_name}'")
+                    ring_error()
                     sys.exit(result.stderr)
             njobs += 1
             logger.success(f"{nruns} runs in {njobs} jobs completed.")
