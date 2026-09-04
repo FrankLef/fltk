@@ -1,12 +1,13 @@
 from pathlib import Path
 import re
-import subprocess
 import sys
-import os
+from typing import Literal
 from loguru import logger
 
 from .scripts import get_files, get_jobs
-from .utils import ring_error, ring_success
+from .utils import ring_success
+from .run_subprocess import run_subprocess
+from .run_module import run_module
 
 logger.remove()
 logger.add(
@@ -15,17 +16,21 @@ logger.add(
 )
 
 
-class JobRun:
+class ScriptRun:
+    """Process scripts using subprocess (default) or importlib."""
+
     def __init__(
         self,
         project_path: Path,
         work_dirs: list[str],
         *,
+        mode: Literal["subprocess", "module"] = "subprocess",
         job_prefix: str = "job",
         run_prefix: str = "run",
     ):
         self.project_path = project_path
         self.work_dirs = work_dirs
+        self.mode = mode
         self.work_path = project_path.joinpath(*work_dirs)
         self.job_prefix = job_prefix
         self.run_prefix = run_prefix
@@ -54,37 +59,13 @@ class JobRun:
         for job_name, files in job_files.items():
             logger.debug(f"Job '{job_name}' with {len(files)} runs.")
             for file in files:
-                logger.info(file.name)
-                result = self.run_command(file)
-                if result.returncode:
-                    logger.exception(f"{file.name} in job '{job_name}'")
-                    ring_error()
-                    sys.exit(result.stderr)
+                if self.mode == "subprocess":
+                    run_subprocess(self.project_path, job_name=job_name, file=file)
+                elif self.mode == "module":
+                    run_module(job_name, file=file)
+                else:
+                    raise ValueError(f"'{self.mode}' is an invalid mode.")
                 nruns += 1
             njobs += 1
         logger.success(f"{nruns} runs in {njobs} jobs completed.")
         ring_success()
-
-    def run_command(self, file: Path) -> subprocess.CompletedProcess[str]:
-        """Run a specific scrip with subprocess."""
-        root_path: str = str(self.project_path)
-        # 1. Clone system environment and fix PYTHONPATH
-        custom_env = os.environ.copy()
-        custom_env["PYTHONPATH"] = (
-            f"{root_path}{os.pathsep}{custom_env['PYTHONPATH']}"
-            if "PYTHONPATH" in custom_env
-            else root_path
-        )
-        # 2. Run the script purely by its name (no appended arguments)
-        # "-X", "utf8" used to display utf-8 character on terminal
-        # stdin, stdout, stderr allow the child process's breakpoint() to use your actual terminal.
-        result = subprocess.run(
-            args=[sys.executable, "-X", "utf8", file],
-            stdin=sys.stdin,
-            stdout=sys.stdout,
-            stderr=sys.stderr,
-            # capture_output=True,  # do not use capture_output with stdin, stdout, stderr
-            text=True,
-            env=custom_env,
-        )
-        return result
