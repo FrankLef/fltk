@@ -3,6 +3,7 @@ import re
 import sys
 from typing import Literal
 from loguru import logger
+import time
 
 from .scripts import get_files, get_jobs
 from .utils import ring_success
@@ -17,7 +18,10 @@ logger.add(
 
 
 class ScriptRun:
-    """Process scripts using subprocess (default) or importlib."""
+    """Process scripts using subprocess (default) or importlib.
+
+    Using importlib is significantly faster.
+    """
 
     def __init__(
         self,
@@ -25,23 +29,30 @@ class ScriptRun:
         work_dirs: list[str],
         *,
         mode: Literal["subprocess", "module"] = "subprocess",
+        with_timer: bool = False,
         job_prefix: str = "job",
         run_prefix: str = "run",
     ):
         self.project_path = project_path
         self.work_dirs = work_dirs
         self.mode = mode
+        self.with_timer = with_timer
         self.work_path = project_path.joinpath(*work_dirs)
         self.job_prefix = job_prefix
         self.run_prefix = run_prefix
 
     def execute(self, job_args: str, file_pat: str | None = None) -> None:
+        if self.with_timer:
+            start_time = time.perf_counter()
         parsed_jobs = self.parse_jobs(job_args)
         jobs = get_jobs(
             parsed_jobs, work_path=self.work_path, job_prefix=self.job_prefix
         )
         files = get_files(jobs, file_pat=file_pat, run_prefix=self.run_prefix)
         self.run_jobs(files)
+        if self.with_timer:
+            exec_time = time.perf_counter() - start_time
+            print(f"Execution time {exec_time:.6f} seconds.")
 
     def parse_jobs(self, jobs_args: str) -> list[str]:
         """Parse the job argument from the CLI."""
