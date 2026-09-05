@@ -1,12 +1,12 @@
 from pathlib import Path
 import re
 import sys
+import time
 from typing import Literal
 from loguru import logger
-import time
 
 from .scripts import get_files, get_jobs
-from . import utils
+from .utils import print_timer, ring_success
 from .run_subprocess import run_subprocess
 from .run_module import run_module
 
@@ -54,7 +54,7 @@ class ScriptRun:
         files = get_files(jobs, file_pat=file_pat, run_prefix=self.run_prefix)
         self.run_jobs(files)
         if with_timer:
-            utils.print_timer(time.perf_counter() - start_time)
+            print_timer(time.perf_counter() - start_time)
 
     def parse_jobs(self, jobs_args: str) -> list[str]:
         """Parse the job argument from the CLI."""
@@ -81,4 +81,4 @@ class ScriptRun:
                 nruns += 1
             njobs += 1
         logger.success(f"{nruns} runs in {njobs} jobs completed.")
-        utils.ring_success()
+        ring_success()
