@@ -6,7 +6,7 @@ from loguru import logger
 import time
 
 from .scripts import get_files, get_jobs
-from .utils import ring_success
+from . import utils
 from .run_subprocess import run_subprocess
 from .run_module import run_module
 
@@ -54,8 +54,7 @@ class ScriptRun:
         files = get_files(jobs, file_pat=file_pat, run_prefix=self.run_prefix)
         self.run_jobs(files)
         if with_timer:
-            exec_time = time.perf_counter() - start_time
-            print(f"Execution time {exec_time:.6f} seconds.")
+            utils.print_timer(time.perf_counter() - start_time)
 
     def parse_jobs(self, jobs_args: str) -> list[str]:
         """Parse the job argument from the CLI."""
@@ -82,4 +81,4 @@ class ScriptRun:
                 nruns += 1
             njobs += 1
         logger.success(f"{nruns} runs in {njobs} jobs completed.")
-        ring_success()
+        utils.ring_success()
