@@ -28,7 +28,7 @@ class ScriptRun:
         project_path: Path,
         work_dirs: list[str],
         *,
-        mode: Literal["module", "subprocess"] = "module",
+        mode: Literal["importlib", "subprocess"] = "importlib",
         job_prefix: str = "job",
         run_prefix: str = "run",
     ):
@@ -72,7 +72,7 @@ class ScriptRun:
         for job_name, files in job_files.items():
             logger.debug(f"Job '{job_name}' with {len(files)} runs.")
             for file in files:
-                if self.mode == "module":
+                if self.mode == "importlib":
                     run_module(job_name, file=file)
                 elif self.mode == "subprocess":
                     run_subprocess(self.project_path, job_name=job_name, file=file)
