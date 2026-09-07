@@ -18,7 +18,7 @@ logger.add(
 
 
 class ScriptRun:
-    """Process scripts using subprocess (default) or importlib.
+    """Process scripts using importlib (default) or subprocess.
 
     Using importlib is significantly faster.
     """
