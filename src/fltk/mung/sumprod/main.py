@@ -86,33 +86,33 @@ class MungSumprod(Mung):
         df = lmx.load_mat_from_xl(self, path=path, sheet_nm=sheet_nm)
         self.load_sump(df)
 
-    def fit_transform(self, missing_to_zero: bool) -> None:
-        """Process the fit and transform steps in a sequence.
+    def fit_transform(self) -> None:
+        """Apply the sumprod calculations.
 
         Args:
-            is_merged (bool, optional): If True, merge the calcXulated data to the original dataframe. Otherwise, don't do it.
-            verbose (bool, optional): If True, display info. Defaults to False.
+            missing_to_zero (bool): Replace missing values with zero.
         """
         self.fit()
-        self.transform(missing_to_zero=missing_to_zero)
+        # self.transform(missing_to_zero=missing_to_zero)
+        self.transform()
 
     def fit(self) -> None:
-        """Fit the data."""
-        # Not used.
+        """Fit the data. Not used, here to keep cconsistency."""
 
-    def transform(self, missing_to_zero: bool) -> None:
-        """Do the calcXulations."""
-        self.calculate(missing_to_zero=missing_to_zero)
+    def transform(self) -> None:
+        """Apply the sumprod calculations.
 
-    def calculate(self, missing_to_zero: bool) -> None:
+        Args:
+            missing_to_zero (bool): Replace missing values with zero.
+        """
+        # self.calculate(missing_to_zero=missing_to_zero)
+        self.calculate()
+
+    def calculate(self) -> None:
         data = self.raw
         sump_df = self.sump
         calc_df = calc(
-            data,
-            sumprod=sump_df,
-            raw_vars=self.raw_vars,
-            sump_vars=self.sump_vars,
-            missing_to_zero=missing_to_zero,
+            data, sumprod=sump_df, raw_vars=self.raw_vars, sump_vars=self.sump_vars
         )
         self.calc = calc_df
 

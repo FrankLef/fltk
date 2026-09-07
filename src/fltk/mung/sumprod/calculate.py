@@ -8,7 +8,6 @@ def calculate(
     sumprod: pl.DataFrame,
     raw_vars: RawVars,
     sump_vars: SumprodVars,
-    missing_to_zero: bool,
 ) -> pl.DataFrame:
     _idx_from = sump_vars.idx_from
     _idx_to = sump_vars.idx_to
@@ -25,17 +24,22 @@ def calculate(
             merged_df = sump_df.join(
                 raw_df, left_on=_idx_from, right_on=_idx, how="left"
             )
-            # add groups to see which one had missing data
-            cols = {col: pl.lit(val) for col, val in zip(_groups, group_vals)}
-            merged_df = (
-                merged_df.with_columns(**cols)
-                .with_columns((pl.col(_coef) * pl.col(_value)).alias(_newvalue))
-                .with_columns(
-                    pl.when(missing_to_zero)
-                    .then(pl.col(_newvalue).fill_null(0))
-                    .otherwise(pl.col(_newvalue))
+            merged_df = merged_df.with_columns(
+                (pl.col(_coef).fill_null(0) * pl.col(_value).fill_null(0)).alias(
+                    _newvalue
                 )
             )
+            # add groups to see which one had missing data
+            # cols = {col: pl.lit(val) for col, val in zip(_groups, group_vals)}
+            # merged_df = (
+            #     merged_df.with_columns(**cols)
+            #     .with_columns((pl.col(_coef) * pl.col(_value)).alias(_newvalue))
+            #     .with_columns(
+            #         pl.when(missing_to_zero)
+            #         .then(pl.col(_newvalue).fill_null(0))
+            #         .otherwise(pl.col(_newvalue))
+            #     )
+            # )
 
             dfs.append(merged_df)
 
@@ -43,13 +47,17 @@ def calculate(
 
     all_groups = list(_groups) + [_idx_to]
     final_df = (
+        # all_df.group_by(all_groups)
+        # .agg(
+        #     pl.when(pl.col(_newvalue).has_nulls())
+        #     .then(None)
+        #     .otherwise(pl.col(_newvalue).sum())
+        #     .alias(_newvalue)
+        # )
+        # .sort(all_groups)
+        # .rename({_idx_to: _idx})
         all_df.group_by(all_groups)
-        .agg(
-            pl.when(pl.col(_newvalue).has_nulls())
-            .then(None)
-            .otherwise(pl.col(_newvalue).sum())
-            .alias(_newvalue)
-        )
+        .agg(pl.col(_newvalue).sum().alias(_newvalue))
         .sort(all_groups)
         .rename({_idx_to: _idx})
     )
