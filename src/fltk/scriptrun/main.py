@@ -28,7 +28,7 @@ class ScriptRun:
         project_path: Path,
         work_dirs: list[str],
         *,
-        mode: Literal["subprocess", "module"] = "subprocess",
+        mode: Literal["subprocess", "module"] = "module",
         job_prefix: str = "job",
         run_prefix: str = "run",
     ):
@@ -72,12 +72,13 @@ class ScriptRun:
         for job_name, files in job_files.items():
             logger.debug(f"Job '{job_name}' with {len(files)} runs.")
             for file in files:
-                if self.mode == "subprocess":
-                    run_subprocess(self.project_path, job_name=job_name, file=file)
-                elif self.mode == "module":
+                if self.mode == "module":
                     run_module(job_name, file=file)
+                elif self.mode == "subprocess":
+                    run_subprocess(self.project_path, job_name=job_name, file=file)
                 else:
-                    raise ValueError(f"'{self.mode}' is an invalid mode.")
+                    msg = f"'{self.mode}' is an invalid scriptrun mode."
+                    raise ValueError(msg)
                 nruns += 1
             njobs += 1
         logger.success(f"{nruns} runs in {njobs} jobs completed.")
