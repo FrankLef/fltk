@@ -28,7 +28,7 @@ class ScriptRun:
         project_path: Path,
         work_dirs: list[str],
         *,
-        mode: Literal["subprocess", "module"] = "module",
+        mode: Literal["module", "subprocess"] = "module",
         job_prefix: str = "job",
         run_prefix: str = "run",
     ):
