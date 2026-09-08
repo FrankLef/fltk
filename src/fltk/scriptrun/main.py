@@ -18,9 +18,11 @@ logger.add(
 
 
 class ScriptRun:
-    """Process scripts using importlib (default) or subprocess.
+    """Process scripts using `importlib` (default) or `subprocess`.
 
-    Using importlib is significantly faster.
+    Note that `subprocess` does not recognize relative imports since it creates a completely  isolated namespace. This greatly limits its usefuleness.  When using `subprocess` with relative import **no error message will be issued!** `subprocess` will simply not execute anything.
+
+    We tested running 9 scripts in 9 different directories with `subprocess` and `importlib`. `subprocess` takes about 3.8 seconds but `importlib` takes  about 2.8 seconds to do the same. `importlib` is therefore clearly faster.
     """
 
     def __init__(
