@@ -2,7 +2,7 @@
 
 import sqlalchemy as sa
 from typing import NamedTuple
-import pandas as pd
+import polars as pl
 
 
 class ConnParams(NamedTuple):
@@ -35,8 +35,10 @@ def build_engine(
     pw: str,
     port: int = 1433,
 ) -> sa.Engine:
-    # Since version 1.4.17 sqlalchemy requires a sqlalchemy.engine.url.URL to create the engine.
-    # We can't use just a string anymore.
+    # NOTE: Since version 1.4.17 sqlalchemy requires a sqlalchemy.engine.url.URL to create the engine.
+    # NOTE: You MUST use parse.quote_plus from urllib to avoid problem with the password when it contains characters such as '@' which creates an invalid url.
+    # passwd = quote_plus(passwd)
+    # url = rf"{driver}://{user}:{passwd}@{host}:{port}/{db}"
     engine_url = sa.engine.url.URL.create(
         drivername=driver_nm,
         username=user,
@@ -48,49 +50,34 @@ def build_engine(
     )
     # NOTE: Debug line to see the connection string
     # print("connection string:", engine_url.render_as_string(), "\n", sep="\n")
-    an_engine = sa.create_engine(engine_url)
-    return an_engine
+    engine = sa.create_engine(engine_url)
+    return engine
 
 
-def test_connect(engin: sa.Engine) -> bool:
+def test_connect(conn: sa.orm.session.Session) -> bool:
+    """Test the MS SQL engine."""
     try:
-        with engin.connect() as conn:
-            out = conn.execute(sa.text("SELECT 1"))
-            for row in out:
-                print(row)
+        out = conn.execute(sa.text("SELECT 1"))
+        for row in out:
+            print(row)
     except sa.exc.InterfaceError as e:
-        msg = f"CONNECTION FAILED:\n{e}"
-        print(msg)
-        raise e
-    finally:
-        engin.dispose()
+        e.add_note(f"CONNECTION FAILED:\n{e}")
+        raise
     return True
 
 
-def fetch(qry: str) -> pd.DataFrame:
-    engin = build_engine(
-        driver_nm=params.driver_nm,
-        driver=params.driver,
-        server=params.server,
-        database=params.database,
-        user=params.user,
-        pw=params.pw,
-        port=params.port,
-    )
+def fetch(conn: sa.orm.session.Session, qry: str) -> pl.DataFrame:
+    """Fetch data from MS SQL database using polars."""
     try:
-        with engin.connect() as conn:
-            data = pd.read_sql_query(sql=sa.text(qry), con=conn)
+        data = pl.read_database(sa.text(qry), connection=conn)
     except sa.exc.InterfaceError as e:
-        msg = f"CONNECTION FAILED:\n{e}"
-        print(msg)
-        raise e
-    finally:
-        engin.dispose()
+        e.add_note(f"CONNECTION FAILED:\n{e}")
+        raise
     return data
 
 
-def main(test_it: bool = False) -> sa.Engine:
-    engin = build_engine(
+def main() -> sa.Engine:
+    engine = build_engine(
         driver_nm=params.driver_nm,
         driver=params.driver,
         server=params.server,
@@ -99,6 +86,4 @@ def main(test_it: bool = False) -> sa.Engine:
         pw=params.pw,
         port=params.port,
     )
-    if test_it:
-        test_connect(engin)
-    return engin
+    return engine

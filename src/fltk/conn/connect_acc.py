@@ -31,16 +31,16 @@ class ConnectAcc:
         engine_url = sa.engine.url.URL.create(
             drivername="access+pyodbc", query={"odbc_connect": conn_str}
         )
-        an_engine = sa.create_engine(engine_url)
-        return an_engine
+        engine = sa.create_engine(engine_url)
+        return engine
 
     def test_connect(self):
         try:
             with self._engine.connect() as conn:
                 conn.execute(sa.text("SELECT 1"))
         except (sa.exc.DBAPIError, sa.exc.OperationalError) as e:
-            msg = f"CONNECTION FAILED:\n{e}"
-            raise sa.exc.DBAPIError(msg)
+            e.add_note(f"CONNECTION FAILED:\n{e}")
+            raise
         finally:
             self._engine.dispose()
         return True
