@@ -7,14 +7,11 @@ from typing import NamedTuple
 import polars as pl
 import sqlalchemy as sa
 
-# params = ConnParams(
-#     driver_nm="mssql+pyodbc",
-#     driver="SQL Server",
-#     server="jrysvrsql01\bi_data_wh",
-#     database="BI_SJM_TEST",
-#     Trusted_Connection=”yes",
-#     port=1433
-# )
+# EXAMPLE HOW TO USE
+# def main():
+#     engine = get_engine()
+#     with engine.connect() as conn:
+#         test_connect(conn)
 
 
 class ConnParams(NamedTuple):

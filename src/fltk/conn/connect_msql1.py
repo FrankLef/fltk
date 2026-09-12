@@ -4,6 +4,12 @@ import sqlalchemy as sa
 from typing import NamedTuple
 import polars as pl
 
+# EXAMPLE HOW TO USE
+# def main():
+#     engine = get_engine()
+#     with engine.connect() as conn:
+#         test_connect(conn)
+
 
 class ConnParams(NamedTuple):
     driver_nm: str
