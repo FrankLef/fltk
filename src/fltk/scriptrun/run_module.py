@@ -9,8 +9,4 @@ def run_module(job_name: str, file: Path) -> None:
     job_dir = file.parent.name
     modul = import_module(name="." + a_script, package=job_dir)
     utils.print_process(modul_nm=modul.__name__, modul_doc=modul.__doc__)
-    try:
-        modul.main()
-    except Exception as e:
-        e.add_note(f"Run'{file.name}' in job '{job_name}'")
-        raise
+    modul.main()
