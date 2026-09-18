@@ -19,7 +19,7 @@ class PrintObj:
     class PType(StrEnum):
         NONE = auto()
         SHOW = auto()
-        FILE = auto()
+        HTML = auto()
         PDF = auto()
         SVG = auto()
 
@@ -36,7 +36,7 @@ class PrintObj:
         if ptype not in self.PType:
             raise TypeError(f"'{ptype}' is an invalid PType value.")
 
-        if ptype in (self.PType.FILE, self.PType.PDF):
+        if ptype in (self.PType.HTML, self.PType.PDF, self.PType.SVG):
             self.start_msg()
 
         for name, obj in objs.items():
@@ -50,7 +50,7 @@ class PrintObj:
         if ptype != self.PType.NONE:
             if ptype == self.PType.SHOW:
                 obj.show()
-            elif ptype == self.PType.FILE:
+            elif ptype == self.PType.HTML:
                 fn = name + ".html"
                 path_fn = self.path.joinpath(fn)
                 if isinstance(obj, go.Figure):
