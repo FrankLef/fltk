@@ -1,7 +1,6 @@
 from pathlib import Path
 import polars as pl
 
-# from collections.abc import Sequence
 from rich import print as rprint
 
 
@@ -32,8 +31,7 @@ class Feathr:
         # this is megabytes ("MB"), not megabit ("Mb")
         size = data.estimated_size("mb")
         if not silent:
-            msg: str = f"Save '{name}' to feather {size:.2f} MB"
-            rprint(msg)
+            rprint(f"Save '{name}' to feather {size:.2f} MB")
         return path
 
     def load(self, name: str, silent: bool = False) -> pl.DataFrame:
@@ -41,8 +39,7 @@ class Feathr:
         with open(path, "rb") as f:
             data = pl.read_ipc(f)
         if not silent:
-            msg: str = f"Load '{name}' from feather {data.shape}"
-            rprint(msg)
+            rprint(f"Load '{name}' from feather {data.shape}")
         return data
 
     def to_dict(self) -> dict[str, pl.DataFrame]:
