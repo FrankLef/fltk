@@ -12,14 +12,21 @@ class QryClean(QryRepo):
         Args:
             col (str): Column name.
         """
-        pats = ((r"^\s+|\s$", ""), (r"[\t\n\r\v\f]+", ""), (r" +", " "))
-        for pat, replace in pats:
-            qry = f"""
-            UPDATE {self.table_nm}
-            SET {col} = regexp_replace({col}, '{pat}', '{replace}', 'g')
-            WHERE {col} IS NOT NULL;
-            """
-            self.conn.sql(qry)
+        qry = rf"""
+        UPDATE {self.table_nm}
+        SET {col} = REGEXP_REPLACE({col}, '\s+', ' ', 'g')
+        WHERE {col} IS NOT NULL;
+        """
+        self.conn.sql(qry)
+
+        qry = f"""
+        UPDATE {self.table_nm} SET {col} = TRIM({col})
+        WHERE {col} IS NOT NULL;
+        """
+        self.conn.sql(qry)
+
+        qry = f"UPDATE {self.table_nm} SET {col} = NULLIF({col}, '');"
+        self.conn.sql(qry)
 
     def drop_cols(self, cols: Sequence[str]) -> None:
         """_summary_
