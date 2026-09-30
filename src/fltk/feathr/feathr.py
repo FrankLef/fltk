@@ -1,5 +1,6 @@
 from pathlib import Path
 import polars as pl
+from collections.abc import Sequence
 
 from rich import print as rprint
 
@@ -7,21 +8,26 @@ from rich import print as rprint
 class Feathr:
     def __init__(self, path: Path) -> None:
         self.path = path
-        self.names: list[str] = []
 
     def __repr__(self) -> str:
         # !r to use the repr() version of the variable (adds quotes)
-        msg: str = f"Feathr(path={self.path})"
-        return msg
+        return f"Feathr(path={self.path})"
 
     def __str__(self) -> str:
-        msg: str = f"{len(self.names)} data sets in the feather"
-        return msg
+        return f"{len(self.files)} feather files."
+
+    @property
+    def names(self) -> list[str]:
+        out = [x.stem for x in self.files]
+        return out
+
+    @property
+    def files(self) -> list[Path]:
+        out = list(self.path.glob("*.feather"))
+        return out
 
     def file(self, name: str) -> Path:
         name = name.lower()
-        if name not in (self.names):
-            self.names.append(name)
         path = self.path.joinpath(f"{name}.feather")
         return path
 
@@ -41,6 +47,15 @@ class Feathr:
         if not silent:
             rprint(f"Load '{name}' from feather {data.shape}")
         return data
+
+    def drop(self, names: Sequence[str] | None = None) -> int:
+        if names:
+            files = [self.file(name) for name in names]
+        else:
+            files = self.files
+        for file in files:
+            file.unlink()
+        return len(files)
 
     def to_dict(self) -> dict[str, pl.DataFrame]:
         out = {name: self.load(name, silent=True) for name in self.names}
