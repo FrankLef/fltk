@@ -5,10 +5,10 @@ def clean_ws(text: str | None = None) -> str | None:
     """Clean text by remove layout characters and multiple whitespaces.
 
     Args:
-        text (str): String to clean.
+        text (str | None, optional): String to clean. Defaults to None.
 
     Returns:
-        str: Cleaned-up text.
+        str | None: Cleaned-up string.
     """
     if not text:
         return None
