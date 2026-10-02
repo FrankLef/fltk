@@ -14,7 +14,7 @@ class QryConstraints(QryRepo):
         qry = f"ALTER TABLE {self.table_nm} ALTER COLUMN {col} SET NOT NULL"
         return qry
 
-    def add_primary_key(self, keys: Sequence[str], skip_error: bool = False) -> None:
+    def add_primary_key(self, keys: Sequence[str], skip_error: bool = False) -> str:
         qry = self.write_add_primary_key(keys)
         try:
             self.conn.sql(qry)
@@ -27,6 +27,7 @@ class QryConstraints(QryRepo):
             msg: str = f"Invalid PK provided for table '{self.table_nm}'."
             e.add_note(msg)
             raise
+        return qry
 
     def set_not_null(self, cols: Sequence[str], skip_error: bool = False) -> None:
         for col in cols:

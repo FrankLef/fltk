@@ -39,13 +39,14 @@ class QryUpdate(QryRepo):
             qry_add = self.write_add_col(col=name, dtype=dtype)
             self.conn.sql(qry_add)
 
-    def update(self, col: str, upd_text: str) -> None:
+    def update(self, col: str, upd_text: str) -> str:
         qry_update = self.write_update(col=col, upd_text=upd_text)
         self.conn.sql(qry_update)
+        return qry_update
 
     def update_from(
         self, col: str, upd_text: str, from_table: str, join_vars: tuple[str, str]
-    ) -> None:
+    ) -> str:
         """Update a table using values from a reference table.
 
         Args:
@@ -60,10 +61,12 @@ class QryUpdate(QryRepo):
         # print("qry_update_from:\n", qry_update_from)
         # raise KeyboardInterrupt()
         self.conn.sql(qry_update_from)
+        return qry_update_from
 
-    def add_update(self, col: str, dtype: str, upd_text: str) -> None:
+    def add_update(self, col: str, dtype: str, upd_text: str) -> str:
         self.add_cols({col: dtype})
-        self.update(col=col, upd_text=upd_text)
+        qry_update = self.update(col=col, upd_text=upd_text)
+        return qry_update
 
     def add_update_from(
         self,
@@ -72,8 +75,9 @@ class QryUpdate(QryRepo):
         upd_text: str,
         from_table: str,
         join_vars: tuple[str, str],
-    ) -> None:
+    ) -> str:
         self.add_cols({col: dtype})
-        self.update_from(
+        qry_update_from = self.update_from(
             col=col, upd_text=upd_text, from_table=from_table, join_vars=join_vars
         )
+        return qry_update_from

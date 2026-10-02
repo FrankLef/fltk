@@ -20,10 +20,9 @@ class QryUtils(QryRepo):
             raise AssertionError(msg)
         return False
 
-    def create_with_df(
-        self, data: pl.DataFrame, table_nm: str, is_temp: bool = False
-    ) -> None:
+    def create_with_df(self, data: pl.DataFrame, is_temp: bool = False) -> str:
         self.conn.register(view_name="data", python_object=data)
         temp_txt = "TEMP TABLE" if is_temp else "TABLE"
-        qry = f"CREATE OR REPLACE {temp_txt} {table_nm} AS SELECT * FROM data;"
+        qry = f"CREATE OR REPLACE {temp_txt} {self.table_nm} AS SELECT * FROM data;"
         self.conn.sql(qry)
+        return qry

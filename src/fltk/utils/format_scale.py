@@ -17,7 +17,14 @@ def format_scale(value: float, scale: float, mask: str, na: str = "-") -> str:
 
     Examples:
 
-    >>> df['new'] = df['val'].apply(scale_format, scale=1, mask="{:,.2f}")  # doctest: +SKIP
+    >>> df = df.with_columns(
+            pl.col("val")
+            .map_elements(
+                lambda x: format_scale(x, scale=1, mask="{:,.2f}"),
+                return_dtype=pl.String  # Specify the output data type (e.g., pl.String, pl.Float64)
+            )
+            .alias("new")
+        )  # doctest: +SKIP
 
     Returns:
         str: Formatted value in a given scale.
@@ -29,6 +36,20 @@ def format_scale(value: float, scale: float, mask: str, na: str = "-") -> str:
     else:
         formatted_val = na
     return formatted_val
+
+
+def format_scale_col(
+    data: pl.DataFrame, val_col: str, fmt_col: str, scale: float, mask: str
+) -> pl.DataFrame:
+    data = data.with_columns(
+        pl.col(val_col)
+        .map_elements(
+            lambda x: format_scale(x, scale=scale, mask=mask),
+            return_dtype=pl.String,  # Specify the output data type (e.g., pl.String, pl.Float64)
+        )
+        .alias(fmt_col)
+    )
+    return data
 
 
 def format_scale_groups(
