@@ -43,6 +43,7 @@ def format_scale_col(
 ) -> pl.DataFrame:
     data = data.with_columns(
         pl.col(val_col)
+        .cast(pl.Float64)
         .map_elements(
             lambda x: format_scale(x, scale=scale, mask=mask),
             return_dtype=pl.String,  # Specify the output data type (e.g., pl.String, pl.Float64)
