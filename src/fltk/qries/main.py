@@ -2,7 +2,7 @@ from .base import QryRepo
 from .clean import QryClean
 from .constraints import QryConstraints
 from .enums import QryEnums
-from .info import QryInfo
+from .utils import QryUtils
 from .transform_log import QryTransformLog
 from .update import QryUpdate
 
@@ -21,8 +21,8 @@ class QryFltk(QryRepo):
         return QryEnums(self.conn, table_nm=self.table_nm)
 
     @property
-    def info(self) -> QryRepo:
-        return QryInfo(self.conn, table_nm=self.table_nm)
+    def utils(self) -> QryRepo:
+        return QryUtils(self.conn, table_nm=self.table_nm)
 
     @property
     def transform_log(self) -> QryRepo:
