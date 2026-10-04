@@ -2,7 +2,6 @@
 
 import polars as pl
 from typing import Any, Final
-# from ..dic.main import IDic
 
 
 def format_scale(value: float, scale: float, mask: str, na: str = "-") -> str:
