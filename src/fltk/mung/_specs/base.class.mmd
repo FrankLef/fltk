@@ -1,0 +1,20 @@
+---
+title: Mung Abstract Class Base
+config:
+    theme: default
+    look: classic
+---
+classDiagram
+    class Base {
+        +dfs  "dict[str, pl.DataFrame]"
+        +__init__(name)
+        +fit()
+        +transform()
+        +get_summary() "dict[str, tuple[int, int]]"
+        +to_excel(path: Path)
+    }
+
+    %% Direct links to your sequence files (Works in GitHub / Markdown viewers)
+    %%link PaymentProcessor "execute()" "execute.seq.mmd" "View execution sequence"
+    %%link PaymentProcessor "validateCard()" "validate-card.seq.mmd" "View validation sequence"
+

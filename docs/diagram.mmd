@@ -1,0 +1,23 @@
+---
+config:
+title: Class Execute
+theme: default
+look: classic
+---
+
+
+graph TD
+    Start([Start: execute]) --> Init[Initialize Variables]
+    Init --> Check{Is Valid?}
+    
+    Check -- No --> Error[Log Error & Throw Exception]
+    Error --> End([End])
+    
+    Check -- Yes --> Process[Process Data]
+    Process --> Loop{More Records?}
+    
+    Loop -- Yes --> SubProcess[Update Database]
+    SubProcess --> Loop
+    
+    Loop -- No --> Success[Return Success Result]
+    Success --> End
