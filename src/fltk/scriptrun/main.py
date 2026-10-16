@@ -67,19 +67,17 @@ class ScriptRun:
 
     def run_jobs(self, job_files: dict[str, list[Path]]) -> None:
         """Loop through jobs and execute the scrips."""
-        njobs: int = 0
         nruns: int = 0
         for job_name, files in job_files.items():
             logger.debug(f"Job '{job_name}' with {len(files)} runs.")
             for file in files:
                 if self.mode == "importlib":
-                    run_module(job_name, file=file)
+                    run_module(file=file)
                 elif self.mode == "subprocess":
-                    run_subprocess(self.project_path, job_name=job_name, file=file)
+                    run_subprocess(self.project_path, file=file)
                 else:
                     msg = f"'{self.mode}' is an invalid scriptrun mode."
                     raise ValueError(msg)
                 nruns += 1
-            njobs += 1
-        logger.success(f"{nruns} runs in {njobs} jobs completed.")
+        logger.success(f"{nruns} runs in {len(job_files)} jobs completed.")
         ring_success()

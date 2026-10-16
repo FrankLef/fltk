@@ -4,7 +4,7 @@ from importlib import import_module
 from . import utils
 
 
-def run_module(job_name: str, file: Path) -> None:
+def run_module(file: Path) -> None:
     a_script = file.stem
     job_dir = file.parent.name
     modul = import_module(name="." + a_script, package=job_dir)
