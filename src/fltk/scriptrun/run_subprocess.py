@@ -19,14 +19,24 @@ def run_subprocess(
         if "PYTHONPATH" in custom_env
         else root_path
     )
+
+    # module name is without '.py' extension
+    file_path = file.with_suffix("")
+    # relative path (i.e. relative to root_path)
+    relative_path = os.path.relpath(file_path, root_path)
+    # replace backslash with dot
+    module_name = relative_path.replace(os.sep, ".")
+
     result = subprocess.run(
-        [sys.executable, "-X", "utf8", file],
+        [sys.executable, "-X", "utf8", "-m", module_name],
         stdin=sys.stdin,
         stdout=sys.stdout,
         stderr=sys.stderr,
-        # capture_output=True,  # do not use capture_output with stdin, stdout, stderr
-        text=True,
+        cwd=root_path,
         env=custom_env,
+        capture_output=False,  # do not use capture_output with stdin, stdout, stderr
+        check=False,
+        text=True,
     )
 
     if result.returncode:
