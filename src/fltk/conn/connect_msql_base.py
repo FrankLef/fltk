@@ -19,22 +19,22 @@ class ConnectMsql(ABC):
 
     def test_connect(self) -> bool:
         """Test the MS SQL engine."""
-        conn: sa.engine.Connection = self._engine.connect()
-        try:
-            out = conn.execute(sa.text("SELECT 1"))
-            for row in out:
-                print(row)
-        except sa.exc.InterfaceError as e:
-            e.add_note(f"CONNECTION FAILED:\n{e}")
-            raise
+        with self._engine.connect() as conn:
+            try:
+                out = conn.execute(sa.text("SELECT 1"))
+                for row in out:
+                    print(row)
+            except sa.exc.InterfaceError as e:
+                e.add_note(f"CONNECTION FAILED:\n{e}")
+                raise
         return True
 
     def fetch(self, qry: str) -> pl.DataFrame:
         """Fetch data from MS SQL database using polars."""
-        conn: sa.engine.Connection = self._engine.connect()
-        try:
-            data = pl.read_database(sa.text(qry), connection=conn)
-        except sa.exc.InterfaceError as e:
-            e.add_note(f"CONNECTION FAILED:\n{e}")
-            raise
+        with self._engine.connect() as conn:
+            try:
+                data = pl.read_database(sa.text(qry), connection=conn)
+            except sa.exc.InterfaceError as e:
+                e.add_note(f"CONNECTION FAILED:\n{e}")
+                raise
         return data

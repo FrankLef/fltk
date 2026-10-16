@@ -70,7 +70,8 @@ class ScriptRun:
         nruns: int = 0
         for job_name, files in job_files.items():
             logger.debug(f"Job '{job_name}' with {len(files)} runs.")
-            for file in files:
+            sorted_files = sorted(files)
+            for file in sorted_files:
                 if self.mode == "importlib":
                     run_module(file=file)
                 elif self.mode == "subprocess":
