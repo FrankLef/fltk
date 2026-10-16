@@ -28,10 +28,6 @@ class ConnectMsqlNoTrust(ConnectMsql):
         self._port = port
         self._engine = self._build_engine()
 
-    @property
-    def engine(self):
-        return self._engine
-
     def _build_engine(self) -> sa.Engine:
         # NOTE: Since version 1.4.17 sqlalchemy requires a sqlalchemy.engine.url.URL to create the engine.
         # NOTE: You MUST use parse.quote_plus from urllib to avoid problem with the password when it contains characters such as '@' which creates an invalid url.

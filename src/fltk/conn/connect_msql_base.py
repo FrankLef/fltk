@@ -10,7 +10,7 @@ class ConnectMsql(ABC):
         self._engine = self._build_engine()
 
     @property
-    def engine(self):
+    def engine(self) -> sa.Engine:
         return self._engine
 
     @abstractmethod
