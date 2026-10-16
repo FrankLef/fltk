@@ -10,7 +10,7 @@ class ConnectAcc:
         self._path = path
         self._engine = self._build_engine(path)
 
-    def _build_engine(self, path: Path):
+    def _build_engine(self, path: Path) -> sa.Engine:
         """Create SQLAlchemy engine for MS Access.
 
         Args:
@@ -34,7 +34,7 @@ class ConnectAcc:
         engine = sa.create_engine(engine_url)
         return engine
 
-    def test_connect(self):
+    def test_connect(self) -> bool:
         try:
             with self._engine.connect() as conn:
                 conn.execute(sa.text("SELECT 1"))
@@ -45,7 +45,7 @@ class ConnectAcc:
             self._engine.dispose()
         return True
 
-    def load(self, data: pl.DataFrame, tbl: str) -> pl.DataFrame:
+    def load(self, data: pl.DataFrame, tbl: str) -> None:
         """Upload data to MS Access.
 
         IMPORTANT: The `con` parameter actually take an SQLAlchemy engine,
@@ -78,7 +78,6 @@ class ConnectAcc:
         # # Important: `con` argument takes en engine, not a connection!
         # data.to_sql(name=tbl, con=self._engine, index=False, if_exists="replace")
         self._engine.dispose()
-        return data
 
     def read(self, qry: str) -> pl.DataFrame:
         """Download  data from MS Access.
