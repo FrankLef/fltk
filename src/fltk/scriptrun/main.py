@@ -34,7 +34,7 @@ class ScriptRun:
     ):
         self.project_path = project_path
         self.work_dirs = work_dirs
-        self.mode = mode
+        self.mode = mode.lower()
         self.work_path = project_path.joinpath(*work_dirs)
         self.dir_prefix = dir_prefix
         self.file_prefix = file_prefix
