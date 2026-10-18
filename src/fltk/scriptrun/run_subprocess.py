@@ -26,7 +26,7 @@ def run_subprocess(project_path: Path, file: Path) -> subprocess.CompletedProces
     )
 
     if result.returncode:
-        logger.exception(f"{file.name} in job '{module_name}'")
+        logger.exception(f"{file.name} in module '{module_name}'")
         ring_error()
         sys.exit(result.stderr)
     return result

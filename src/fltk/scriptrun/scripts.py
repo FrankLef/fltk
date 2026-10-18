@@ -3,12 +3,12 @@ import re
 
 
 def get_jobs(
-    parsed_jobs: list[str], work_path: Path, job_prefix: str
+    parsed_jobs: list[str], work_path: Path, dir_prefix: str
 ) -> dict[str, Path]:
     job_names = set(parsed_jobs)  # unique names only
     jobs = {}
     for job_name in job_names:
-        pat = rf"^{job_prefix}.+_{job_name}"
+        pat = rf"^{dir_prefix}.+_{job_name}"
         pattern = re.compile(pat)
         dirs = [
             path
@@ -29,12 +29,12 @@ def get_jobs(
 
 
 def get_files(
-    jobs: dict[str, Path], file_pat: str | None, run_prefix: str
+    jobs: dict[str, Path], file_pat: str | None, file_prefix: str
 ) -> dict[str, list[Path]]:
     if file_pat:
-        pat = rf"^{run_prefix}.+_{file_pat}[.]py$"
+        pat = rf"^{file_prefix}.+_{file_pat}[.]py$"
     else:
-        pat = rf"^{run_prefix}.+_.*[.]py$"
+        pat = rf"^{file_prefix}.+_.*[.]py$"
     pattern = re.compile(pat)
     job_files = {}
     for job_name, job_path in jobs.items():
@@ -43,9 +43,9 @@ def get_files(
             for file in job_path.iterdir()
             if file.is_file() and pattern.search(file.name)
         ]
+        files.sort()
         if not files:
             msg = f"No file found for job '{job_name}' and pattern '{pat}'."
             raise FileNotFoundError(msg)
-        files.sort()
         job_files[job_name] = files
     return job_files

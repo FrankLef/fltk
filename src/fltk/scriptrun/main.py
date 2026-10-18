@@ -29,15 +29,15 @@ class ScriptRun:
         work_dirs: list[str],
         *,
         mode: Literal["importlib", "subprocess"] = "importlib",
-        job_prefix: str = "job",
-        run_prefix: str = "run",
+        dir_prefix: str = "job",
+        file_prefix: str = "run",
     ):
         self.project_path = project_path
         self.work_dirs = work_dirs
         self.mode = mode
         self.work_path = project_path.joinpath(*work_dirs)
-        self.job_prefix = job_prefix
-        self.run_prefix = run_prefix
+        self.dir_prefix = dir_prefix
+        self.file_prefix = file_prefix
 
     def execute(
         self,
@@ -49,9 +49,9 @@ class ScriptRun:
             start_time = time.perf_counter()
         parsed_jobs = self.parse_jobs(job_args)
         jobs = get_jobs(
-            parsed_jobs, work_path=self.work_path, job_prefix=self.job_prefix
+            parsed_jobs, work_path=self.work_path, dir_prefix=self.dir_prefix
         )
-        files = get_files(jobs, file_pat=file_pat, run_prefix=self.run_prefix)
+        files = get_files(jobs, file_pat=file_pat, file_prefix=self.file_prefix)
         self.run_jobs(files)
         if with_timer:
             print_timer(time.perf_counter() - start_time)
@@ -70,7 +70,6 @@ class ScriptRun:
         nruns: int = 0
         for job_name, files in job_files.items():
             logger.debug(f"Job '{job_name}' with {len(files)} runs.")
-            files.sort()
             for file in files:
                 if self.mode == "importlib":
                     run_module(file=file)
