@@ -5,7 +5,7 @@ from rich.prompt import Confirm
 
 
 if TYPE_CHECKING:
-    from .main import MungSumprod  # Only imported when checking types
+    from . import MungSumprod  # Only imported when checking types
 
 
 def load_raw_data(inst: MungSumprod, data: pl.DataFrame) -> pl.DataFrame:

@@ -4,7 +4,7 @@ import pytest
 from pathlib import Path
 import polars as pl
 
-from fltk.mung.waterfall.main import MungWaterfall
+from fltk.mung.waterfall import MungWaterfall
 
 
 @pytest.fixture

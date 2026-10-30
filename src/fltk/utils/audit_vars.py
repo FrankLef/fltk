@@ -22,18 +22,3 @@ def audit_illegal(data: pl.DataFrame, vars: str | tuple[str, ...]) -> bool:
         """
         raise ValueError(msg)
     return True
-
-
-# def audit_keys(data: pd.DataFrame, keys: str | tuple[str, ...]) -> bool:
-#     """Validate the keys."""
-#     if isinstance(keys, str):
-#         cols: str | list[str] = keys
-#     else:
-#         cols = list(keys)
-#     unique_counts = data[cols].value_counts()
-#     ndistinct = len(unique_counts)
-#     check = data.shape[0] - ndistinct
-#     if check:
-#         msg: str = f"Data has {check} duplicates in the keys."
-#         raise KeyError(msg)
-#     return True

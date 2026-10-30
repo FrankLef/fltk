@@ -4,7 +4,7 @@ import pytest
 from pathlib import Path
 import polars as pl
 
-from fltk.mung.bridge.main import MungBridge
+from fltk.mung.bridge import MungBridge
 
 
 @pytest.fixture

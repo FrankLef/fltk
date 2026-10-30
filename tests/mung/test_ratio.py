@@ -4,7 +4,7 @@ import pytest
 from pathlib import Path
 import polars as pl
 
-from fltk.mung.ratio.main import MungRatio
+from fltk.mung.ratio import MungRatio
 
 
 @pytest.fixture

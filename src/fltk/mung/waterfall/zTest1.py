@@ -2,7 +2,7 @@ import polars as pl
 from pathlib import Path
 from datetime import datetime as dt
 
-from fltk.mung.waterfall.main import MungWaterfall
+from fltk.mung.waterfall import MungWaterfall
 
 
 fixtures_path = Path(__file__).parents[4].joinpath("tests", "mung", "fixtures")

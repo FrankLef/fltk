@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, Final
 import polars as pl
 
 if TYPE_CHECKING:
-    from .main import MungWaterfall  # Only imported when checking types
+    from . import MungWaterfall  # Only imported when checking types
 
 
 def get_wfall(inst: MungWaterfall) -> pl.DataFrame:

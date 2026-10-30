@@ -2,7 +2,7 @@ import polars as pl
 from pathlib import Path
 from datetime import datetime as dt
 
-from fltk.mung.sumprod.main import MungSumprod
+from fltk.mung.sumprod import MungSumprod
 
 fixtures_path = Path(__file__).parents[4].joinpath("tests", "mung", "fixtures")
 sumprod_path = fixtures_path.joinpath("sumprod.xlsx")

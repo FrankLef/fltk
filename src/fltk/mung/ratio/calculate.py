@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 import polars as pl
 
 if TYPE_CHECKING:
-    from .main import MungRatio  # Only imported when checking types
+    from . import MungRatio  # Only imported when checking types
 
 
 def calculate(inst: MungRatio) -> pl.DataFrame:

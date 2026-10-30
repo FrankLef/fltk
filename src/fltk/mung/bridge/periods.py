@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 import polars as pl
 
 if TYPE_CHECKING:
-    from .main import MungBridge  # Only imported when checking types
+    from . import MungBridge  # Only imported when checking types
 
 
 def get_periods(inst: MungBridge) -> pl.DataFrame:

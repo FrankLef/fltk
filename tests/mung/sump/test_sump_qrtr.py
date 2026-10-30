@@ -4,7 +4,7 @@ import pytest
 from pathlib import Path
 import polars as pl
 from typing import Any
-from fltk.mung.sumprod.main import MungSumprod
+from fltk.mung.sumprod import MungSumprod
 
 newvalue_nm: str = "qrtr_amt"
 

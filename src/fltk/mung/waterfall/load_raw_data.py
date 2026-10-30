@@ -5,7 +5,7 @@ import polars as pl
 from ...utils import audit_vars as audit
 
 if TYPE_CHECKING:
-    from .main import MungWaterfall  # Only imported when checking types
+    from . import MungWaterfall  # Only imported when checking types
 
 
 def load_raw_data(inst: MungWaterfall, data: pl.DataFrame) -> pl.DataFrame:

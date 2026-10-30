@@ -5,7 +5,7 @@ import polars as pl
 from ...utils import audit_vars as audit
 
 if TYPE_CHECKING:
-    from .main import MungRatio  # Only imported when checking types
+    from . import MungRatio  # Only imported when checking types
 
 
 def load_ratios(inst: MungRatio, data: pl.DataFrame) -> pl.DataFrame:

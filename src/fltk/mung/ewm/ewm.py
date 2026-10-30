@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 import polars as pl
 
 if TYPE_CHECKING:
-    from .main import MungEwm  # Only imported when checking types
+    from . import MungEwm  # Only imported when checking types
 
 
 def get_ewm(inst: MungEwm) -> pl.DataFrame:

@@ -4,7 +4,7 @@ import polars as pl
 
 
 if TYPE_CHECKING:
-    from .main import MungSumprod  # Only imported when checking types
+    from . import MungSumprod  # Only imported when checking types
 
 
 def load_sump(inst: MungSumprod, data: pl.DataFrame) -> None:

@@ -4,7 +4,7 @@ import pytest
 from pathlib import Path
 import polars as pl
 
-from fltk.mung.ewm.main import MungEwm
+from fltk.mung.ewm import MungEwm
 
 
 @pytest.fixture

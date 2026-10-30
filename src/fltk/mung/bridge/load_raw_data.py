@@ -5,7 +5,7 @@ import polars as pl
 from ...utils import audit_vars as audit
 
 if TYPE_CHECKING:
-    from .main import MungBridge  # Only imported when checking types
+    from . import MungBridge  # Only imported when checking types
 
 
 def load_raw_data(inst: MungBridge, data: pl.DataFrame) -> pl.DataFrame:
