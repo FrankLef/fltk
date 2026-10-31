@@ -22,17 +22,9 @@ def load_mat_from_xl(
         """
         raise KeyError(msg)
 
-    # cols = df.columns[df.columns != _idx_to].to_list()
     cols = df.select(pl.exclude(_idx_to)).columns
     df = df.unpivot(
         index=_idx_to, on=cols, variable_name=_idx_from, value_name=_sump_coef
     )
     df = df.drop_nulls()
-    # df = df.melt(
-    #     id_vars=_idx_to,
-    #     value_vars=cols,
-    #     var_name=_idx_from,
-    #     value_name=_sump_coef,
-    # )
-    # df.dropna(inplace=True)
     return df
