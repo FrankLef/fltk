@@ -8,5 +8,8 @@ def run_module(file: Path) -> None:
     a_script = file.stem
     script_dir = file.parent.name
     modul = import_module(name="." + a_script, package=script_dir)
+    if not hasattr(modul, "main"):
+        msg: str = f"Module '{modul.__name__}' has no main() function."
+        raise AttributeError(msg)
     utils.print_process(modul_nm=modul.__name__, modul_doc=modul.__doc__)
     modul.main()
