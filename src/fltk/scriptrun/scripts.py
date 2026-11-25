@@ -18,7 +18,7 @@ def get_jobs(
         if len(dirs) == 1:
             jobs[job_name] = dirs[0]
         elif len(dirs) > 1:
-            msg: str = f"There must be exactly 1 directory for job '{job_name}' but there are {len(dirs)}. Weird!\ndirs: {dirs}\njob: {job_name}\npattern: {pat}"
+            msg: str = f"There must be exactly 1 directory for job '{job_name}' but there are {len(dirs)}. Weird!\njob: {job_name}\npattern: {pat}\ndirectories found: {dirs}"
             raise AssertionError(msg)
         else:
             msg = f"No directory found.\njob: {job_name}\npattern: {pat}."
