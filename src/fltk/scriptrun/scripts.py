@@ -43,9 +43,9 @@ def get_files(
             for file in job_path.iterdir()
             if file.is_file() and pattern.search(file.name)
         ]
-        files.sort()
         if not files:
             msg = f"No file found.\njob: {job_name}\npattern: {pat}."
             raise FileNotFoundError(msg)
+        files.sort()
         job_files[job_name] = files
     return job_files
