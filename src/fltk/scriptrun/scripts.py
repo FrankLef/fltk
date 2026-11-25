@@ -18,10 +18,10 @@ def get_jobs(
         if len(dirs) == 1:
             jobs[job_name] = dirs[0]
         elif len(dirs) > 1:
-            msg: str = f"There must be exactly 1 directory for job '{job_name}' but there are {len(dirs)}. Very weird!"
+            msg: str = f"There must be exactly 1 directory for job '{job_name}' but there are {len(dirs)}. Weird!\ndirs: {dirs}\njob: {job_name}\npattern: {pat}"
             raise AssertionError(msg)
         else:
-            msg = f"No directory found for job '{job_name}' and pattern '{pat}'."
+            msg = f"No directory found.\njob: {job_name}\npattern: {pat}."
             raise FileNotFoundError(msg)
     # must sort the job by dirs!
     sorted_jobs = dict(sorted(jobs.items(), key=lambda item: item[1]))
@@ -45,7 +45,7 @@ def get_files(
         ]
         files.sort()
         if not files:
-            msg = f"No file found for job '{job_name}' and pattern '{pat}'."
+            msg = f"No file found.\njob: {job_name}\npattern: {pat}."
             raise FileNotFoundError(msg)
         job_files[job_name] = files
     return job_files
